@@ -52,14 +52,14 @@
             this.strainYRadioButton = new System.Windows.Forms.RadioButton();
             this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
             this.tensionRadioButton = new System.Windows.Forms.RadioButton();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.MainImagePanel = new System.Windows.Forms.Panel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.imageSliderPanel = new System.Windows.Forms.Panel();
             this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.optionsPanel = new System.Windows.Forms.Panel();
             this.LoadImagesPanel = new System.Windows.Forms.Panel();
             this.LoadImagesLabel = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
+            this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
             this.optionsPanel.SuspendLayout();
@@ -285,16 +285,15 @@
             this.tensionRadioButton.Text = "Tension";
             this.tensionRadioButton.UseVisualStyleBackColor = true;
             // 
-            // panel1
+            // MainImagePanel
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.MainPictureBox);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1108, 767);
-            this.panel1.TabIndex = 34;
+            this.MainImagePanel.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.MainImagePanel.Controls.Add(this.MainPictureBox);
+            this.MainImagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainImagePanel.Location = new System.Drawing.Point(0, 53);
+            this.MainImagePanel.Name = "MainImagePanel";
+            this.MainImagePanel.Size = new System.Drawing.Size(890, 714);
+            this.MainImagePanel.TabIndex = 34;
             // 
             // MainPictureBox
             // 
@@ -302,15 +301,14 @@
             this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainPictureBox.Location = new System.Drawing.Point(0, 0);
             this.MainPictureBox.Name = "MainPictureBox";
-            this.MainPictureBox.Size = new System.Drawing.Size(1106, 765);
-            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.MainPictureBox.Size = new System.Drawing.Size(890, 714);
+            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             // 
             // imageSliderPanel
             // 
             this.imageSliderPanel.AutoScroll = true;
-            this.imageSliderPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.imageSliderPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.imageSliderPanel.Controls.Add(this.LoadImagesPanel);
             this.imageSliderPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -378,14 +376,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1108, 767);
+            this.Controls.Add(this.MainImagePanel);
             this.Controls.Add(this.optionsPanel);
             this.Controls.Add(this.imageSliderPanel);
-            this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Digital Image Correlation";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.MainImagePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
             this.imageSliderPanel.ResumeLayout(false);
             this.optionsPanel.ResumeLayout(false);
@@ -420,7 +417,7 @@
         private System.Windows.Forms.RadioButton strainYRadioButton;
         private System.Windows.Forms.RadioButton strainShearRadioButton;
         private System.Windows.Forms.RadioButton tensionRadioButton;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel MainImagePanel;
         private System.Windows.Forms.PictureBox MainPictureBox;
         private System.Windows.Forms.Panel imageSliderPanel;
         private System.Windows.Forms.OpenFileDialog loadImagesFileDialog;

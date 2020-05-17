@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
@@ -17,6 +18,11 @@ namespace DigitalImageCorrelation.Desktop
             if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
             {
                 _presenter.OpenImages(loadImagesFileDialog.FileNames);
+                var firstImage = _presenter.imageContainers.FirstOrDefault();
+                if (firstImage != null)
+                {
+                    MainPictureBox.Image = firstImage.image;
+                }
             }
         }
     }
