@@ -305,6 +305,10 @@
             this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
+            this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.MainPictureBox_Paint);
+            this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
+            this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
+            this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
             // imageSliderPanel
             // 

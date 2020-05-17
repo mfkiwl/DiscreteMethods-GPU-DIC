@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 namespace DigitalImageCorrelation.Desktop
 {
     public class MainFormPresenter
     {
         private MainForm _mainForm;
+        public Painter painter;
         public List<ImageContainer> imageContainers = new List<ImageContainer>();
 
-        public MainFormPresenter(MainForm form)
+        public MainFormPresenter(MainForm form, Painter painter)
         {
             _mainForm = form;
+            this.painter = painter;
         }
 
         public void OpenImages(string[] filenames)

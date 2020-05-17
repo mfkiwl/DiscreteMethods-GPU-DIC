@@ -6,11 +6,14 @@ namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
+
+
+
         private MainFormPresenter _presenter;
         public MainForm()
         {
             InitializeComponent();
-            _presenter = new MainFormPresenter(this);
+            _presenter = new MainFormPresenter(this, new Painter(this.MainPictureBox));
         }
 
         private void openImagesButton_Click(object sender, EventArgs e)
@@ -24,6 +27,27 @@ namespace DigitalImageCorrelation.Desktop
                     MainPictureBox.Image = firstImage.image;
                 }
             }
+        }
+
+        private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            _presenter.painter.MainPictureBox_MouseDown(sender, e);
+        }
+
+        private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            _presenter.painter.MainPictureBox_MouseUp(sender, e);
+        }
+
+        private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
+
+        {
+            _presenter.painter.MainPictureBox_MouseMove(sender, e, showCropBoxCheckbox.Checked);
+        }
+
+        private void MainPictureBox_Paint(object sender, PaintEventArgs e)
+        {
+            _presenter.painter.MainPictureBox_Paint(sender, e, showCropBoxCheckbox.Checked);
         }
     }
 }
