@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
@@ -15,6 +8,18 @@ namespace DigitalImageCorrelation.Desktop
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void openImagesButton_Click(object sender, EventArgs e)
+        {
+
+            if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                foreach (String file in loadImagesFileDialog.FileNames)
+                {
+
+                }
+            }
         }
     }
 }

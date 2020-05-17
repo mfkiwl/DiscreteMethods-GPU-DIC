@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.openImagesButton = new System.Windows.Forms.Button();
             this.sizeLabel = new System.Windows.Forms.Label();
             this.sizeNumberLabel = new System.Windows.Forms.Label();
@@ -55,6 +56,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
+            this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -68,6 +70,7 @@
             this.openImagesButton.TabIndex = 1;
             this.openImagesButton.Text = "Open images";
             this.openImagesButton.UseVisualStyleBackColor = true;
+            this.openImagesButton.Click += new System.EventHandler(this.openImagesButton_Click);
             // 
             // sizeLabel
             // 
@@ -102,6 +105,7 @@
             this.pointsXTextbox.Name = "pointsXTextbox";
             this.pointsXTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsXTextbox.TabIndex = 5;
+            this.pointsXTextbox.Text = "40";
             // 
             // pointsYTextbox
             // 
@@ -109,6 +113,7 @@
             this.pointsYTextbox.Name = "pointsYTextbox";
             this.pointsYTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsYTextbox.TabIndex = 7;
+            this.pointsYTextbox.Text = "40";
             // 
             // pointsYLabel
             // 
@@ -125,6 +130,7 @@
             this.subsetDeltaTextbox.Name = "subsetDeltaTextbox";
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.subsetDeltaTextbox.TabIndex = 9;
+            this.subsetDeltaTextbox.Text = "15";
             // 
             // subsetDeltaLabel
             // 
@@ -141,6 +147,7 @@
             this.windowDeltaTextbox.Name = "windowDeltaTextbox";
             this.windowDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.windowDeltaTextbox.TabIndex = 11;
+            this.windowDeltaTextbox.Text = "20";
             // 
             // windowDeltaLabel
             // 
@@ -163,6 +170,8 @@
             // showCropBoxCheckbox
             // 
             this.showCropBoxCheckbox.AutoSize = true;
+            this.showCropBoxCheckbox.Checked = true;
+            this.showCropBoxCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showCropBoxCheckbox.Location = new System.Drawing.Point(894, 297);
             this.showCropBoxCheckbox.Name = "showCropBoxCheckbox";
             this.showCropBoxCheckbox.Size = new System.Drawing.Size(97, 17);
@@ -182,6 +191,7 @@
             // imageRadioButton
             // 
             this.imageRadioButton.AutoSize = true;
+            this.imageRadioButton.Checked = true;
             this.imageRadioButton.Location = new System.Drawing.Point(894, 334);
             this.imageRadioButton.Name = "imageRadioButton";
             this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
@@ -197,7 +207,6 @@
             this.pointsRadioButton.Name = "pointsRadioButton";
             this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
             this.pointsRadioButton.TabIndex = 16;
-            this.pointsRadioButton.TabStop = true;
             this.pointsRadioButton.Text = "Points";
             this.pointsRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -208,7 +217,6 @@
             this.displacementVRadioButton.Name = "displacementVRadioButton";
             this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
             this.displacementVRadioButton.TabIndex = 17;
-            this.displacementVRadioButton.TabStop = true;
             this.displacementVRadioButton.Text = "Displacement vectors";
             this.displacementVRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -219,7 +227,6 @@
             this.displacementXRadioButton.Name = "displacementXRadioButton";
             this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
             this.displacementXRadioButton.TabIndex = 18;
-            this.displacementXRadioButton.TabStop = true;
             this.displacementXRadioButton.Text = "Displacement (X)";
             this.displacementXRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -230,7 +237,6 @@
             this.displacementYRadiobutton.Name = "displacementYRadiobutton";
             this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
             this.displacementYRadiobutton.TabIndex = 19;
-            this.displacementYRadiobutton.TabStop = true;
             this.displacementYRadiobutton.Text = "Displacement (Y)";
             this.displacementYRadiobutton.UseVisualStyleBackColor = true;
             // 
@@ -241,7 +247,6 @@
             this.strainXRadioButton.Name = "strainXRadioButton";
             this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
             this.strainXRadioButton.TabIndex = 20;
-            this.strainXRadioButton.TabStop = true;
             this.strainXRadioButton.Text = "Strain (X)";
             this.strainXRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -252,7 +257,6 @@
             this.strainYRadioButton.Name = "strainYRadioButton";
             this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
             this.strainYRadioButton.TabIndex = 21;
-            this.strainYRadioButton.TabStop = true;
             this.strainYRadioButton.Text = "Strain (Y)";
             this.strainYRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -263,7 +267,6 @@
             this.strainShearRadioButton.Name = "strainShearRadioButton";
             this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
             this.strainShearRadioButton.TabIndex = 22;
-            this.strainShearRadioButton.TabStop = true;
             this.strainShearRadioButton.Text = "Strain (Shear)";
             this.strainShearRadioButton.UseVisualStyleBackColor = true;
             // 
@@ -274,13 +277,13 @@
             this.tensionRadioButton.Name = "tensionRadioButton";
             this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
             this.tensionRadioButton.TabIndex = 23;
-            this.tensionRadioButton.TabStop = true;
             this.tensionRadioButton.Text = "Tension";
             this.tensionRadioButton.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Location = new System.Drawing.Point(13, 71);
             this.panel1.Name = "panel1";
@@ -299,6 +302,7 @@
             // panel2
             // 
             this.panel2.AutoScroll = true;
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.button4);
             this.panel2.Location = new System.Drawing.Point(12, 12);
             this.panel2.Name = "panel2";
@@ -313,6 +317,12 @@
             this.button4.TabIndex = 0;
             this.button4.Text = "Example btn";
             this.button4.UseVisualStyleBackColor = true;
+            // 
+            // loadImagesFileDialog
+            // 
+            this.loadImagesFileDialog.Filter = "*.BMP;*.JPG;*.GIF|";
+            this.loadImagesFileDialog.Multiselect = true;
+            this.loadImagesFileDialog.Title = "Load Images to analyze";
             // 
             // MainForm
             // 
@@ -344,8 +354,9 @@
             this.Controls.Add(this.sizeNumberLabel);
             this.Controls.Add(this.sizeLabel);
             this.Controls.Add(this.openImagesButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Digital Image Correlation";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -383,6 +394,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.OpenFileDialog loadImagesFileDialog;
     }
 }
 
