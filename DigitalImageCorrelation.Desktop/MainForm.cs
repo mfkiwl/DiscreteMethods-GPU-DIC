@@ -12,7 +12,7 @@ namespace DigitalImageCorrelation.Desktop
         public MainForm()
         {
             InitializeComponent();
-            _presenter = new MainFormPresenter(this, new Painter(this.MainPictureBox));
+            _presenter = new MainFormPresenter(this, new Painter(this.MainPictureBox, this.showCropBoxCheckbox, this.zoomTrackBar));
         }
 
         private void openImagesButton_Click(object sender, EventArgs e)
@@ -36,12 +36,23 @@ namespace DigitalImageCorrelation.Desktop
         private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
 
         {
-            _presenter.painter.MainPictureBox_MouseMove(sender, e, showCropBoxCheckbox.Checked);
+            _presenter.painter.MainPictureBox_MouseMove(sender, e);
         }
 
-        private void MainPictureBox_Resize(object sender, EventArgs e)
+        private void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            _presenter.painter.MainPictureBox_Resize(sender, e, showCropBoxCheckbox.Checked);
+            _presenter.painter.showCropBoxCheckbox_CheckedChanged(sender, e);
+
+        }
+
+        private void zoomTrackBar_ValueChanged(object sender, EventArgs e)
+        {
+            _presenter.painter.zoomTrackBar_ValueChanged(sender as TrackBar, e);
+        }
+
+        private void MainImagePanel_SizeChanged(object sender, EventArgs e)
+        {
+            _presenter.painter.MainPictureBox_Resize(sender, e);
 
         }
     }

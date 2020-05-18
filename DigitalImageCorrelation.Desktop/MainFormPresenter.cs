@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
 namespace DigitalImageCorrelation.Desktop
 {
-    public class MainFormPresenter
+    public class MainFormPresenter : BasePresenter
     {
         private MainForm _mainForm;
         public Painter painter;
@@ -18,14 +19,22 @@ namespace DigitalImageCorrelation.Desktop
 
         public void OpenImages(string[] filenames)
         {
-            imageContainers = new List<ImageContainer>();
-            foreach (var fileName in filenames)
+            try
             {
-                Image image = Image.FromFile(fileName);
-                Bitmap bitmap = new Bitmap(fileName);
-                imageContainers.Add(new ImageContainer(bitmap));
+                imageContainers = new List<ImageContainer>();
+                foreach (var fileName in filenames)
+                {
+                    Image image = Image.FromFile(fileName);
+                    Bitmap bitmap = new Bitmap(fileName);
+                    imageContainers.Add(new ImageContainer(bitmap));
+                }
+                painter.LoadFirstImage(imageContainers.FirstOrDefault());
             }
-            painter.LoadFirstImage(imageContainers.FirstOrDefault());
+            catch (Exception ex)
+            {
+                Error(ex, "Error during loading files.");
+            }
         }
+
     }
 }
