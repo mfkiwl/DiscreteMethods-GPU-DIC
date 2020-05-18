@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
@@ -6,12 +7,41 @@ namespace DigitalImageCorrelation.Desktop
     public class Painter
     {
         public PictureBox picture;
+        private ImageContainer _imageContainter;
+        private Bitmap _img;
+        public ImageContainer imageContainer
+        {
+            get { return _imageContainter; }
+            set
+            {
+                _imageContainter = value;
+                DrawRectagle();
+            }
+        }
 
-        Rectangle rect = new Rectangle(125, 125, 500, 500);
+        private int left;
+        private int top;
+        private int width;
+        private int height;
         bool isMouseDown = false;
         public Painter(PictureBox _pictureBox)
         {
             picture = _pictureBox;
+            //ReloadSizes(_pictureBox);
+        }
+
+        public void LoadFirstImage(ImageContainer container)
+        {
+            ReloadSizes(container.image);
+            imageContainer = container;
+        }
+
+        private void ReloadSizes(Bitmap bmp)
+        {
+            width = Convert.ToInt32(bmp.Width * 0.8);
+            height = Convert.ToInt32(bmp.Height * 0.8);
+            left = Convert.ToInt32(bmp.Width * 0.1);
+            top = Convert.ToInt32(bmp.Height * 0.1);
         }
 
         internal void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -28,31 +58,56 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (isMouseDown == true && shouldDraw)
             {
-                rect.Location = e.Location;
+                //cropRectangle.Location = e.Location;
 
-                if (rect.Right > picture.Width)
-                {
-                    rect.X = picture.Width - rect.Width;
-                }
-                if (rect.Top < 0)
-                {
-                    rect.Y = 0;
-                }
-                if (rect.Left < 0)
-                {
-                    rect.X = 0;
-                }
-                if (rect.Bottom > picture.Height)
-                {
-                    rect.Y = picture.Height - rect.Height;
-                }
+                //if (cropRectangle.Right > picture.Width)
+                //{
+                //    cropRectangle.X = picture.Width - cropRectangle.Width;
+                //}
+                //if (cropRectangle.Top < 0)
+                //{
+                //    cropRectangle.Y = 0;
+                //}
+                //if (cropRectangle.Left < 0)
+                //{
+                //    cropRectangle.X = 0;
+                //}
+                //if (cropRectangle.Bottom > picture.Height)
+                //{
+                //    cropRectangle.Y = picture.Height - cropRectangle.Height;
+                //}
                 picture.Refresh();
             }
         }
-        public void MainPictureBox_Paint(object sender, PaintEventArgs e, bool shouldDraw)
+
+        internal void MainPictureBox_Resize(object sender, EventArgs e, bool shouldDraw)
         {
-            if (shouldDraw)
-                e.Graphics.DrawRectangle(new Pen(Color.RoyalBlue), rect);
+            //ReloadSizes(picture);
+            //if (shouldDraw)
+            //    picture.Refresh();
+        }
+        private void DrawRectagle()
+        {
+            _img = _imageContainter.image;
+            Graphics g = Graphics.FromImage(_img);
+            g.DrawRectangle(new Pen(Color.RoyalBlue), new Rectangle(left, top, width, height));
+            picture.Image = _img;
+        }
+
+        private void CenterPictureBox(PictureBox picBox, Bitmap picImage)
+        {
+            picBox.Image = picImage;
+            picBox.Location = new Point((picBox.Parent.ClientSize.Width / 2) - (picImage.Width / 2),
+                                        (picBox.Parent.ClientSize.Height / 2) - (picImage.Height / 2));
+            picBox.Refresh();
+        }
+
+        internal void MainPictureBox_Paint(object sender, PaintEventArgs e, bool shouldDraw)
+        {
+            //    Graphics newGraphics = Graphics.FromImage(_img.image);
+            //    if (shouldDraw)
+            //        newGraphics.DrawRectangle(new Pen(Color.RoyalBlue), new Rectangle(left, top, width, height));
+            //    e.Graphics.DrawImage(imageFile, new PointF(0.0F, 0.0F));
         }
 
     }

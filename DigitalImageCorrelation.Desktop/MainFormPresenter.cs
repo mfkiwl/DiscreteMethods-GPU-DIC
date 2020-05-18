@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+
 namespace DigitalImageCorrelation.Desktop
 {
     public class MainFormPresenter
@@ -16,12 +18,14 @@ namespace DigitalImageCorrelation.Desktop
 
         public void OpenImages(string[] filenames)
         {
+            imageContainers = new List<ImageContainer>();
             foreach (var fileName in filenames)
             {
                 Image image = Image.FromFile(fileName);
                 Bitmap bitmap = new Bitmap(fileName);
                 imageContainers.Add(new ImageContainer(bitmap));
             }
+            painter.LoadFirstImage(imageContainers.FirstOrDefault());
         }
     }
 }

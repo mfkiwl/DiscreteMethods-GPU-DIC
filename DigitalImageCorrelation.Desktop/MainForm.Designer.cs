@@ -55,15 +55,15 @@
             this.MainImagePanel = new System.Windows.Forms.Panel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.imageSliderPanel = new System.Windows.Forms.Panel();
-            this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.optionsPanel = new System.Windows.Forms.Panel();
             this.LoadImagesPanel = new System.Windows.Forms.Panel();
             this.LoadImagesLabel = new System.Windows.Forms.Label();
+            this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.optionsPanel = new System.Windows.Forms.Panel();
             this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
-            this.optionsPanel.SuspendLayout();
             this.LoadImagesPanel.SuspendLayout();
+            this.optionsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // openImagesButton
@@ -287,6 +287,7 @@
             // 
             // MainImagePanel
             // 
+            this.MainImagePanel.AutoScroll = true;
             this.MainImagePanel.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.MainImagePanel.Controls.Add(this.MainPictureBox);
             this.MainImagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -298,17 +299,16 @@
             // MainPictureBox
             // 
             this.MainPictureBox.BackColor = System.Drawing.Color.DimGray;
-            this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainPictureBox.Location = new System.Drawing.Point(0, 0);
             this.MainPictureBox.Name = "MainPictureBox";
             this.MainPictureBox.Size = new System.Drawing.Size(890, 714);
-            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
-            this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.MainPictureBox_Paint);
             this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
             this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
             this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
+            this.MainPictureBox.Resize += new System.EventHandler(this.MainPictureBox_Resize);
             // 
             // imageSliderPanel
             // 
@@ -320,6 +320,23 @@
             this.imageSliderPanel.Name = "imageSliderPanel";
             this.imageSliderPanel.Size = new System.Drawing.Size(1108, 53);
             this.imageSliderPanel.TabIndex = 35;
+            // 
+            // LoadImagesPanel
+            // 
+            this.LoadImagesPanel.Controls.Add(this.LoadImagesLabel);
+            this.LoadImagesPanel.Location = new System.Drawing.Point(4, 4);
+            this.LoadImagesPanel.Name = "LoadImagesPanel";
+            this.LoadImagesPanel.Size = new System.Drawing.Size(89, 32);
+            this.LoadImagesPanel.TabIndex = 0;
+            // 
+            // LoadImagesLabel
+            // 
+            this.LoadImagesLabel.AutoSize = true;
+            this.LoadImagesLabel.Location = new System.Drawing.Point(8, 8);
+            this.LoadImagesLabel.Name = "LoadImagesLabel";
+            this.LoadImagesLabel.Size = new System.Drawing.Size(67, 13);
+            this.LoadImagesLabel.TabIndex = 0;
+            this.LoadImagesLabel.Text = "Load images";
             // 
             // loadImagesFileDialog
             // 
@@ -358,23 +375,6 @@
             this.optionsPanel.Size = new System.Drawing.Size(218, 714);
             this.optionsPanel.TabIndex = 36;
             // 
-            // LoadImagesPanel
-            // 
-            this.LoadImagesPanel.Controls.Add(this.LoadImagesLabel);
-            this.LoadImagesPanel.Location = new System.Drawing.Point(4, 4);
-            this.LoadImagesPanel.Name = "LoadImagesPanel";
-            this.LoadImagesPanel.Size = new System.Drawing.Size(89, 32);
-            this.LoadImagesPanel.TabIndex = 0;
-            // 
-            // LoadImagesLabel
-            // 
-            this.LoadImagesLabel.AutoSize = true;
-            this.LoadImagesLabel.Location = new System.Drawing.Point(8, 8);
-            this.LoadImagesLabel.Name = "LoadImagesLabel";
-            this.LoadImagesLabel.Size = new System.Drawing.Size(67, 13);
-            this.LoadImagesLabel.TabIndex = 0;
-            this.LoadImagesLabel.Text = "Load images";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -387,12 +387,13 @@
             this.Name = "MainForm";
             this.Text = "Digital Image Correlation";
             this.MainImagePanel.ResumeLayout(false);
+            this.MainImagePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
             this.imageSliderPanel.ResumeLayout(false);
-            this.optionsPanel.ResumeLayout(false);
-            this.optionsPanel.PerformLayout();
             this.LoadImagesPanel.ResumeLayout(false);
             this.LoadImagesPanel.PerformLayout();
+            this.optionsPanel.ResumeLayout(false);
+            this.optionsPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }

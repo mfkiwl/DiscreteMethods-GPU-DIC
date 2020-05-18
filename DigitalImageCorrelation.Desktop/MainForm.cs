@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
@@ -21,11 +20,6 @@ namespace DigitalImageCorrelation.Desktop
             if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
             {
                 _presenter.OpenImages(loadImagesFileDialog.FileNames);
-                var firstImage = _presenter.imageContainers.FirstOrDefault();
-                if (firstImage != null)
-                {
-                    MainPictureBox.Image = firstImage.image;
-                }
             }
         }
 
@@ -45,9 +39,10 @@ namespace DigitalImageCorrelation.Desktop
             _presenter.painter.MainPictureBox_MouseMove(sender, e, showCropBoxCheckbox.Checked);
         }
 
-        private void MainPictureBox_Paint(object sender, PaintEventArgs e)
+        private void MainPictureBox_Resize(object sender, EventArgs e)
         {
-            _presenter.painter.MainPictureBox_Paint(sender, e, showCropBoxCheckbox.Checked);
+            _presenter.painter.MainPictureBox_Resize(sender, e, showCropBoxCheckbox.Checked);
+
         }
     }
 }
