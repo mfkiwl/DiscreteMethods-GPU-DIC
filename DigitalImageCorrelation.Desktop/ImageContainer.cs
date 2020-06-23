@@ -5,14 +5,16 @@ namespace DigitalImageCorrelation.Desktop
     public class ImageContainer
     {
         private Bitmap _image;
+        public string filename { get; set; }
         public Bitmap Image
         {
             get { return _image.Clone() as Bitmap; }
             set { _image = value; }
         }
-        public ImageContainer(Bitmap image)
+        public ImageContainer(Bitmap image, string name)
         {
-            this._image = image;
+            _image = image;
+            filename = name;
         }
     }
 }

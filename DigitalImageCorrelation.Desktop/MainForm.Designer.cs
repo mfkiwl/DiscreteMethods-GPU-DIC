@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.openImagesButton = new System.Windows.Forms.Button();
-            this.sizeLabel = new System.Windows.Forms.Label();
             this.sizeNumberLabel = new System.Windows.Forms.Label();
             this.pointsXLabel = new System.Windows.Forms.Label();
             this.pointsXTextbox = new System.Windows.Forms.TextBox();
@@ -56,42 +55,33 @@
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.imageSliderPanel = new System.Windows.Forms.Panel();
             this.LoadImagesPanel = new System.Windows.Forms.Panel();
-            this.LoadImagesLabel = new System.Windows.Forms.Label();
             this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.optionsPanel = new System.Windows.Forms.Panel();
+            this.ImageNameLabel = new System.Windows.Forms.Label();
             this.zoomLabel = new System.Windows.Forms.Label();
             this.zoomTrackBar = new System.Windows.Forms.TrackBar();
+            this.ResetZoomButton = new System.Windows.Forms.Button();
             this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
-            this.LoadImagesPanel.SuspendLayout();
             this.optionsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.zoomTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // openImagesButton
             // 
-            this.openImagesButton.Location = new System.Drawing.Point(3, 3);
+            this.openImagesButton.Location = new System.Drawing.Point(6, 6);
             this.openImagesButton.Name = "openImagesButton";
             this.openImagesButton.Size = new System.Drawing.Size(202, 41);
             this.openImagesButton.TabIndex = 1;
             this.openImagesButton.Text = "Open images";
             this.openImagesButton.UseVisualStyleBackColor = true;
-            this.openImagesButton.Click += new System.EventHandler(this.openImagesButton_Click);
-            // 
-            // sizeLabel
-            // 
-            this.sizeLabel.AutoSize = true;
-            this.sizeLabel.Location = new System.Drawing.Point(4, 51);
-            this.sizeLabel.Name = "sizeLabel";
-            this.sizeLabel.Size = new System.Drawing.Size(27, 13);
-            this.sizeLabel.TabIndex = 2;
-            this.sizeLabel.Text = "Size";
+            this.openImagesButton.Click += new System.EventHandler(this.OpenImagesButton_Click);
             // 
             // sizeNumberLabel
             // 
             this.sizeNumberLabel.AutoSize = true;
-            this.sizeNumberLabel.Location = new System.Drawing.Point(4, 73);
+            this.sizeNumberLabel.Location = new System.Drawing.Point(8, 72);
             this.sizeNumberLabel.Name = "sizeNumberLabel";
             this.sizeNumberLabel.Size = new System.Drawing.Size(38, 13);
             this.sizeNumberLabel.TabIndex = 3;
@@ -100,7 +90,7 @@
             // pointsXLabel
             // 
             this.pointsXLabel.AutoSize = true;
-            this.pointsXLabel.Location = new System.Drawing.Point(4, 96);
+            this.pointsXLabel.Location = new System.Drawing.Point(8, 95);
             this.pointsXLabel.Name = "pointsXLabel";
             this.pointsXLabel.Size = new System.Drawing.Size(57, 13);
             this.pointsXLabel.TabIndex = 4;
@@ -108,7 +98,7 @@
             // 
             // pointsXTextbox
             // 
-            this.pointsXTextbox.Location = new System.Drawing.Point(3, 113);
+            this.pointsXTextbox.Location = new System.Drawing.Point(7, 112);
             this.pointsXTextbox.Name = "pointsXTextbox";
             this.pointsXTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsXTextbox.TabIndex = 5;
@@ -116,7 +106,7 @@
             // 
             // pointsYTextbox
             // 
-            this.pointsYTextbox.Location = new System.Drawing.Point(137, 113);
+            this.pointsYTextbox.Location = new System.Drawing.Point(141, 112);
             this.pointsYTextbox.Name = "pointsYTextbox";
             this.pointsYTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsYTextbox.TabIndex = 7;
@@ -125,7 +115,7 @@
             // pointsYLabel
             // 
             this.pointsYLabel.AutoSize = true;
-            this.pointsYLabel.Location = new System.Drawing.Point(138, 96);
+            this.pointsYLabel.Location = new System.Drawing.Point(142, 95);
             this.pointsYLabel.Name = "pointsYLabel";
             this.pointsYLabel.Size = new System.Drawing.Size(57, 13);
             this.pointsYLabel.TabIndex = 6;
@@ -133,7 +123,7 @@
             // 
             // subsetDeltaTextbox
             // 
-            this.subsetDeltaTextbox.Location = new System.Drawing.Point(3, 155);
+            this.subsetDeltaTextbox.Location = new System.Drawing.Point(7, 154);
             this.subsetDeltaTextbox.Name = "subsetDeltaTextbox";
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.subsetDeltaTextbox.TabIndex = 9;
@@ -142,7 +132,7 @@
             // subsetDeltaLabel
             // 
             this.subsetDeltaLabel.AutoSize = true;
-            this.subsetDeltaLabel.Location = new System.Drawing.Point(4, 138);
+            this.subsetDeltaLabel.Location = new System.Drawing.Point(8, 137);
             this.subsetDeltaLabel.Name = "subsetDeltaLabel";
             this.subsetDeltaLabel.Size = new System.Drawing.Size(66, 13);
             this.subsetDeltaLabel.TabIndex = 8;
@@ -150,7 +140,7 @@
             // 
             // windowDeltaTextbox
             // 
-            this.windowDeltaTextbox.Location = new System.Drawing.Point(137, 155);
+            this.windowDeltaTextbox.Location = new System.Drawing.Point(141, 154);
             this.windowDeltaTextbox.Name = "windowDeltaTextbox";
             this.windowDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.windowDeltaTextbox.TabIndex = 11;
@@ -159,7 +149,7 @@
             // windowDeltaLabel
             // 
             this.windowDeltaLabel.AutoSize = true;
-            this.windowDeltaLabel.Location = new System.Drawing.Point(138, 138);
+            this.windowDeltaLabel.Location = new System.Drawing.Point(142, 137);
             this.windowDeltaLabel.Name = "windowDeltaLabel";
             this.windowDeltaLabel.Size = new System.Drawing.Size(72, 13);
             this.windowDeltaLabel.TabIndex = 10;
@@ -168,7 +158,7 @@
             // analyzeButton
             // 
             this.analyzeButton.Enabled = false;
-            this.analyzeButton.Location = new System.Drawing.Point(3, 181);
+            this.analyzeButton.Location = new System.Drawing.Point(7, 180);
             this.analyzeButton.Name = "analyzeButton";
             this.analyzeButton.Size = new System.Drawing.Size(202, 41);
             this.analyzeButton.TabIndex = 12;
@@ -180,7 +170,7 @@
             this.showCropBoxCheckbox.AutoSize = true;
             this.showCropBoxCheckbox.Checked = true;
             this.showCropBoxCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showCropBoxCheckbox.Location = new System.Drawing.Point(3, 229);
+            this.showCropBoxCheckbox.Location = new System.Drawing.Point(7, 228);
             this.showCropBoxCheckbox.Name = "showCropBoxCheckbox";
             this.showCropBoxCheckbox.Size = new System.Drawing.Size(97, 17);
             this.showCropBoxCheckbox.TabIndex = 13;
@@ -191,7 +181,7 @@
             // displayModeLabel
             // 
             this.displayModeLabel.AutoSize = true;
-            this.displayModeLabel.Location = new System.Drawing.Point(6, 313);
+            this.displayModeLabel.Location = new System.Drawing.Point(10, 312);
             this.displayModeLabel.Name = "displayModeLabel";
             this.displayModeLabel.Size = new System.Drawing.Size(68, 13);
             this.displayModeLabel.TabIndex = 14;
@@ -201,7 +191,7 @@
             // 
             this.imageRadioButton.AutoSize = true;
             this.imageRadioButton.Checked = true;
-            this.imageRadioButton.Location = new System.Drawing.Point(9, 329);
+            this.imageRadioButton.Location = new System.Drawing.Point(13, 328);
             this.imageRadioButton.Name = "imageRadioButton";
             this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
             this.imageRadioButton.TabIndex = 15;
@@ -212,7 +202,7 @@
             // pointsRadioButton
             // 
             this.pointsRadioButton.AutoSize = true;
-            this.pointsRadioButton.Location = new System.Drawing.Point(9, 352);
+            this.pointsRadioButton.Location = new System.Drawing.Point(13, 351);
             this.pointsRadioButton.Name = "pointsRadioButton";
             this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
             this.pointsRadioButton.TabIndex = 16;
@@ -222,7 +212,7 @@
             // displacementVRadioButton
             // 
             this.displacementVRadioButton.AutoSize = true;
-            this.displacementVRadioButton.Location = new System.Drawing.Point(9, 375);
+            this.displacementVRadioButton.Location = new System.Drawing.Point(13, 374);
             this.displacementVRadioButton.Name = "displacementVRadioButton";
             this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
             this.displacementVRadioButton.TabIndex = 17;
@@ -232,7 +222,7 @@
             // displacementXRadioButton
             // 
             this.displacementXRadioButton.AutoSize = true;
-            this.displacementXRadioButton.Location = new System.Drawing.Point(9, 398);
+            this.displacementXRadioButton.Location = new System.Drawing.Point(13, 397);
             this.displacementXRadioButton.Name = "displacementXRadioButton";
             this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
             this.displacementXRadioButton.TabIndex = 18;
@@ -242,7 +232,7 @@
             // displacementYRadiobutton
             // 
             this.displacementYRadiobutton.AutoSize = true;
-            this.displacementYRadiobutton.Location = new System.Drawing.Point(9, 421);
+            this.displacementYRadiobutton.Location = new System.Drawing.Point(13, 420);
             this.displacementYRadiobutton.Name = "displacementYRadiobutton";
             this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
             this.displacementYRadiobutton.TabIndex = 19;
@@ -252,7 +242,7 @@
             // strainXRadioButton
             // 
             this.strainXRadioButton.AutoSize = true;
-            this.strainXRadioButton.Location = new System.Drawing.Point(9, 444);
+            this.strainXRadioButton.Location = new System.Drawing.Point(13, 443);
             this.strainXRadioButton.Name = "strainXRadioButton";
             this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
             this.strainXRadioButton.TabIndex = 20;
@@ -262,7 +252,7 @@
             // strainYRadioButton
             // 
             this.strainYRadioButton.AutoSize = true;
-            this.strainYRadioButton.Location = new System.Drawing.Point(9, 467);
+            this.strainYRadioButton.Location = new System.Drawing.Point(13, 466);
             this.strainYRadioButton.Name = "strainYRadioButton";
             this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
             this.strainYRadioButton.TabIndex = 21;
@@ -272,7 +262,7 @@
             // strainShearRadioButton
             // 
             this.strainShearRadioButton.AutoSize = true;
-            this.strainShearRadioButton.Location = new System.Drawing.Point(9, 490);
+            this.strainShearRadioButton.Location = new System.Drawing.Point(13, 489);
             this.strainShearRadioButton.Name = "strainShearRadioButton";
             this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
             this.strainShearRadioButton.TabIndex = 22;
@@ -282,7 +272,7 @@
             // tensionRadioButton
             // 
             this.tensionRadioButton.AutoSize = true;
-            this.tensionRadioButton.Location = new System.Drawing.Point(9, 513);
+            this.tensionRadioButton.Location = new System.Drawing.Point(13, 512);
             this.tensionRadioButton.Name = "tensionRadioButton";
             this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
             this.tensionRadioButton.TabIndex = 23;
@@ -326,20 +316,13 @@
             // 
             // LoadImagesPanel
             // 
-            this.LoadImagesPanel.Controls.Add(this.LoadImagesLabel);
-            this.LoadImagesPanel.Location = new System.Drawing.Point(4, 4);
+            this.LoadImagesPanel.AutoScroll = true;
+            this.LoadImagesPanel.AutoSize = true;
+            this.LoadImagesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LoadImagesPanel.Location = new System.Drawing.Point(0, 0);
             this.LoadImagesPanel.Name = "LoadImagesPanel";
-            this.LoadImagesPanel.Size = new System.Drawing.Size(89, 32);
+            this.LoadImagesPanel.Size = new System.Drawing.Size(1108, 53);
             this.LoadImagesPanel.TabIndex = 0;
-            // 
-            // LoadImagesLabel
-            // 
-            this.LoadImagesLabel.AutoSize = true;
-            this.LoadImagesLabel.Location = new System.Drawing.Point(8, 8);
-            this.LoadImagesLabel.Name = "LoadImagesLabel";
-            this.LoadImagesLabel.Size = new System.Drawing.Size(67, 13);
-            this.LoadImagesLabel.TabIndex = 0;
-            this.LoadImagesLabel.Text = "Load images";
             // 
             // loadImagesFileDialog
             // 
@@ -349,10 +332,11 @@
             // 
             // optionsPanel
             // 
+            this.optionsPanel.Controls.Add(this.ResetZoomButton);
+            this.optionsPanel.Controls.Add(this.ImageNameLabel);
             this.optionsPanel.Controls.Add(this.zoomLabel);
             this.optionsPanel.Controls.Add(this.zoomTrackBar);
             this.optionsPanel.Controls.Add(this.openImagesButton);
-            this.optionsPanel.Controls.Add(this.sizeLabel);
             this.optionsPanel.Controls.Add(this.sizeNumberLabel);
             this.optionsPanel.Controls.Add(this.tensionRadioButton);
             this.optionsPanel.Controls.Add(this.pointsXLabel);
@@ -380,10 +364,19 @@
             this.optionsPanel.Size = new System.Drawing.Size(218, 714);
             this.optionsPanel.TabIndex = 36;
             // 
+            // ImageNameLabel
+            // 
+            this.ImageNameLabel.AutoSize = true;
+            this.ImageNameLabel.Location = new System.Drawing.Point(8, 50);
+            this.ImageNameLabel.Name = "ImageNameLabel";
+            this.ImageNameLabel.Size = new System.Drawing.Size(65, 13);
+            this.ImageNameLabel.TabIndex = 26;
+            this.ImageNameLabel.Text = "Image name";
+            // 
             // zoomLabel
             // 
             this.zoomLabel.AutoSize = true;
-            this.zoomLabel.Location = new System.Drawing.Point(5, 249);
+            this.zoomLabel.Location = new System.Drawing.Point(9, 248);
             this.zoomLabel.Name = "zoomLabel";
             this.zoomLabel.Size = new System.Drawing.Size(37, 13);
             this.zoomLabel.TabIndex = 25;
@@ -392,7 +385,7 @@
             // zoomTrackBar
             // 
             this.zoomTrackBar.LargeChange = 20;
-            this.zoomTrackBar.Location = new System.Drawing.Point(3, 265);
+            this.zoomTrackBar.Location = new System.Drawing.Point(7, 264);
             this.zoomTrackBar.Maximum = 250;
             this.zoomTrackBar.Minimum = 10;
             this.zoomTrackBar.Name = "zoomTrackBar";
@@ -401,6 +394,16 @@
             this.zoomTrackBar.TabIndex = 24;
             this.zoomTrackBar.Value = 100;
             this.zoomTrackBar.ValueChanged += new System.EventHandler(this.zoomTrackBar_ValueChanged);
+            // 
+            // ResetZoomButton
+            // 
+            this.ResetZoomButton.Location = new System.Drawing.Point(134, 228);
+            this.ResetZoomButton.Name = "ResetZoomButton";
+            this.ResetZoomButton.Size = new System.Drawing.Size(75, 23);
+            this.ResetZoomButton.TabIndex = 27;
+            this.ResetZoomButton.Text = "Reset zoom";
+            this.ResetZoomButton.UseVisualStyleBackColor = true;
+            this.ResetZoomButton.Click += new System.EventHandler(this.ResetZoomButton_Click);
             // 
             // MainForm
             // 
@@ -417,8 +420,7 @@
             this.MainImagePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
             this.imageSliderPanel.ResumeLayout(false);
-            this.LoadImagesPanel.ResumeLayout(false);
-            this.LoadImagesPanel.PerformLayout();
+            this.imageSliderPanel.PerformLayout();
             this.optionsPanel.ResumeLayout(false);
             this.optionsPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.zoomTrackBar)).EndInit();
@@ -428,7 +430,6 @@
 
         #endregion
         private System.Windows.Forms.Button openImagesButton;
-        private System.Windows.Forms.Label sizeLabel;
         private System.Windows.Forms.Label sizeNumberLabel;
         private System.Windows.Forms.Label pointsXLabel;
         private System.Windows.Forms.TextBox pointsXTextbox;
@@ -456,9 +457,10 @@
         private System.Windows.Forms.OpenFileDialog loadImagesFileDialog;
         private System.Windows.Forms.Panel optionsPanel;
         private System.Windows.Forms.Panel LoadImagesPanel;
-        private System.Windows.Forms.Label LoadImagesLabel;
         private System.Windows.Forms.Label zoomLabel;
         private System.Windows.Forms.TrackBar zoomTrackBar;
+        private System.Windows.Forms.Label ImageNameLabel;
+        private System.Windows.Forms.Button ResetZoomButton;
     }
 }
 
