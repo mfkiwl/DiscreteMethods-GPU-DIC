@@ -12,7 +12,20 @@ namespace DigitalImageCorrelation.Desktop
         private ImageContainer _imageContainter;
         private Bitmap _img;
         private Label _imageNameLabel;
+        private int left;
+        private int top;
+        private int width;
+        private int height;
+        private Pen _rectanglePen = new Pen(Color.Red, 2);
+        private Pen _circlePen = new Pen(Color.Yellow, 2);
         private double _scale = 1.0;
+        private const int DELTA = 5;
+        bool isMouseDown = false;
+
+        public double ScaledLeft { get => left * _scale; }
+        public double ScaledTop { get => top * _scale; }
+        public double ScaledWidth { get => width * _scale; }
+        public double ScaledHeight { get => height * _scale; }
 
         private bool ShouldDraw
         {
@@ -28,11 +41,6 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private int left;
-        private int top;
-        private int width;
-        private int height;
-        bool isMouseDown = false;
         public Painter(PictureBox pictureBox, CheckBox showCropBoxCheckbox, TrackBar trackBar, Label imageNameLabel)
         {
             _picture = pictureBox;
@@ -52,12 +60,39 @@ namespace DigitalImageCorrelation.Desktop
             RedrawImage(bmp);
         }
 
-        private void ReloadSizes(Bitmap bmp)
+        public void ReloadSizes(Bitmap bmp)
         {
             width = Convert.ToInt32(bmp.Width * 0.8);
             height = Convert.ToInt32(bmp.Height * 0.8);
             left = Convert.ToInt32(bmp.Width * 0.1);
             top = Convert.ToInt32(bmp.Height * 0.1);
+        }
+
+        public bool IsInCorner(Point point)
+        {
+
+            //left top
+            if (Math.Abs(ScaledLeft - point.X) < DELTA && Math.Abs(ScaledTop - point.Y) < DELTA)
+            {
+                return true;
+            }
+            //left bottom
+            else if (Math.Abs(ScaledLeft - point.X) < DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < DELTA)
+            {
+                return true;
+            }
+            //right top
+            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < DELTA && Math.Abs(ScaledTop - point.Y) < DELTA)
+            {
+                return true;
+            }
+            //right bottom
+            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < DELTA)
+            {
+                return true;
+            }
+            return false;
+
         }
 
         private void CalculateDefaultScale(Bitmap bmp)
@@ -69,7 +104,11 @@ namespace DigitalImageCorrelation.Desktop
 
         internal void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            isMouseDown = true;
+            if (IsInCorner(e.Location))
+            {
+                isMouseDown = true;
+            }
+
         }
 
         internal void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -79,30 +118,12 @@ namespace DigitalImageCorrelation.Desktop
 
         internal void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            //if (isMouseDown == true && ShouldDraw)
-            //{
-            //    //cropRectangle.Location = e.Location;
+            if (isMouseDown == true && ShouldDraw)
+            {
+                var point = e.Location;
 
-            //    //if (cropRectangle.Right > picture.Width)
-            //    //{
-            //    //    cropRectangle.X = picture.Width - cropRectangle.Width;
-            //    //}
-            //    //if (cropRectangle.Top < 0)
-            //    //{
-            //    //    cropRectangle.Y = 0;
-            //    //}
-            //    //if (cropRectangle.Left < 0)
-            //    //{
-            //    //    cropRectangle.X = 0;
-            //    //}
-            //    //if (cropRectangle.Bottom > picture.Height)
-            //    //{
-            //    //    cropRectangle.Y = picture.Height - cropRectangle.Height;
-            //    //}
-            //    _picture.Refresh();
-            //}
+            }
         }
-
 
         internal void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
@@ -147,22 +168,8 @@ namespace DigitalImageCorrelation.Desktop
         private void RedrawImage(Bitmap bmp)
         {
             bmp = ScaleBitmap(bmp);
-            //CenterImage(bmp);
             DrawRectagle(bmp);
             _picture.Image = bmp;
-        }
-
-
-        private void CenterImage(Bitmap img)
-        {
-            if (_picture.Parent.ClientSize.Width > img.Width || _picture.Parent.ClientSize.Height > img.Height)
-                _picture.Location = new Point(
-                    (_picture.Parent.ClientSize.Width / 2) - (img.Width / 2),
-                    (_picture.Parent.ClientSize.Height / 2) - (img.Height / 2));
-            else
-            {
-                _picture.Location = new Point(0, 0);
-            }
         }
 
         private Bitmap DrawRectagle(Bitmap img)
@@ -170,7 +177,12 @@ namespace DigitalImageCorrelation.Desktop
             if (ShouldDraw)
             {
                 Graphics g = Graphics.FromImage(img);
-                g.DrawRectangle(new Pen(Color.RoyalBlue), new Rectangle((int)(left * _scale), (int)(top * _scale), (int)(width * _scale), (int)(height * _scale)));
+                g.DrawRectangle(_rectanglePen, new Rectangle((int)(ScaledLeft), (int)(ScaledTop), (int)(ScaledWidth), (int)(ScaledHeight)));
+                g.DrawEllipse(_circlePen, (int)(ScaledLeft) - DELTA, (int)(ScaledTop) - DELTA, 2 * DELTA, 2 * DELTA);
+                g.DrawEllipse(_circlePen, (int)(ScaledLeft + ScaledWidth) - DELTA, (int)(ScaledTop) - DELTA, 2 * DELTA, 2 * DELTA);
+                g.DrawEllipse(_circlePen, (int)(ScaledLeft) - DELTA, (int)(ScaledTop + ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
+                g.DrawEllipse(_circlePen, (int)(ScaledLeft + ScaledWidth) - DELTA, (int)(ScaledTop + ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
+
             }
             return img;
         }
