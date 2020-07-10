@@ -7,30 +7,25 @@ namespace DigitalImageCorrelation.Desktop
     public class Painter
     {
         private PictureBox _picture;
-        private CheckBox _checkbox;
-        private TrackBar _zoomTrackBar;
         private ImageContainer _imageContainter;
         private Bitmap _img;
-        private Label _imageNameLabel;
-        private int left;
-        private int top;
-        private int width;
-        private int height;
+        private static int left;
+        private static int top;
+        private static int width;
+        private static int height;
         private Pen _rectanglePen = new Pen(Color.Red, 2);
         private Pen _circlePen = new Pen(Color.Yellow, 2);
         private double _scale = 1.0;
         private const int DELTA = 5;
         bool isMouseDown = false;
+        private SelectedCorner DragedCorner = SelectedCorner.None;
 
         public double ScaledLeft { get => left * _scale; }
         public double ScaledTop { get => top * _scale; }
         public double ScaledWidth { get => width * _scale; }
         public double ScaledHeight { get => height * _scale; }
 
-        private bool ShouldDraw
-        {
-            get => _checkbox.Checked;
-        }
+        public bool ShouldDraw { get; set; }
         public ImageContainer imageContainer
         {
             get { return _imageContainter; }
@@ -41,12 +36,10 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        public Painter(PictureBox pictureBox, CheckBox showCropBoxCheckbox, TrackBar trackBar, Label imageNameLabel)
+        public Painter(PictureBox pictureBox, bool shouldDraw)
         {
             _picture = pictureBox;
-            _checkbox = showCropBoxCheckbox;
-            _zoomTrackBar = trackBar;
-            _imageNameLabel = imageNameLabel;
+            ShouldDraw = shouldDraw;
         }
 
         public void LoadImage(ImageContainer container)
@@ -54,9 +47,10 @@ namespace DigitalImageCorrelation.Desktop
 
             imageContainer = container;
             var bmp = imageContainer.Image;
-            _imageNameLabel.Text = container.filename;
-            CalculateDefaultScale(bmp);
-            ReloadSizes(bmp);
+            if (width == 0)
+            {
+                ReloadSizes(bmp);
+            }
             RedrawImage(bmp);
         }
 
@@ -70,71 +64,96 @@ namespace DigitalImageCorrelation.Desktop
 
         public bool IsInCorner(Point point)
         {
-
-            //left top
             if (Math.Abs(ScaledLeft - point.X) < DELTA && Math.Abs(ScaledTop - point.Y) < DELTA)
             {
+                DragedCorner = SelectedCorner.LeftTop;
                 return true;
             }
-            //left bottom
             else if (Math.Abs(ScaledLeft - point.X) < DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < DELTA)
             {
+                DragedCorner = SelectedCorner.LeftBottom;
                 return true;
             }
-            //right top
             else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < DELTA && Math.Abs(ScaledTop - point.Y) < DELTA)
             {
+                DragedCorner = SelectedCorner.RightTop;
                 return true;
             }
-            //right bottom
             else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < DELTA)
             {
+                DragedCorner = SelectedCorner.RightBottom;
                 return true;
             }
             return false;
-
         }
 
-        private void CalculateDefaultScale(Bitmap bmp)
+        public int CalculateDefaultScale()
         {
+            var bmp = imageContainer.Image;
             var scaleX = ((double)_picture.Parent.ClientSize.Width / (double)bmp.Width) * 100.0;
             var scaleY = ((double)_picture.Parent.ClientSize.Height / (double)bmp.Height) * 100.0;
-            _zoomTrackBar.Value = Math.Min((int)scaleX, (int)scaleY);
+            return Math.Min((int)scaleX, (int)scaleY);
         }
 
-        internal void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
+        internal void MouseDown(object sender, MouseEventArgs e)
         {
             if (IsInCorner(e.Location))
             {
                 isMouseDown = true;
             }
-
         }
 
-        internal void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        internal void MouseUp(object sender, MouseEventArgs e)
         {
-            isMouseDown = false;
-        }
-
-        internal void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isMouseDown == true && ShouldDraw)
+            if (isMouseDown)
             {
-                var point = e.Location;
-
+                var point = new Point() { X = (int)(e.Location.X * 1.0 / _scale), Y = (int)(e.Location.Y * 1.0 / _scale) };
+                var xVector = 0;
+                var yVector = 0;
+                if (DragedCorner == SelectedCorner.LeftTop)
+                {
+                    xVector = left - point.X;
+                    yVector = top - point.Y;
+                    left = point.X;
+                    top = point.Y;
+                }
+                else if (DragedCorner == SelectedCorner.LeftBottom)
+                {
+                    xVector = left - point.X;
+                    yVector = point.Y - top - height;
+                    left = point.X;
+                }
+                else if (DragedCorner == SelectedCorner.RightTop)
+                {
+                    xVector = point.X - left - width;
+                    yVector = top - point.Y;
+                    top = point.Y;
+                }
+                else if (DragedCorner == SelectedCorner.RightBottom)
+                {
+                    xVector = point.X - left - width;
+                    yVector = point.Y - top - height;
+                }
+                width += xVector;
+                height += yVector;
+                DragedCorner = SelectedCorner.None;
+                isMouseDown = false;
+                RedrawImage();
             }
         }
 
-        internal void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
+        internal void DrawSquareChange(bool value)
         {
+            ShouldDraw = value;
             if (_img != null)
             {
                 RedrawImage();
             }
         }
 
-        internal void zoomTrackBar_ValueChanged(TrackBar sender, EventArgs e)
+        internal void SetScaleOfImage(double value)
         {
+            _scale = value / 100.0;
             if (_img != null)
             {
                 RedrawImage();
@@ -143,24 +162,20 @@ namespace DigitalImageCorrelation.Desktop
 
         internal void ResetZoom()
         {
-
             if (_img != null)
             {
-                var bmp = _img.Clone() as Bitmap;
-                CalculateDefaultScale(bmp);
-                RedrawImage(bmp);
+                RedrawImage();
             }
         }
 
         private Bitmap ScaleBitmap(Bitmap img)
         {
-            _scale = _zoomTrackBar.Value / 100.0;
             var scaleWidth = (int)(img.Width * _scale);
             var scaleHeight = (int)(img.Height * _scale);
             return new Bitmap(img, (int)scaleWidth, (int)scaleHeight);
         }
 
-        private void RedrawImage()
+        public void RedrawImage()
         {
             RedrawImage(_img.Clone() as Bitmap);
         }
@@ -188,4 +203,13 @@ namespace DigitalImageCorrelation.Desktop
         }
 
     }
+    enum SelectedCorner
+    {
+        None,
+        LeftTop,
+        LeftBottom,
+        RightTop,
+        RightBottom
+    }
 }
+

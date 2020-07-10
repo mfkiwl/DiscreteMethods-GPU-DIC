@@ -18,7 +18,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             InitializeComponent();
             _presenter = new MainFormPresenter();
-            painter = new Painter(MainPictureBox, showCropBoxCheckbox, zoomTrackBar, ImageNameLabel);
+            painter = new Painter(MainPictureBox, showCropBoxCheckbox.Checked);
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -28,6 +28,8 @@ namespace DigitalImageCorrelation.Desktop
                 imageContainers = _presenter.OpenImages(loadImagesFileDialog.FileNames);
                 var container = imageContainers.FirstOrDefault();
                 painter.LoadImage(container);
+                zoomTrackBar.Value = painter.CalculateDefaultScale();
+                ImageNameLabel.Text = container.filename;
                 sizeNumberLabel.Text = $"{container.Image.Width}x{container.Image.Height}px";
                 _buttons = new List<Button>();
                 LoadImagesPanel.Controls.Clear();
@@ -56,44 +58,40 @@ namespace DigitalImageCorrelation.Desktop
             Button button = sender as Button;
             var imageContainer = imageContainers[Int32.Parse(button.Text)];
             painter.LoadImage(imageContainer);
+            ImageNameLabel.Text = imageContainer.filename;
             sizeNumberLabel.Text = $"{imageContainer.Image.Width}x{imageContainer.Image.Height}px";
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            painter.MainPictureBox_MouseDown(sender, e);
+            painter.MouseDown(sender, e);
         }
 
         private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            painter.MainPictureBox_MouseUp(sender, e);
-        }
-
-        private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
-
-        {
-            painter.MainPictureBox_MouseMove(sender, e);
+            painter.MouseUp(sender, e);
         }
 
         private void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            painter.showCropBoxCheckbox_CheckedChanged(sender, e);
-
+            painter.DrawSquareChange(showCropBoxCheckbox.Checked);
         }
 
         private void zoomTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            painter.zoomTrackBar_ValueChanged(sender as TrackBar, e);
+            painter.SetScaleOfImage((sender as TrackBar).Value);
         }
 
         private void MainImagePanel_SizeChanged(object sender, EventArgs e)
         {
-            painter.ResetZoom();
+            zoomTrackBar.Value = painter.CalculateDefaultScale();
+            painter.RedrawImage();
         }
 
         private void ResetZoomButton_Click(object sender, EventArgs e)
         {
-            painter.ResetZoom();
+            zoomTrackBar.Value = painter.CalculateDefaultScale();
+            painter.RedrawImage();
 
         }
     }

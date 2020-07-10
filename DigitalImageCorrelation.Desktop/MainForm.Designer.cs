@@ -57,10 +57,10 @@
             this.LoadImagesPanel = new System.Windows.Forms.Panel();
             this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.optionsPanel = new System.Windows.Forms.Panel();
+            this.ResetZoomButton = new System.Windows.Forms.Button();
             this.ImageNameLabel = new System.Windows.Forms.Label();
             this.zoomLabel = new System.Windows.Forms.Label();
             this.zoomTrackBar = new System.Windows.Forms.TrackBar();
-            this.ResetZoomButton = new System.Windows.Forms.Button();
             this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
@@ -301,7 +301,6 @@
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
-            this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
             this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
             // imageSliderPanel
@@ -364,6 +363,16 @@
             this.optionsPanel.Size = new System.Drawing.Size(218, 714);
             this.optionsPanel.TabIndex = 36;
             // 
+            // ResetZoomButton
+            // 
+            this.ResetZoomButton.Location = new System.Drawing.Point(134, 228);
+            this.ResetZoomButton.Name = "ResetZoomButton";
+            this.ResetZoomButton.Size = new System.Drawing.Size(75, 23);
+            this.ResetZoomButton.TabIndex = 27;
+            this.ResetZoomButton.Text = "Reset zoom";
+            this.ResetZoomButton.UseVisualStyleBackColor = true;
+            this.ResetZoomButton.Click += new System.EventHandler(this.ResetZoomButton_Click);
+            // 
             // ImageNameLabel
             // 
             this.ImageNameLabel.AutoSize = true;
@@ -394,16 +403,6 @@
             this.zoomTrackBar.TabIndex = 24;
             this.zoomTrackBar.Value = 100;
             this.zoomTrackBar.ValueChanged += new System.EventHandler(this.zoomTrackBar_ValueChanged);
-            // 
-            // ResetZoomButton
-            // 
-            this.ResetZoomButton.Location = new System.Drawing.Point(134, 228);
-            this.ResetZoomButton.Name = "ResetZoomButton";
-            this.ResetZoomButton.Size = new System.Drawing.Size(75, 23);
-            this.ResetZoomButton.TabIndex = 27;
-            this.ResetZoomButton.Text = "Reset zoom";
-            this.ResetZoomButton.UseVisualStyleBackColor = true;
-            this.ResetZoomButton.Click += new System.EventHandler(this.ResetZoomButton_Click);
             // 
             // MainForm
             // 
