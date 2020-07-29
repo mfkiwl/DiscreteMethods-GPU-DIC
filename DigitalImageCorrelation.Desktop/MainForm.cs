@@ -1,5 +1,8 @@
-﻿using System;
+﻿using DigitalImageCorrelation.Desktop.Requests;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -7,30 +10,26 @@ namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
-
-
-
-        private MainFormPresenter _presenter;
         private List<Button> _buttons = new List<Button>();
         public List<ImageContainer> imageContainers = new List<ImageContainer>();
+        public ImageContainer CurrentImageContainer;
         public Painter painter;
         public MainForm()
         {
             InitializeComponent();
-            _presenter = new MainFormPresenter();
-            painter = new Painter(MainPictureBox, showCropBoxCheckbox.Checked);
+            painter = new Painter(MainPictureBox);
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
         {
             if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
             {
-                imageContainers = _presenter.OpenImages(loadImagesFileDialog.FileNames);
-                var container = imageContainers.FirstOrDefault();
-                painter.LoadImage(container);
-                zoomTrackBar.Value = painter.CalculateDefaultScale();
-                ImageNameLabel.Text = container.filename;
-                sizeNumberLabel.Text = $"{container.Image.Width}x{container.Image.Height}px";
+                imageContainers = OpenImages(loadImagesFileDialog.FileNames);
+                CurrentImageContainer = imageContainers.FirstOrDefault();
+                zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
+                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
+                ImageNameLabel.Text = CurrentImageContainer.filename;
+                sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
                 _buttons = new List<Button>();
                 LoadImagesPanel.Controls.Clear();
                 for (var i = 0; i < imageContainers.Count; i++)
@@ -56,43 +55,112 @@ namespace DigitalImageCorrelation.Desktop
         private void ChangeImage_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            var imageContainer = imageContainers[Int32.Parse(button.Text)];
-            painter.LoadImage(imageContainer);
-            ImageNameLabel.Text = imageContainer.filename;
-            sizeNumberLabel.Text = $"{imageContainer.Image.Width}x{imageContainer.Image.Height}px";
+            CurrentImageContainer = imageContainers[int.Parse(button.Text)];
+            CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
+            painter.RedrawImage(CreateDrawRequest());
+            ImageNameLabel.Text = CurrentImageContainer.filename;
+            sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            painter.MouseDown(sender, e);
+            CurrentImageContainer.MouseDown(sender, e);
         }
 
         private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            painter.MouseUp(sender, e);
+            CurrentImageContainer.MouseUp(sender, e);
+            painter.RedrawImage(CreateDrawRequest());
         }
 
         private void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            painter.DrawSquareChange(showCropBoxCheckbox.Checked);
+            painter.RedrawImage(CreateDrawRequest());
         }
 
         private void zoomTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            painter.SetScaleOfImage((sender as TrackBar).Value);
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
+                painter.RedrawImage(request);
+            }
         }
 
-        private void MainImagePanel_SizeChanged(object sender, EventArgs e)
+        private void InitializeImageScale(object sender, EventArgs e)
         {
-            zoomTrackBar.Value = painter.CalculateDefaultScale();
-            painter.RedrawImage();
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                zoomTrackBar.Value = painter.CalculateDefaultScale(request);
+                painter.RedrawImage(request);
+            }
         }
 
-        private void ResetZoomButton_Click(object sender, EventArgs e)
+        private DrawRequest CreateDrawRequest()
         {
-            zoomTrackBar.Value = painter.CalculateDefaultScale();
-            painter.RedrawImage();
+            return new DrawRequest()
+            {
+                image = CurrentImageContainer,
+                PointsinX = int.Parse(pointsXTextbox.Text),
+                PointsinY = int.Parse(pointsYTextbox.Text),
+                ShowCropBox = showCropBoxCheckbox.Checked,
+                PictureHeight = MainPictureBox.Parent.ClientSize.Height,
+                PictureWidth = MainPictureBox.Parent.ClientSize.Width,
+                SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
+                WindowsDelta = int.Parse(windowDeltaTextbox.Text),
+                zoom = zoomTrackBar.Value
+            };
+        }
 
+        private void ValidateTextAndRefreshImage(object sender, EventArgs e)
+        {
+            try
+            {
+                int val = int.Parse(pointsXTextbox.Text);
+                if (val <= 0)
+                    throw new ArgumentException();
+            }
+            catch (Exception)
+            {
+                (sender as TextBox).Text = "1";
+            }
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                painter.RedrawImage(request);
+            }
+        }
+
+        public List<ImageContainer> OpenImages(string[] filenames)
+        {
+            try
+            {
+                var imageContainers = new List<ImageContainer>();
+                foreach (var fileName in filenames)
+                {
+                    Image image = Image.FromFile(fileName);
+                    Bitmap bitmap = new Bitmap(fileName);
+                    imageContainers.Add(new ImageContainer(bitmap, Path.GetFileName(fileName)));
+                }
+                return imageContainers;
+            }
+            catch (Exception ex)
+            {
+                Error(ex, "Error during loading files.");
+            }
+            return null;
+        }
+
+        public void Error(Exception ex, string title = "exception occured")
+        {
+            Error(ex.Message + "Stack trace: " + ex.StackTrace, title);
+        }
+
+        public void Error(string message, string title)
+        {
+            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

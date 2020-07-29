@@ -103,6 +103,7 @@
             this.pointsXTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsXTextbox.TabIndex = 5;
             this.pointsXTextbox.Text = "40";
+            this.pointsXTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // pointsYTextbox
             // 
@@ -111,6 +112,7 @@
             this.pointsYTextbox.Size = new System.Drawing.Size(68, 20);
             this.pointsYTextbox.TabIndex = 7;
             this.pointsYTextbox.Text = "40";
+            this.pointsYTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // pointsYLabel
             // 
@@ -128,6 +130,7 @@
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.subsetDeltaTextbox.TabIndex = 9;
             this.subsetDeltaTextbox.Text = "15";
+            this.subsetDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // subsetDeltaLabel
             // 
@@ -145,6 +148,7 @@
             this.windowDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.windowDeltaTextbox.TabIndex = 11;
             this.windowDeltaTextbox.Text = "20";
+            this.windowDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // windowDeltaLabel
             // 
@@ -289,7 +293,7 @@
             this.MainImagePanel.Name = "MainImagePanel";
             this.MainImagePanel.Size = new System.Drawing.Size(890, 714);
             this.MainImagePanel.TabIndex = 34;
-            this.MainImagePanel.SizeChanged += new System.EventHandler(this.MainImagePanel_SizeChanged);
+            this.MainImagePanel.SizeChanged += new System.EventHandler(this.InitializeImageScale);
             // 
             // MainPictureBox
             // 
@@ -371,7 +375,7 @@
             this.ResetZoomButton.TabIndex = 27;
             this.ResetZoomButton.Text = "Reset zoom";
             this.ResetZoomButton.UseVisualStyleBackColor = true;
-            this.ResetZoomButton.Click += new System.EventHandler(this.ResetZoomButton_Click);
+            this.ResetZoomButton.Click += new System.EventHandler(this.zoomTrackBar_ValueChanged);
             // 
             // ImageNameLabel
             // 
