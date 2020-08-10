@@ -1,6 +1,7 @@
 ﻿using DigitalImageCorrelation.Desktop.Requests;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -24,42 +25,29 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
             {
-                imageContainers = OpenImages(loadImagesFileDialog.FileNames);
-                CurrentImageContainer = imageContainers.FirstOrDefault();
-                zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
-                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                ImageNameLabel.Text = CurrentImageContainer.filename;
-                sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
                 _buttons = new List<Button>();
                 LoadImagesPanel.Controls.Clear();
-                for (var i = 0; i < imageContainers.Count; i++)
-                {
-                    var image = imageContainers[i];
-                    Button imageBtn = new Button();
-                    imageBtn.Click += ChangeImage_Click;
-                    if (_buttons.Any())
-                    {
-                        var last = _buttons.Last();
-                        imageBtn.Location = new System.Drawing.Point(last.Location.X + 70, last.Location.Y);
-                    }
-                    imageBtn.AutoSize = true;
-                    imageBtn.Size = new System.Drawing.Size(67, 13);
-                    imageBtn.TabIndex = 0;
-                    imageBtn.Text = i.ToString();
-                    _buttons.Add(imageBtn);
-                    LoadImagesPanel.Controls.Add(imageBtn);
-                }
+                progressBar.Minimum = 0;
+                progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
+                LoadImagesBackgroundWorker.RunWorkerAsync();
             }
         }
 
         private void ChangeImage_Click(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            CurrentImageContainer = imageContainers[int.Parse(button.Text)];
+            CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
+            SetImage(CurrentImageContainer);
+        }
+
+        private void SetImage(ImageContainer container)
+        {
+
             CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
             painter.RedrawImage(CreateDrawRequest());
             ImageNameLabel.Text = CurrentImageContainer.filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+            zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -133,26 +121,6 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        public List<ImageContainer> OpenImages(string[] filenames)
-        {
-            try
-            {
-                var imageContainers = new List<ImageContainer>();
-                foreach (var fileName in filenames)
-                {
-                    Image image = Image.FromFile(fileName);
-                    Bitmap bitmap = new Bitmap(fileName);
-                    imageContainers.Add(new ImageContainer(bitmap, Path.GetFileName(fileName)));
-                }
-                return imageContainers;
-            }
-            catch (Exception ex)
-            {
-                Error(ex, "Error during loading files.");
-            }
-            return null;
-        }
-
         public void Error(Exception ex, string title = "exception occured")
         {
             Error(ex.Message + "Stack trace: " + ex.StackTrace, title);
@@ -161,6 +129,64 @@ namespace DigitalImageCorrelation.Desktop
         public void Error(string message, string title)
         {
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void LoadImagesBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            imageContainers = new List<ImageContainer>();
+
+            foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+            {
+                Bitmap bitmap = new Bitmap(fileName);
+                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
+                imageContainers.Add(image);
+                worker.ReportProgress(index);
+            }
+            e.Result = imageContainers;
+        }
+
+        private void LoadImagesBackgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            progresLabel.Text = (e.ProgressPercentage.ToString() + "/" + progressBar.Maximum.ToString());
+            progressBar.Value = e.ProgressPercentage;
+            Button imageBtn = new Button();
+            imageBtn.Click += ChangeImage_Click;
+            if (_buttons.Any())
+            {
+                var last = _buttons.Last();
+                imageBtn.Location = new Point(last.Location.X + 70, last.Location.Y);
+            }
+            imageBtn.AutoSize = true;
+            imageBtn.Size = new Size(67, 13);
+            imageBtn.TabIndex = 0;
+            imageBtn.Text = (e.ProgressPercentage + 1).ToString();
+            _buttons.Add(imageBtn);
+            LoadImagesPanel.Controls.Add(imageBtn);
+
+            if (e.ProgressPercentage == 0)
+            {
+                CurrentImageContainer = imageContainers.FirstOrDefault();
+                SetImage(CurrentImageContainer);
+            }
+        }
+
+        private void LoadImagesBackgroundWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled == true)
+            {
+                progresLabel.Text = "Canceled!";
+            }
+            else if (e.Error != null)
+            {
+                progresLabel.Text = "Error: " + e.Error.Message;
+            }
+            else
+            {
+                progresLabel.Text = "Done!";
+                progressBar.Value = progressBar.Maximum;
+            }
         }
     }
 }

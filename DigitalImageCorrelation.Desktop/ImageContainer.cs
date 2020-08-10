@@ -24,14 +24,16 @@ namespace DigitalImageCorrelation.Desktop
         public double ScaledWidth { get => width * scale; }
         public double ScaledHeight { get => height * scale; }
 
+        public int Index;
         private bool isMouseDown = false;
         private SelectedCorner DragedCorner = SelectedCorner.None;
 
-        public ImageContainer(Bitmap bitmap, string name)
+        public ImageContainer(Bitmap bitmap, string name, int index)
         {
             _image = bitmap;
             filename = name;
             ReloadSizes(bitmap);
+            Index = index;
         }
 
         internal void MouseDown(object sender, MouseEventArgs e)
