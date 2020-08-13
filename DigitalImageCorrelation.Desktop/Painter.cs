@@ -30,11 +30,14 @@ namespace DigitalImageCorrelation.Desktop
 
         public void RedrawImage(DrawRequest request)
         {
-            var bmp = request.image.Bmp;
-            bmp = ScaleBitmap(bmp, request.image.scale);
-            DrawRectagle(request, bmp, request.ShowCropBox);
-            DrawPoints(bmp, request.image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-            _picture.Image = bmp;
+            if (request.image != null)
+            {
+                var bmp = request.image.Bmp;
+                bmp = ScaleBitmap(bmp, request.image.scale);
+                DrawRectagle(request, bmp, request.ShowCropBox);
+                DrawPoints(bmp, request.image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                _picture.Image = bmp;
+            }
         }
         private Bitmap ScaleBitmap(Bitmap bmp, double scale)
         {
@@ -53,7 +56,6 @@ namespace DigitalImageCorrelation.Desktop
                 g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft + r.image.ScaledWidth) - DELTA, (int)(r.image.ScaledTop) - DELTA, 2 * DELTA, 2 * DELTA);
                 g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft) - DELTA, (int)(r.image.ScaledTop + r.image.ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
                 g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft + r.image.ScaledWidth) - DELTA, (int)(r.image.ScaledTop + r.image.ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
-
             }
             return bmp;
         }
@@ -66,7 +68,6 @@ namespace DigitalImageCorrelation.Desktop
                 foreach (var point in points)
                 {
                     g.DrawEllipse(_circlePen, (int)point.X, point.Y, 2, 2);
-
                 }
             }
             return img;

@@ -133,7 +133,6 @@ namespace DigitalImageCorrelation.Desktop
         {
             scale = zoom / 100.0;
         }
-
     }
     enum SelectedCorner
     {

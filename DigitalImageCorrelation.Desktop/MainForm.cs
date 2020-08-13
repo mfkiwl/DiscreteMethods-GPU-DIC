@@ -23,21 +23,35 @@ namespace DigitalImageCorrelation.Desktop
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
         {
-            if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                _buttons = new List<Button>();
-                LoadImagesPanel.Controls.Clear();
-                progressBar.Minimum = 0;
-                progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
-                LoadImagesBackgroundWorker.RunWorkerAsync();
+                if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    _buttons = new List<Button>();
+                    LoadImagesPanel.Controls.Clear();
+                    progressBar.Minimum = 0;
+                    progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
+                    LoadImagesBackgroundWorker.RunWorkerAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
             }
         }
 
         private void ChangeImage_Click(object sender, EventArgs e)
         {
-            Button button = sender as Button;
-            CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
-            SetImage(CurrentImageContainer);
+            try
+            {
+                Button button = sender as Button;
+                CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
+                SetImage(CurrentImageContainer);
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private void SetImage(ImageContainer container)
@@ -52,13 +66,21 @@ namespace DigitalImageCorrelation.Desktop
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            CurrentImageContainer.MouseDown(sender, e);
+            try
+            {
+                CurrentImageContainer?.MouseDown(sender, e);
+            }
+            catch (Exception) { }
         }
 
         private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            CurrentImageContainer.MouseUp(sender, e);
-            painter.RedrawImage(CreateDrawRequest());
+            try
+            {
+                CurrentImageContainer?.MouseUp(sender, e);
+                painter.RedrawImage(CreateDrawRequest());
+            }
+            catch (Exception) { }
         }
 
         private void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -133,18 +155,23 @@ namespace DigitalImageCorrelation.Desktop
 
         private void LoadImagesBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;
-
-            imageContainers = new List<ImageContainer>();
-
-            foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+            try
             {
-                Bitmap bitmap = new Bitmap(fileName);
-                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
-                imageContainers.Add(image);
-                worker.ReportProgress(index);
+                BackgroundWorker worker = sender as BackgroundWorker;
+                imageContainers = new List<ImageContainer>();
+                foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+                {
+                    Bitmap bitmap = new Bitmap(fileName);
+                    var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
+                    imageContainers.Add(image);
+                    worker.ReportProgress(index);
+                }
+                e.Result = imageContainers;
             }
-            e.Result = imageContainers;
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private void LoadImagesBackgroundWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
