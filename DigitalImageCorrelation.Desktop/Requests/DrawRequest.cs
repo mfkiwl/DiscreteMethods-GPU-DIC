@@ -1,8 +1,10 @@
-﻿namespace DigitalImageCorrelation.Desktop.Requests
+﻿using DigitalImageCorrelation.Core;
+
+namespace DigitalImageCorrelation.Desktop.Requests
 {
     public class DrawRequest
     {
-        public ImageContainer image { get; set; }
+        public ImageContainer Image { get; set; }
         public int PointsinX { get; set; }
         public int PointsinY { get; set; }
         public int SubsetDelta { get; set; }
@@ -10,6 +12,6 @@
         public double PictureWidth { get; set; }
         public double PictureHeight { get; set; }
         public bool ShowCropBox { get; set; }
-        public int zoom { get; set; }
+        public int Zoom { get; set; }
     }
 }

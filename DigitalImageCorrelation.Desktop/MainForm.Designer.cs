@@ -171,6 +171,7 @@
             this.analyzeButton.TabIndex = 12;
             this.analyzeButton.Text = "Analyze";
             this.analyzeButton.UseVisualStyleBackColor = true;
+            this.analyzeButton.Click += new System.EventHandler(this.AnalyzeButton_Click);
             // 
             // showCropBoxCheckbox
             // 
@@ -183,7 +184,7 @@
             this.showCropBoxCheckbox.TabIndex = 13;
             this.showCropBoxCheckbox.Text = "Show crop box";
             this.showCropBoxCheckbox.UseVisualStyleBackColor = true;
-            this.showCropBoxCheckbox.CheckedChanged += new System.EventHandler(this.showCropBoxCheckbox_CheckedChanged);
+            this.showCropBoxCheckbox.CheckedChanged += new System.EventHandler(this.ShowCropBoxCheckbox_CheckedChanged);
             // 
             // displayModeLabel
             // 
@@ -396,7 +397,7 @@
             this.ResetZoomButton.TabIndex = 27;
             this.ResetZoomButton.Text = "Reset zoom";
             this.ResetZoomButton.UseVisualStyleBackColor = true;
-            this.ResetZoomButton.Click += new System.EventHandler(this.zoomTrackBar_ValueChanged);
+            this.ResetZoomButton.Click += new System.EventHandler(this.ZoomTrackBar_ValueChanged);
             // 
             // ImageNameLabel
             // 
@@ -427,7 +428,7 @@
             this.zoomTrackBar.SmallChange = 2;
             this.zoomTrackBar.TabIndex = 24;
             this.zoomTrackBar.Value = 100;
-            this.zoomTrackBar.ValueChanged += new System.EventHandler(this.zoomTrackBar_ValueChanged);
+            this.zoomTrackBar.ValueChanged += new System.EventHandler(this.ZoomTrackBar_ValueChanged);
             // 
             // LoadImagesBackgroundWorker
             // 

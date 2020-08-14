@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 
-namespace DigitalImageCorrelation.Desktop
+namespace DigitalImageCorrelation.Core
 {
     public class ImageContainer
     {
-        private Bitmap _image;
-        public string filename { get; set; }
+        public string Filename { get; set; }
         public Bitmap Bmp
         {
-            get { return _image.Clone() as Bitmap; }
-            set { _image = value; }
+            get { return BmpRaw.Clone() as Bitmap; }
+            set { BmpRaw = value; }
         }
+        public Bitmap BmpRaw { get; private set; }
         public static int left;
         public static int top;
         public static int width;
@@ -30,15 +29,15 @@ namespace DigitalImageCorrelation.Desktop
 
         public ImageContainer(Bitmap bitmap, string name, int index)
         {
-            _image = bitmap;
-            filename = name;
+            BmpRaw = bitmap;
+            Filename = name;
             ReloadSizes(bitmap);
             Index = index;
         }
 
-        internal void MouseDown(object sender, MouseEventArgs e)
+        public void MouseDown(Point point)
         {
-            if (IsInCorner(e.Location))
+            if (IsInCorner(point))
             {
                 isMouseDown = true;
             }
@@ -54,22 +53,22 @@ namespace DigitalImageCorrelation.Desktop
 
         public bool IsInCorner(Point point)
         {
-            if (Math.Abs(ScaledLeft - point.X) < Painter.DELTA && Math.Abs(ScaledTop - point.Y) < Painter.DELTA)
+            if (Math.Abs(ScaledLeft - point.X) < Utils.DELTA && Math.Abs(ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftTop;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft - point.X) < Painter.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Painter.DELTA)
+            else if (Math.Abs(ScaledLeft - point.X) < Utils.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftBottom;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Painter.DELTA && Math.Abs(ScaledTop - point.Y) < Painter.DELTA)
+            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Utils.DELTA && Math.Abs(ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightTop;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Painter.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Painter.DELTA)
+            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Utils.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightBottom;
                 return true;
@@ -77,11 +76,11 @@ namespace DigitalImageCorrelation.Desktop
             return false;
         }
 
-        internal void MouseUp(object sender, MouseEventArgs e)
+        public void MouseUp(Point p)
         {
             if (isMouseDown)
             {
-                var point = new Point() { X = (int)(e.Location.X * 1.0 / scale), Y = (int)(e.Location.Y * 1.0 / scale) };
+                var point = new Point() { X = (int)(p.X * 1.0 / scale), Y = (int)(p.Y * 1.0 / scale) };
                 var xVector = 0;
                 var yVector = 0;
                 if (DragedCorner == SelectedCorner.LeftTop)
@@ -129,7 +128,7 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        internal void SetScaleOfImage(double zoom)
+        public void SetScaleOfImage(double zoom)
         {
             scale = zoom / 100.0;
         }
