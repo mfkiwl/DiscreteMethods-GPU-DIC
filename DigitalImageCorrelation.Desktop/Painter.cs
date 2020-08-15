@@ -3,21 +3,14 @@ using DigitalImageCorrelation.Desktop.Requests;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
 {
     public class Painter
     {
-        private readonly PictureBox _picture;
         private readonly Pen _rectanglePen = new Pen(Color.Red, 2);
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
-
-        public Painter(PictureBox pictureBox)
-        {
-            _picture = pictureBox;
-        }
 
         public int CalculateDefaultScale(DrawRequest request)
         {
@@ -28,7 +21,7 @@ namespace DigitalImageCorrelation.Desktop
         }
 
 
-        public void RedrawImage(DrawRequest request)
+        public Bitmap DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
@@ -36,8 +29,9 @@ namespace DigitalImageCorrelation.Desktop
                 bmp = ScaleBitmap(bmp, request.Image.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
                 DrawPoints(bmp, request.Image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                _picture.Image = bmp;
+                return bmp;
             }
+            return null;
         }
         private Bitmap ScaleBitmap(Bitmap bmp, double scale)
         {

@@ -2,7 +2,7 @@
 
 namespace DigitalImageCorrelation.Core.Requests
 {
-    public class AnalyseRequest
+    public class AnalyzeRequest
     {
         public List<ImageContainer> Containers { get; set; }
     }

@@ -21,7 +21,7 @@ namespace DigitalImageCorrelation.Desktop
         public MainForm()
         {
             InitializeComponent();
-            painter = new Painter(MainPictureBox);
+            painter = new Painter();
             processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
             processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
         }
@@ -67,7 +67,7 @@ namespace DigitalImageCorrelation.Desktop
             }
 
             CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-            painter.RedrawImage(CreateDrawRequest());
+            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
             zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
@@ -87,14 +87,16 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 CurrentImageContainer?.MouseUp(e.Location);
-                painter.RedrawImage(CreateDrawRequest());
+                MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+
             }
             catch (Exception) { }
         }
 
         private void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            painter.RedrawImage(CreateDrawRequest());
+            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+
         }
 
         private void ZoomTrackBar_ValueChanged(object sender, EventArgs e)
@@ -103,7 +105,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 
@@ -113,7 +115,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 zoomTrackBar.Value = painter.CalculateDefaultScale(request);
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 
@@ -133,14 +135,13 @@ namespace DigitalImageCorrelation.Desktop
             };
         }
 
-        private AnalyseRequest CreateAnalyseRequest()
+        private AnalyzeRequest CreateAnalyseRequest()
         {
-            return new AnalyseRequest()
+            return new AnalyzeRequest()
             {
                 Containers = imageContainers
             };
         }
-
 
         private void ValidateTextAndRefreshImage(object sender, EventArgs e)
         {
@@ -157,7 +158,7 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 

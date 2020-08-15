@@ -81,6 +81,10 @@ namespace DigitalImageCorrelation.Core
             if (isMouseDown)
             {
                 var point = new Point() { X = (int)(p.X * 1.0 / scale), Y = (int)(p.Y * 1.0 / scale) };
+                if (point.X <= 0 || point.Y <= 0 || point.X >= BmpRaw.Width || point.Y >= BmpRaw.Height)
+                {
+                    return;
+                }
                 var xVector = 0;
                 var yVector = 0;
                 if (DragedCorner == SelectedCorner.LeftTop)

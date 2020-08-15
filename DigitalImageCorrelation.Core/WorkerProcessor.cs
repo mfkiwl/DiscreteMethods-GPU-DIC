@@ -21,14 +21,14 @@ namespace DigitalImageCorrelation.Core
             BackgroundWorker.WorkerSupportsCancellation = true;
         }
 
-        public void RunWorker(AnalyseRequest request)
+        public void RunWorker(AnalyzeRequest request)
         {
             BackgroundWorker.RunWorkerAsync(request);
         }
 
         public void DoWork(object sender, DoWorkEventArgs e)
         {
-            var request = e.Argument as AnalyseRequest;
+            var request = e.Argument as AnalyzeRequest;
             var bw = sender as BackgroundWorker;
             ImageProcessor processor = new ImageProcessor(bw, request);
             processor.Analyze();

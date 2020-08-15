@@ -9,7 +9,7 @@ namespace DigitalImageCorrelation.Core
     {
         private readonly BackgroundWorker backgroundWorker;
         private List<ImageContainer> containers;
-        internal ImageProcessor(BackgroundWorker bw, AnalyseRequest request)
+        internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
             containers = request.Containers;
             backgroundWorker = bw;

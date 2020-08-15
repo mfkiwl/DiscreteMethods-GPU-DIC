@@ -46,7 +46,7 @@
     <Compile Include="ImageContainer.cs" />
     <Compile Include="WorkerProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Requests\AnaliseRequest.cs" />
+    <Compile Include="Requests\AnalyzeRequest.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
