@@ -1,46 +1,43 @@
-﻿using DigitalImageCorrelation.Desktop.Requests;
+﻿using DigitalImageCorrelation.Core;
+using DigitalImageCorrelation.Desktop.Requests;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
 {
     public class Painter
     {
-        private PictureBox _picture;
-        private Pen _rectanglePen = new Pen(Color.Red, 2);
-        private Pen _cornerPen = new Pen(Color.Yellow, 2);
-        private Pen _circlePen = new Pen(Color.Red, 2);
-
-        public const int DELTA = 5;
-        public Painter(PictureBox pictureBox)
-        {
-            _picture = pictureBox;
-        }
+        private readonly Pen _rectanglePen = new Pen(Color.Red, 2);
+        private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
+        private readonly Pen _circlePen = new Pen(Color.Red, 2);
 
         public int CalculateDefaultScale(DrawRequest request)
         {
-            var bmp = request.image.Bmp;
-            var scaleX = (request.PictureWidth / (double)bmp.Width) * 100.0;
-            var scaleY = (request.PictureHeight / (double)bmp.Height) * 100.0;
+            var bmp = request.Image.Bmp;
+            var scaleX = request.PictureWidth / bmp.Width * 100.0;
+            var scaleY = request.PictureHeight / bmp.Height * 100.0;
             return Math.Min((int)scaleX, (int)scaleY);
         }
 
 
-        public void RedrawImage(DrawRequest request)
+        public Bitmap DrawImage(DrawRequest request)
         {
-            var bmp = request.image.Bmp;
-            bmp = ScaleBitmap(bmp, request.image.scale);
-            DrawRectagle(request, bmp, request.ShowCropBox);
-            DrawPoints(bmp, request.image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-            _picture.Image = bmp;
+            if (request.Image != null)
+            {
+                var bmp = request.Image.Bmp;
+                bmp = ScaleBitmap(bmp, request.Image.scale);
+                DrawRectagle(request, bmp, request.ShowCropBox);
+                DrawPoints(bmp, request.Image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                return bmp;
+            }
+            return null;
         }
         private Bitmap ScaleBitmap(Bitmap bmp, double scale)
         {
             var scaleWidth = (int)(bmp.Width * scale);
             var scaleHeight = (int)(bmp.Height * scale);
-            return new Bitmap(bmp, (int)scaleWidth, (int)scaleHeight);
+            return new Bitmap(bmp, scaleWidth, scaleHeight);
         }
 
         private Bitmap DrawRectagle(DrawRequest r, Bitmap bmp, bool ShowCropBox)
@@ -48,12 +45,11 @@ namespace DigitalImageCorrelation.Desktop
             if (ShowCropBox)
             {
                 Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle((int)(r.image.ScaledLeft), (int)(r.image.ScaledTop), (int)(r.image.ScaledWidth), (int)(r.image.ScaledHeight)));
-                g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft) - DELTA, (int)(r.image.ScaledTop) - DELTA, 2 * DELTA, 2 * DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft + r.image.ScaledWidth) - DELTA, (int)(r.image.ScaledTop) - DELTA, 2 * DELTA, 2 * DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft) - DELTA, (int)(r.image.ScaledTop + r.image.ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.image.ScaledLeft + r.image.ScaledWidth) - DELTA, (int)(r.image.ScaledTop + r.image.ScaledHeight) - DELTA, 2 * DELTA, 2 * DELTA);
-
+                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.ScaledLeft, (int)r.Image.ScaledTop, (int)r.Image.ScaledWidth, (int)r.Image.ScaledHeight));
+                g.DrawEllipse(_cornerPen, (int)r.Image.ScaledLeft - Utils.DELTA, (int)r.Image.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.ScaledLeft + r.Image.ScaledWidth) - Utils.DELTA, (int)r.Image.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)r.Image.ScaledLeft - Utils.DELTA, (int)(r.Image.ScaledTop + r.Image.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.ScaledLeft + r.Image.ScaledWidth) - Utils.DELTA, (int)(r.Image.ScaledTop + r.Image.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
             }
             return bmp;
         }
@@ -65,8 +61,7 @@ namespace DigitalImageCorrelation.Desktop
                 Graphics g = Graphics.FromImage(img);
                 foreach (var point in points)
                 {
-                    g.DrawEllipse(_circlePen, (int)point.X, point.Y, 2, 2);
-
+                    g.DrawEllipse(_circlePen, point.X, point.Y, 2, 2);
                 }
             }
             return img;

@@ -1,6 +1,9 @@
-﻿using DigitalImageCorrelation.Desktop.Requests;
+﻿using DigitalImageCorrelation.Core;
+using DigitalImageCorrelation.Core.Requests;
+using DigitalImageCorrelation.Desktop.Requests;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,77 +17,95 @@ namespace DigitalImageCorrelation.Desktop
         public List<ImageContainer> imageContainers = new List<ImageContainer>();
         public ImageContainer CurrentImageContainer;
         public Painter painter;
+        private readonly WorkerProcessor processor = new WorkerProcessor();
         public MainForm()
         {
             InitializeComponent();
-            painter = new Painter(MainPictureBox);
+            painter = new Painter();
+            processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
+            processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
         {
-            if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                imageContainers = OpenImages(loadImagesFileDialog.FileNames);
-                CurrentImageContainer = imageContainers.FirstOrDefault();
-                zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
-                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                ImageNameLabel.Text = CurrentImageContainer.filename;
-                sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-                _buttons = new List<Button>();
-                LoadImagesPanel.Controls.Clear();
-                for (var i = 0; i < imageContainers.Count; i++)
+                if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    var image = imageContainers[i];
-                    Button imageBtn = new Button();
-                    imageBtn.Click += ChangeImage_Click;
-                    if (_buttons.Any())
-                    {
-                        var last = _buttons.Last();
-                        imageBtn.Location = new System.Drawing.Point(last.Location.X + 70, last.Location.Y);
-                    }
-                    imageBtn.AutoSize = true;
-                    imageBtn.Size = new System.Drawing.Size(67, 13);
-                    imageBtn.TabIndex = 0;
-                    imageBtn.Text = i.ToString();
-                    _buttons.Add(imageBtn);
-                    LoadImagesPanel.Controls.Add(imageBtn);
+                    _buttons = new List<Button>();
+                    LoadImagesPanel.Controls.Clear();
+                    progressBar.Minimum = 0;
+                    progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
+                    LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
             }
         }
 
         private void ChangeImage_Click(object sender, EventArgs e)
         {
-            Button button = sender as Button;
-            CurrentImageContainer = imageContainers[int.Parse(button.Text)];
+            try
+            {
+                Button button = sender as Button;
+                CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
+                SetImage(CurrentImageContainer);
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+        private void SetImage(ImageContainer container)
+        {
+            if (container is null)
+            {
+                throw new ArgumentNullException(nameof(container));
+            }
+
             CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-            painter.RedrawImage(CreateDrawRequest());
-            ImageNameLabel.Text = CurrentImageContainer.filename;
+            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+            ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+            zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            CurrentImageContainer.MouseDown(sender, e);
+            try
+            {
+                CurrentImageContainer?.MouseDown(e.Location);
+            }
+            catch (Exception) { }
         }
 
         private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            CurrentImageContainer.MouseUp(sender, e);
-            painter.RedrawImage(CreateDrawRequest());
+            try
+            {
+                CurrentImageContainer?.MouseUp(e.Location);
+                MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+
+            }
+            catch (Exception) { }
         }
 
-        private void showCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            painter.RedrawImage(CreateDrawRequest());
+            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+
         }
 
-        private void zoomTrackBar_ValueChanged(object sender, EventArgs e)
+        private void ZoomTrackBar_ValueChanged(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
                 CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 
@@ -94,7 +115,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 zoomTrackBar.Value = painter.CalculateDefaultScale(request);
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 
@@ -102,7 +123,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new DrawRequest()
             {
-                image = CurrentImageContainer,
+                Image = CurrentImageContainer,
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
                 ShowCropBox = showCropBoxCheckbox.Checked,
@@ -110,7 +131,15 @@ namespace DigitalImageCorrelation.Desktop
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
                 WindowsDelta = int.Parse(windowDeltaTextbox.Text),
-                zoom = zoomTrackBar.Value
+                Zoom = zoomTrackBar.Value
+            };
+        }
+
+        private AnalyzeRequest CreateAnalyseRequest()
+        {
+            return new AnalyzeRequest()
+            {
+                Containers = imageContainers
             };
         }
 
@@ -129,28 +158,8 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                painter.RedrawImage(request);
+                MainPictureBox.Image = painter.DrawImage(request);
             }
-        }
-
-        public List<ImageContainer> OpenImages(string[] filenames)
-        {
-            try
-            {
-                var imageContainers = new List<ImageContainer>();
-                foreach (var fileName in filenames)
-                {
-                    Image image = Image.FromFile(fileName);
-                    Bitmap bitmap = new Bitmap(fileName);
-                    imageContainers.Add(new ImageContainer(bitmap, Path.GetFileName(fileName)));
-                }
-                return imageContainers;
-            }
-            catch (Exception ex)
-            {
-                Error(ex, "Error during loading files.");
-            }
-            return null;
         }
 
         public void Error(Exception ex, string title = "exception occured")
@@ -161,6 +170,87 @@ namespace DigitalImageCorrelation.Desktop
         public void Error(string message, string title)
         {
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            imageContainers = new List<ImageContainer>();
+            foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+            {
+                Bitmap bitmap = new Bitmap(fileName);
+                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
+                imageContainers.Add(image);
+                worker.ReportProgress(index);
+            }
+            e.Result = imageContainers;
+        }
+
+        private void LoadImagesBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + progressBar.Maximum.ToString();
+            progressBar.Value = e.ProgressPercentage;
+            Button imageBtn = new Button();
+            imageBtn.Click += ChangeImage_Click;
+            if (_buttons.Any())
+            {
+                var last = _buttons.Last();
+                imageBtn.Location = new Point(last.Location.X + 70, last.Location.Y);
+            }
+            imageBtn.AutoSize = true;
+            imageBtn.Size = new Size(67, 13);
+            imageBtn.TabIndex = 0;
+            imageBtn.Text = (e.ProgressPercentage + 1).ToString();
+            _buttons.Add(imageBtn);
+            LoadImagesPanel.Controls.Add(imageBtn);
+
+            if (e.ProgressPercentage == 0)
+            {
+                CurrentImageContainer = imageContainers.FirstOrDefault();
+                SetImage(CurrentImageContainer);
+            }
+        }
+
+        private void LoadImagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled == true)
+            {
+                progresLabel.Text = "Canceled!";
+            }
+            else if (e.Error != null)
+            {
+                progresLabel.Text = "Error: " + e.Error.Message;
+                Error(e.Error);
+                analyzeButton.Enabled = false;
+            }
+            else
+            {
+                progresLabel.Text = "Done!";
+                progressBar.Value = progressBar.Maximum;
+                analyzeButton.Enabled = true;
+            }
+        }
+
+        private void AnalyzeButton_Click(object sender, EventArgs e)
+        {
+            analyzeButton.Enabled = false;
+            progresLabel.Text = "0/" + imageContainers.Count;
+            progressBar.Maximum = imageContainers.Count;
+            progressBar.Value = 0;
+            processor.RunWorker(CreateAnalyseRequest());
+        }
+
+        private void OnImageProcessor_ProgressChanged(int progres)
+        {
+            progresLabel.Text = progres.ToString() + "/" + imageContainers.Count;
+            progressBar.Value = progres;
+        }
+
+        private void OnImageProcessor_RunWorkerCompleted()
+        {
+            progresLabel.Text = "Done!";
+            progressBar.Value = progressBar.Maximum;
+            analyzeButton.Enabled = true;
         }
     }
 }
