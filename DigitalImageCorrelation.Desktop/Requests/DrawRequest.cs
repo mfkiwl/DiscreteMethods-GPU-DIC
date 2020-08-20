@@ -12,6 +12,6 @@ namespace DigitalImageCorrelation.Desktop.Requests
         public double PictureWidth { get; set; }
         public double PictureHeight { get; set; }
         public bool ShowCropBox { get; set; }
-        public int Zoom { get; set; }
+        public double Zoom { get; set; }
     }
 }

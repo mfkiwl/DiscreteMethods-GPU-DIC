@@ -18,6 +18,16 @@ namespace DigitalImageCorrelation.Desktop
         public ImageContainer CurrentImageContainer;
         public Painter painter;
         private readonly WorkerProcessor processor = new WorkerProcessor();
+        private double Zoom
+        {
+            get => ImageContainer.scale;
+            set
+            {
+                ImageContainer.scale = value;
+                zoomTextbox.Text = value.ToString("F");
+            }
+        }
+        private const double ZoomStep = 1.1;
         public MainForm()
         {
             InitializeComponent();
@@ -65,12 +75,9 @@ namespace DigitalImageCorrelation.Desktop
             {
                 throw new ArgumentNullException(nameof(container));
             }
-
-            CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
             MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-            zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -99,23 +106,12 @@ namespace DigitalImageCorrelation.Desktop
 
         }
 
-        private void ZoomTrackBar_ValueChanged(object sender, EventArgs e)
-        {
-            if (CurrentImageContainer != null)
-            {
-                var request = CreateDrawRequest();
-                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                MainPictureBox.Image = painter.DrawImage(request);
-            }
-        }
-
         private void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
-                var request = CreateDrawRequest();
-                zoomTrackBar.Value = painter.CalculateDefaultScale(request);
-                MainPictureBox.Image = painter.DrawImage(request);
+                Zoom = painter.CalculateDefaultScale(CreateDrawRequest());
+                MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
             }
         }
 
@@ -130,8 +126,7 @@ namespace DigitalImageCorrelation.Desktop
                 PictureHeight = MainPictureBox.Parent.ClientSize.Height,
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
-                WindowsDelta = int.Parse(windowDeltaTextbox.Text),
-                Zoom = zoomTrackBar.Value
+                WindowsDelta = int.Parse(windowDeltaTextbox.Text)
             };
         }
 
@@ -207,6 +202,7 @@ namespace DigitalImageCorrelation.Desktop
             if (e.ProgressPercentage == 0)
             {
                 CurrentImageContainer = imageContainers.FirstOrDefault();
+                InitializeImageScale(null, null);
                 SetImage(CurrentImageContainer);
             }
         }
@@ -251,6 +247,26 @@ namespace DigitalImageCorrelation.Desktop
             progresLabel.Text = "Done!";
             progressBar.Value = progressBar.Maximum;
             analyzeButton.Enabled = true;
+        }
+
+        private void ZoomDownButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                Zoom = Zoom / ZoomStep;
+                MainPictureBox.Image = painter.DrawImage(request);
+            }
+        }
+
+        private void zoomUpButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                Zoom = Zoom * ZoomStep;
+                MainPictureBox.Image = painter.DrawImage(request);
+            }
         }
     }
 }

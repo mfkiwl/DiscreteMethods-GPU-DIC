@@ -12,12 +12,12 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
 
-        public int CalculateDefaultScale(DrawRequest request)
+        public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
-            var scaleX = request.PictureWidth / bmp.Width * 100.0;
-            var scaleY = request.PictureHeight / bmp.Height * 100.0;
-            return Math.Min((int)scaleX, (int)scaleY);
+            var scaleX = (request.PictureWidth / bmp.Width);
+            var scaleY = (request.PictureHeight / bmp.Height);
+            return Math.Min(scaleX, scaleY);
         }
 
 
@@ -26,7 +26,7 @@ namespace DigitalImageCorrelation.Desktop
             if (request.Image != null)
             {
                 var bmp = request.Image.Bmp;
-                bmp = ScaleBitmap(bmp, request.Image.scale);
+                bmp = ScaleBitmap(bmp, ImageContainer.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
                 DrawPoints(bmp, request.Image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 return bmp;

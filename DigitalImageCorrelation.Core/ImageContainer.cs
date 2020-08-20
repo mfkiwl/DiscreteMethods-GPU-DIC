@@ -17,7 +17,7 @@ namespace DigitalImageCorrelation.Core
         public static int top;
         public static int width;
         public static int height;
-        public double scale = 1.0;
+        public static double scale = 1.0;
         public double ScaledLeft { get => left * scale; }
         public double ScaledTop { get => top * scale; }
         public double ScaledWidth { get => width * scale; }
@@ -118,7 +118,6 @@ namespace DigitalImageCorrelation.Core
             }
         }
 
-
         public IEnumerable<Point> CalculatePoints(int w, int h)
         {
             var spaceX = ScaledWidth / (w + 1);
@@ -130,11 +129,6 @@ namespace DigitalImageCorrelation.Core
                     yield return new Point((int)((i + 1) * spaceX + ScaledLeft), (int)((j + 1) * spaceY + ScaledTop));
                 }
             }
-        }
-
-        public void SetScaleOfImage(double zoom)
-        {
-            scale = zoom / 100.0;
         }
     }
     enum SelectedCorner
