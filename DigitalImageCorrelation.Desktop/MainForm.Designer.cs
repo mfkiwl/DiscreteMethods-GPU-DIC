@@ -133,7 +133,7 @@
             this.subsetDeltaTextbox.Name = "subsetDeltaTextbox";
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.subsetDeltaTextbox.TabIndex = 9;
-            this.subsetDeltaTextbox.Text = "15";
+            this.subsetDeltaTextbox.Text = "10";
             this.subsetDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // subsetDeltaLabel
@@ -151,7 +151,7 @@
             this.windowDeltaTextbox.Name = "windowDeltaTextbox";
             this.windowDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.windowDeltaTextbox.TabIndex = 11;
-            this.windowDeltaTextbox.Text = "20";
+            this.windowDeltaTextbox.Text = "14";
             this.windowDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // windowDeltaLabel

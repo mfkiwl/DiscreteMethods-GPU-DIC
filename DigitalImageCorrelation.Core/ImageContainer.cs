@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace DigitalImageCorrelation.Core
 {
@@ -12,6 +13,8 @@ namespace DigitalImageCorrelation.Core
             get { return BmpRaw.Clone() as Bitmap; }
             set { BmpRaw = value; }
         }
+        public byte[,] GrayScaleImage;
+        public IEnumerable<Point> Points;
         public Bitmap BmpRaw { get; private set; }
         public static int left;
         public static int top;
@@ -33,6 +36,7 @@ namespace DigitalImageCorrelation.Core
             Filename = name;
             ReloadSizes(bitmap);
             Index = index;
+            GrayScaleImage = ToGrayScale(bitmap);
         }
 
         public void MouseDown(Point point)
@@ -118,7 +122,7 @@ namespace DigitalImageCorrelation.Core
             }
         }
 
-        public IEnumerable<Point> CalculatePoints(int w, int h)
+        public IEnumerable<Point> CalculateStartingPoints(int w, int h)
         {
             var spaceX = ScaledWidth / (w + 1);
             var spaceY = ScaledHeight / (h + 1);
@@ -130,6 +134,44 @@ namespace DigitalImageCorrelation.Core
                 }
             }
         }
+
+        private byte[,] ToGrayScale(Bitmap image)
+        {
+            BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
+
+            int pixelsize = Image.GetPixelFormatSize(bitmapData.PixelFormat) / 8;
+
+            IntPtr pointer = bitmapData.Scan0;
+            int nbytes = bitmapData.Height * bitmapData.Stride;
+            byte[] imagebytes = new byte[nbytes];
+            System.Runtime.InteropServices.Marshal.Copy(pointer, imagebytes, 0, nbytes);
+
+            double red;
+            double green;
+            double blue;
+            double gray;
+
+            var grayScaleArray = new byte[bitmapData.Height, bitmapData.Width];
+
+            if (pixelsize >= 3)
+            {
+                for (int I = 0; I < bitmapData.Height; I++)
+                {
+                    for (int J = 0; J < bitmapData.Width; J++)
+                    {
+                        int position = (I * bitmapData.Stride) + (J * pixelsize);
+                        blue = imagebytes[position];
+                        green = imagebytes[position + 1];
+                        red = imagebytes[position + 2];
+                        gray = 0.299 * red + 0.587 * green + 0.114 * blue;
+                        grayScaleArray[I, J] = (byte)gray;
+                    }
+                }
+            }
+            image.UnlockBits(bitmapData);
+            return grayScaleArray;
+        }
+
     }
     enum SelectedCorner
     {

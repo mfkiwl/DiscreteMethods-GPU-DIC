@@ -7,17 +7,17 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
-        private List<Button> _buttons = new List<Button>();
-        public List<ImageContainer> imageContainers = new List<ImageContainer>();
+        public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
         public ImageContainer CurrentImageContainer;
         public Painter painter;
-        private readonly WorkerProcessor processor = new WorkerProcessor();
+        private readonly Worker processor = new Worker();
         private double Zoom
         {
             get => ImageContainer.scale;
@@ -42,10 +42,23 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _buttons = new List<Button>();
                     LoadImagesPanel.Controls.Clear();
                     progressBar.Minimum = 0;
                     progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
+                    for (int i = 0; i < loadImagesFileDialog.FileNames.Count(); i++)
+                    {
+                        Button imageBtn = new Button();
+                        imageBtn.Click += ChangeImage_Click;
+                        imageBtn.Location = new Point(i * 70, 0);
+                        imageBtn.AutoSize = true;
+                        imageBtn.Size = new Size(67, 13);
+                        imageBtn.TabIndex = 0;
+                        imageBtn.Text = (i + 1).ToString();
+                        LoadImagesPanel.Controls.Add(imageBtn);
+                    }
+
+
+
                     LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
             }
@@ -60,8 +73,7 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 Button button = sender as Button;
-                CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
-                SetImage(CurrentImageContainer);
+                SetImage(imageContainers[int.Parse(button.Text) - 1]);
             }
             catch (Exception ex)
             {
@@ -75,6 +87,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 throw new ArgumentNullException(nameof(container));
             }
+            CurrentImageContainer = container;
             MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
@@ -126,7 +139,7 @@ namespace DigitalImageCorrelation.Desktop
                 PictureHeight = MainPictureBox.Parent.ClientSize.Height,
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
-                WindowsDelta = int.Parse(windowDeltaTextbox.Text)
+                WindowDelta = int.Parse(windowDeltaTextbox.Text)
             };
         }
 
@@ -134,7 +147,11 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new AnalyzeRequest()
             {
-                Containers = imageContainers
+                imageContainers = imageContainers,
+                SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
+                WindowDelta = int.Parse(windowDeltaTextbox.Text),
+                PointsinX = int.Parse(pointsXTextbox.Text),
+                PointsinY = int.Parse(pointsYTextbox.Text)
             };
         }
 
@@ -170,42 +187,31 @@ namespace DigitalImageCorrelation.Desktop
         private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            imageContainers = new List<ImageContainer>();
-            foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+            imageContainers = new Dictionary<int, ImageContainer>();
+            Parallel.ForEach(loadImagesFileDialog.FileNames, (fileName, state, index) =>
             {
                 Bitmap bitmap = new Bitmap(fileName);
-                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
-                imageContainers.Add(image);
-                worker.ReportProgress(index);
-            }
+                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), (int)index);
+                imageContainers.Add((int)index, image);
+                worker.ReportProgress((int)index);
+            });
             e.Result = imageContainers;
         }
 
         private void LoadImagesBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + progressBar.Maximum.ToString();
-            progressBar.Value = e.ProgressPercentage;
-            Button imageBtn = new Button();
-            imageBtn.Click += ChangeImage_Click;
-            if (_buttons.Any())
+            if (progressBar.Value < progressBar.Maximum)
             {
-                var last = _buttons.Last();
-                imageBtn.Location = new Point(last.Location.X + 70, last.Location.Y);
+                progressBar.Value = progressBar.Value + 1;
             }
-            imageBtn.AutoSize = true;
-            imageBtn.Size = new Size(67, 13);
-            imageBtn.TabIndex = 0;
-            imageBtn.Text = (e.ProgressPercentage + 1).ToString();
-            _buttons.Add(imageBtn);
-            LoadImagesPanel.Controls.Add(imageBtn);
-
+            progresLabel.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
             if (e.ProgressPercentage == 0)
             {
-                CurrentImageContainer = imageContainers.FirstOrDefault();
+                SetImage(imageContainers[0]);
                 InitializeImageScale(null, null);
-                SetImage(CurrentImageContainer);
             }
         }
+
 
         private void LoadImagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {

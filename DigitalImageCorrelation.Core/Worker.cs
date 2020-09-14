@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace DigitalImageCorrelation.Core
 {
-    public class WorkerProcessor
+    public class Worker
     {
         public delegate void ProgressUpdate(int value);
         public event ProgressUpdate OnProgressUpdate;
@@ -11,7 +11,7 @@ namespace DigitalImageCorrelation.Core
         public delegate void TaskDone();
         public event TaskDone OnTaskDone;
         private readonly BackgroundWorker BackgroundWorker;
-        public WorkerProcessor()
+        public Worker()
         {
             BackgroundWorker = new BackgroundWorker();
             BackgroundWorker.DoWork += DoWork;

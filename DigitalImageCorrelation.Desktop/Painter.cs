@@ -28,7 +28,7 @@ namespace DigitalImageCorrelation.Desktop
                 var bmp = request.Image.Bmp;
                 bmp = ScaleBitmap(bmp, ImageContainer.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
-                DrawPoints(bmp, request.Image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                DrawPoints(bmp, request.Image.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 return bmp;
             }
             return null;
