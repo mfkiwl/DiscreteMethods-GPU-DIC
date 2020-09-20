@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzeResult.cs" />
     <Compile Include="ImageProcessor.cs" />
     <Compile Include="ImageContainer.cs" />
+    <Compile Include="Position.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\AnalyzeRequest.cs" />

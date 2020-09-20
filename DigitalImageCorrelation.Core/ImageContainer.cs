@@ -8,26 +8,17 @@ namespace DigitalImageCorrelation.Core
     public class ImageContainer
     {
         public string Filename { get; set; }
+        private bool isMouseDown = false;
+        public byte[,] GrayScaleImage;
+        public int Index;
         public Bitmap Bmp
         {
             get { return BmpRaw.Clone() as Bitmap; }
             set { BmpRaw = value; }
         }
-        public byte[,] GrayScaleImage;
-        public IEnumerable<Point> Points;
         public Bitmap BmpRaw { get; private set; }
-        public static int left;
-        public static int top;
-        public static int width;
-        public static int height;
-        public static double scale = 1.0;
-        public double ScaledLeft { get => left * scale; }
-        public double ScaledTop { get => top * scale; }
-        public double ScaledWidth { get => width * scale; }
-        public double ScaledHeight { get => height * scale; }
-
-        public int Index;
-        private bool isMouseDown = false;
+        public AnalyzeResult analyzeResult;
+        public Position pos = new Position();
         private SelectedCorner DragedCorner = SelectedCorner.None;
 
         public ImageContainer(Bitmap bitmap, string name, int index)
@@ -49,30 +40,30 @@ namespace DigitalImageCorrelation.Core
 
         private void ReloadSizes(Bitmap bmp)
         {
-            width = Convert.ToInt32(bmp.Width * 0.8);
-            height = Convert.ToInt32(bmp.Height * 0.8);
-            left = Convert.ToInt32(bmp.Width * 0.1);
-            top = Convert.ToInt32(bmp.Height * 0.1);
+            Position.width = Convert.ToInt32(bmp.Width * 0.8);
+            Position.height = Convert.ToInt32(bmp.Height * 0.8);
+            Position.left = Convert.ToInt32(bmp.Width * 0.1);
+            Position.top = Convert.ToInt32(bmp.Height * 0.1);
         }
 
         public bool IsInCorner(Point point)
         {
-            if (Math.Abs(ScaledLeft - point.X) < Utils.DELTA && Math.Abs(ScaledTop - point.Y) < Utils.DELTA)
+            if (Math.Abs(pos.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftTop;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft - point.X) < Utils.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Utils.DELTA)
+            else if (Math.Abs(pos.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop + pos.ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftBottom;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Utils.DELTA && Math.Abs(ScaledTop - point.Y) < Utils.DELTA)
+            else if (Math.Abs(pos.ScaledLeft + pos.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightTop;
                 return true;
             }
-            else if (Math.Abs(ScaledLeft + ScaledWidth - point.X) < Utils.DELTA && Math.Abs(ScaledTop + ScaledHeight - point.Y) < Utils.DELTA)
+            else if (Math.Abs(pos.ScaledLeft + pos.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop + pos.ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightBottom;
                 return true;
@@ -84,7 +75,7 @@ namespace DigitalImageCorrelation.Core
         {
             if (isMouseDown)
             {
-                var point = new Point() { X = (int)(p.X * 1.0 / scale), Y = (int)(p.Y * 1.0 / scale) };
+                var point = new Point() { X = (int)(p.X * 1.0 / Position.scale), Y = (int)(p.Y * 1.0 / Position.scale) };
                 if (point.X <= 0 || point.Y <= 0 || point.X >= BmpRaw.Width || point.Y >= BmpRaw.Height)
                 {
                     return;
@@ -93,45 +84,32 @@ namespace DigitalImageCorrelation.Core
                 var yVector = 0;
                 if (DragedCorner == SelectedCorner.LeftTop)
                 {
-                    xVector = left - point.X;
-                    yVector = top - point.Y;
-                    left = point.X;
-                    top = point.Y;
+                    xVector = Position.left - point.X;
+                    yVector = Position.top - point.Y;
+                    Position.left = point.X;
+                    Position.top = point.Y;
                 }
                 else if (DragedCorner == SelectedCorner.LeftBottom)
                 {
-                    xVector = left - point.X;
-                    yVector = point.Y - top - height;
-                    left = point.X;
+                    xVector = Position.left - point.X;
+                    yVector = point.Y - Position.top - Position.height;
+                    Position.left = point.X;
                 }
                 else if (DragedCorner == SelectedCorner.RightTop)
                 {
-                    xVector = point.X - left - width;
-                    yVector = top - point.Y;
-                    top = point.Y;
+                    xVector = point.X - Position.left - Position.width;
+                    yVector = Position.top - point.Y;
+                    Position.top = point.Y;
                 }
                 else if (DragedCorner == SelectedCorner.RightBottom)
                 {
-                    xVector = point.X - left - width;
-                    yVector = point.Y - top - height;
+                    xVector = point.X - Position.left - Position.width;
+                    yVector = point.Y - Position.top - Position.height;
                 }
-                width += xVector;
-                height += yVector;
+                Position.width += xVector;
+                Position.height += yVector;
                 DragedCorner = SelectedCorner.None;
                 isMouseDown = false;
-            }
-        }
-
-        public IEnumerable<Point> CalculateStartingPoints(int w, int h)
-        {
-            var spaceX = ScaledWidth / (w + 1);
-            var spaceY = ScaledHeight / (h + 1);
-            for (int i = 0; i < w; i++)
-            {
-                for (int j = 0; j < h; j++)
-                {
-                    yield return new Point((int)((i + 1) * spaceX + ScaledLeft), (int)((j + 1) * spaceY + ScaledTop));
-                }
             }
         }
 

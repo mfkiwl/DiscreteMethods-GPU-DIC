@@ -1,4 +1,5 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -15,23 +16,26 @@ namespace DigitalImageCorrelation.Core
             backgroundWorker = bw;
         }
 
-        public void Analyze()
+        public void Analyze(DoWorkEventArgs e)
         {
             var containers = _request.imageContainers.Values.OrderBy(x => x.Index).ToArray();
-            var firstContainer = containers.First();
-            var basePoints = firstContainer.CalculateStartingPoints(_request.PointsinX, _request.PointsinY).ToArray();
-            var previousGreyScaleImage = firstContainer.GrayScaleImage;
+            var previousContainer = containers.First();
+            previousContainer.analyzeResult = new AnalyzeResult();
+            previousContainer.analyzeResult.Points = previousContainer.pos.CalculateStartingPoints(_request.PointsinX, _request.PointsinY);
             foreach (var (item, index) in containers.WithIndex())
             {
                 if (index == 0)
                 {
                     continue;
                 }
-                var calculatedPoints = basePoints.AsParallel().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, previousGreyScaleImage, item.GrayScaleImage, point)).ToArray();
-                basePoints = calculatedPoints;
-                previousGreyScaleImage = item.GrayScaleImage;
-                backgroundWorker.ReportProgress(index);
+                item.analyzeResult = new AnalyzeResult
+                {
+                    Points = previousContainer.analyzeResult.Points.AsParallel().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, previousContainer.GrayScaleImage, item.GrayScaleImage, point)).ToArray()
+                };
+                previousContainer = item;
+                backgroundWorker.ReportProgress(index + 1);
             }
+            e.Result = containers.ToDictionary(x => new { x.Index, x.analyzeResult });
         }
         private Point FindPoint(int searchDelta, int subsetDelta, byte[,] baseImage, byte[,] nextImage, Point point)
         {
@@ -61,11 +65,17 @@ namespace DigitalImageCorrelation.Core
             {
                 for (var x = -subsetDelta; x <= subsetDelta; x++)
                 {
-                    //TODO is it ok? check coordinates
-                    var v0 = baseImage[point.X + x, point.Y + y];
-                    var v1 = nextImage[point.X + x + u, point.Y + y + v];
-                    var diff = v0 - v1;
-                    sum += diff * diff;
+                    try
+                    {
+                        var v0 = baseImage[point.X + x, point.Y + y];
+                        var v1 = nextImage[point.X + x + u, point.Y + y + v];
+                        sum += (v0 - v1) * (v0 - v1);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        return sum;
+                    }
                 }
             }
             return sum;

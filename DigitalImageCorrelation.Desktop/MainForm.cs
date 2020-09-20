@@ -20,10 +20,10 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Worker processor = new Worker();
         private double Zoom
         {
-            get => ImageContainer.scale;
+            get => Position.scale;
             set
             {
-                ImageContainer.scale = value;
+                Position.scale = value;
                 zoomTextbox.Text = value.ToString("F");
             }
         }
@@ -56,9 +56,6 @@ namespace DigitalImageCorrelation.Desktop
                         imageBtn.Text = (i + 1).ToString();
                         LoadImagesPanel.Controls.Add(imageBtn);
                     }
-
-
-
                     LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
             }
@@ -139,8 +136,14 @@ namespace DigitalImageCorrelation.Desktop
                 PictureHeight = MainPictureBox.Parent.ClientSize.Height,
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
-                WindowDelta = int.Parse(windowDeltaTextbox.Text)
+                WindowDelta = int.Parse(windowDeltaTextbox.Text),
+                Type = GetDrawingType()
             };
+        }
+
+        private DrawingType GetDrawingType()
+        {
+            return DrawingType.Points;
         }
 
         private AnalyzeRequest CreateAnalyseRequest()
@@ -248,11 +251,27 @@ namespace DigitalImageCorrelation.Desktop
             progressBar.Value = progres;
         }
 
-        private void OnImageProcessor_RunWorkerCompleted()
+        private void OnImageProcessor_RunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            progresLabel.Text = "Done!";
-            progressBar.Value = progressBar.Maximum;
-            analyzeButton.Enabled = true;
+            if (e.Cancelled == true)
+            {
+                progresLabel.Text = "Canceled!";
+                analyzeButton.Enabled = true;
+            }
+            else if (e.Error != null)
+            {
+                progresLabel.Text = "Error: " + e.Error.Message;
+                Error(e.Error);
+                analyzeButton.Enabled = true;
+            }
+            else
+            {
+                //imageContainers = e.Result as Dictionary<int, AnalyzeResult>;
+                progresLabel.Text = "Done!";
+                progressBar.Value = progressBar.Maximum;
+                analyzeButton.Enabled = true;
+            }
+
         }
 
         private void ZoomDownButton_Click(object sender, EventArgs e)

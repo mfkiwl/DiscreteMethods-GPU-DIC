@@ -1,4 +1,6 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace DigitalImageCorrelation.Core
@@ -8,7 +10,7 @@ namespace DigitalImageCorrelation.Core
         public delegate void ProgressUpdate(int value);
         public event ProgressUpdate OnProgressUpdate;
 
-        public delegate void TaskDone();
+        public delegate void TaskDone(RunWorkerCompletedEventArgs e);
         public event TaskDone OnTaskDone;
         private readonly BackgroundWorker BackgroundWorker;
         public Worker()
@@ -28,10 +30,18 @@ namespace DigitalImageCorrelation.Core
 
         public void DoWork(object sender, DoWorkEventArgs e)
         {
-            var request = e.Argument as AnalyzeRequest;
-            var bw = sender as BackgroundWorker;
-            ImageProcessor processor = new ImageProcessor(bw, request);
-            processor.Analyze();
+            try
+            {
+                var request = e.Argument as AnalyzeRequest;
+                var bw = sender as BackgroundWorker;
+                ImageProcessor processor = new ImageProcessor(bw, request);
+                processor.Analyze(e);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
         }
         public void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -40,7 +50,7 @@ namespace DigitalImageCorrelation.Core
 
         public void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            OnTaskDone();
+            OnTaskDone(e);
         }
     }
 }
