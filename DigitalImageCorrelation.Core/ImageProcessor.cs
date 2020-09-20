@@ -21,6 +21,7 @@ namespace DigitalImageCorrelation.Core
             var containers = _request.imageContainers.Values.OrderBy(x => x.Index).ToArray();
             var previousContainer = containers.First();
             previousContainer.analyzeResult = new AnalyzeResult();
+            AnalyzeResult.StartingPoints = previousContainer.pos.CalculateStartingPoints(_request.PointsinX, _request.PointsinY);
             previousContainer.analyzeResult.Points = previousContainer.pos.CalculateStartingPoints(_request.PointsinX, _request.PointsinY);
             foreach (var (item, index) in containers.WithIndex())
             {

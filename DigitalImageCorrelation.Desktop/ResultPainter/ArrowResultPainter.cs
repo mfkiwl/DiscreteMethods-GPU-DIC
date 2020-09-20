@@ -12,7 +12,7 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
 
         public Bitmap Paint(Bitmap bitmap, AnalyzeResult result, DrawRequest request)
         {
-            var startingPoints = request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY).ToArray();
+            var startingPoints = AnalyzeResult.StartingPoints.ToArray();
             if (result != null)
             {
                 Graphics g = Graphics.FromImage(bitmap);

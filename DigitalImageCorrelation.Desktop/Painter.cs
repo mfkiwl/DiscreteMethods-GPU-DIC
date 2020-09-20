@@ -22,12 +22,19 @@ namespace DigitalImageCorrelation.Desktop
             return Math.Min(scaleX, scaleY);
         }
 
+
+        public Bitmap GetBackgroundImage(DrawRequest request)
+        {
+            return request.Image.BmpRaw;
+        }
+
+
         public Bitmap DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
                 _resultPainter = ChooseResultPainter(request.Type);
-                var bmp = request.Image.Bmp;
+                var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
                 _resultPainter.Paint(bmp, request.Image.analyzeResult, request);
                 DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 bmp = ScaleBitmap(bmp, Position.scale);

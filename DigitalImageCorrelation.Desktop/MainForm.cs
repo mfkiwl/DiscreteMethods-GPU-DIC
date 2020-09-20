@@ -18,14 +18,15 @@ namespace DigitalImageCorrelation.Desktop
         public ImageContainer CurrentImageContainer;
         public Painter painter;
         private readonly Worker processor = new Worker();
-        private double Zoom
+        private double GetZoom()
         {
-            get => Position.scale;
-            set
-            {
-                Position.scale = value;
-                zoomTextbox.Text = value.ToString("F");
-            }
+            return Position.scale;
+        }
+
+        private void SetZoom(double value)
+        {
+            Position.scale = value;
+            zoomTextbox.Text = value.ToString("F");
         }
         private const double ZoomStep = 1.1;
         public MainForm()
@@ -34,6 +35,7 @@ namespace DigitalImageCorrelation.Desktop
             painter = new Painter();
             processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
             processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
+            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -94,6 +96,7 @@ namespace DigitalImageCorrelation.Desktop
                 throw new ArgumentNullException(nameof(container));
             }
             CurrentImageContainer = container;
+            MainPictureBox.BackgroundImage = container.BmpRaw;
             MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
@@ -114,7 +117,6 @@ namespace DigitalImageCorrelation.Desktop
             {
                 CurrentImageContainer?.MouseUp(e.Location);
                 MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
-
             }
             catch (Exception) { }
         }
@@ -122,15 +124,15 @@ namespace DigitalImageCorrelation.Desktop
         private void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
-
         }
 
         private void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
-                Zoom = painter.CalculateDefaultScale(CreateDrawRequest());
+                SetZoom(painter.CalculateDefaultScale(CreateDrawRequest()));
                 MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+                MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
             }
         }
 
@@ -155,7 +157,7 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 var checkedButton = RadioButtonsPanel.Controls.OfType<RadioButton>()
-                                          .FirstOrDefault(r => r.Checked) as RadioButton;
+                                          .FirstOrDefault(r => r.Checked);
                 return (DrawingType)int.Parse(checkedButton.Tag.ToString());
             }
             catch (Exception ex)
@@ -226,7 +228,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (progressBar.Value < progressBar.Maximum)
             {
-                progressBar.Value = progressBar.Value + 1;
+                progressBar.Value += 1;
             }
             progresLabel.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
             if (e.ProgressPercentage == 0)
@@ -300,17 +302,17 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                Zoom = Zoom / ZoomStep;
+                SetZoom(GetZoom() / ZoomStep);
                 MainPictureBox.Image = painter.DrawImage(request);
             }
         }
 
-        private void zoomUpButton_Click(object sender, EventArgs e)
+        private void ZoomUpButton_Click(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                Zoom = Zoom * ZoomStep;
+                SetZoom(GetZoom() * ZoomStep);
                 MainPictureBox.Image = painter.DrawImage(request);
             }
         }

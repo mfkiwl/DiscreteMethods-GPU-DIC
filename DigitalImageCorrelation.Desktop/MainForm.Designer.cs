@@ -293,7 +293,7 @@
             this.zoomUpButton.TabIndex = 31;
             this.zoomUpButton.Text = "+";
             this.zoomUpButton.UseVisualStyleBackColor = true;
-            this.zoomUpButton.Click += new System.EventHandler(this.zoomUpButton_Click);
+            this.zoomUpButton.Click += new System.EventHandler(this.ZoomUpButton_Click);
             // 
             // ZoomDownButton
             // 
