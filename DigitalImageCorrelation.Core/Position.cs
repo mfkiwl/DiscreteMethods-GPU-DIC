@@ -17,13 +17,13 @@ namespace DigitalImageCorrelation.Core
 
         public IEnumerable<Point> CalculateStartingPoints(int w, int h)
         {
-            var spaceX = ScaledWidth / (w + 1);
-            var spaceY = ScaledHeight / (h + 1);
+            var spaceX = width / (w + 1);
+            var spaceY = height / (h + 1);
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
                 {
-                    yield return new Point((int)((i + 1) * spaceX + ScaledLeft), (int)((j + 1) * spaceY + ScaledTop));
+                    yield return new Point((int)((i + 1) * spaceX + left), (int)((j + 1) * spaceY + top));
                 }
             }
         }

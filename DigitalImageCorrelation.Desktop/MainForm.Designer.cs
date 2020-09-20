@@ -42,15 +42,6 @@
             this.analyzeButton = new System.Windows.Forms.Button();
             this.showCropBoxCheckbox = new System.Windows.Forms.CheckBox();
             this.displayModeLabel = new System.Windows.Forms.Label();
-            this.imageRadioButton = new System.Windows.Forms.RadioButton();
-            this.pointsRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementVRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementXRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementYRadiobutton = new System.Windows.Forms.RadioButton();
-            this.strainXRadioButton = new System.Windows.Forms.RadioButton();
-            this.strainYRadioButton = new System.Windows.Forms.RadioButton();
-            this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
-            this.tensionRadioButton = new System.Windows.Forms.RadioButton();
             this.MainImagePanel = new System.Windows.Forms.Panel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.imageSliderPanel = new System.Windows.Forms.Panel();
@@ -66,10 +57,21 @@
             this.ImageNameLabel = new System.Windows.Forms.Label();
             this.zoomLabel = new System.Windows.Forms.Label();
             this.LoadImagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.RadioButtonsPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.imageRadioButton = new System.Windows.Forms.RadioButton();
+            this.pointsRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementVRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementXRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementYRadiobutton = new System.Windows.Forms.RadioButton();
+            this.strainXRadioButton = new System.Windows.Forms.RadioButton();
+            this.strainYRadioButton = new System.Windows.Forms.RadioButton();
+            this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
+            this.tensionRadioButton = new System.Windows.Forms.RadioButton();
             this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
             this.optionsPanel.SuspendLayout();
+            this.RadioButtonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // openImagesButton
@@ -192,101 +194,9 @@
             this.displayModeLabel.AutoSize = true;
             this.displayModeLabel.Location = new System.Drawing.Point(5, 287);
             this.displayModeLabel.Name = "displayModeLabel";
-            this.displayModeLabel.Size = new System.Drawing.Size(68, 13);
+            this.displayModeLabel.Size = new System.Drawing.Size(71, 13);
             this.displayModeLabel.TabIndex = 14;
-            this.displayModeLabel.Text = "DisplayMode";
-            // 
-            // imageRadioButton
-            // 
-            this.imageRadioButton.AutoSize = true;
-            this.imageRadioButton.Checked = true;
-            this.imageRadioButton.Location = new System.Drawing.Point(8, 303);
-            this.imageRadioButton.Name = "imageRadioButton";
-            this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
-            this.imageRadioButton.TabIndex = 15;
-            this.imageRadioButton.TabStop = true;
-            this.imageRadioButton.Text = "Image";
-            this.imageRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // pointsRadioButton
-            // 
-            this.pointsRadioButton.AutoSize = true;
-            this.pointsRadioButton.Location = new System.Drawing.Point(8, 326);
-            this.pointsRadioButton.Name = "pointsRadioButton";
-            this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
-            this.pointsRadioButton.TabIndex = 16;
-            this.pointsRadioButton.Text = "Points";
-            this.pointsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementVRadioButton
-            // 
-            this.displacementVRadioButton.AutoSize = true;
-            this.displacementVRadioButton.Location = new System.Drawing.Point(8, 349);
-            this.displacementVRadioButton.Name = "displacementVRadioButton";
-            this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
-            this.displacementVRadioButton.TabIndex = 17;
-            this.displacementVRadioButton.Text = "Displacement vectors";
-            this.displacementVRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementXRadioButton
-            // 
-            this.displacementXRadioButton.AutoSize = true;
-            this.displacementXRadioButton.Location = new System.Drawing.Point(8, 372);
-            this.displacementXRadioButton.Name = "displacementXRadioButton";
-            this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
-            this.displacementXRadioButton.TabIndex = 18;
-            this.displacementXRadioButton.Text = "Displacement (X)";
-            this.displacementXRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementYRadiobutton
-            // 
-            this.displacementYRadiobutton.AutoSize = true;
-            this.displacementYRadiobutton.Location = new System.Drawing.Point(8, 395);
-            this.displacementYRadiobutton.Name = "displacementYRadiobutton";
-            this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
-            this.displacementYRadiobutton.TabIndex = 19;
-            this.displacementYRadiobutton.Text = "Displacement (Y)";
-            this.displacementYRadiobutton.UseVisualStyleBackColor = true;
-            // 
-            // strainXRadioButton
-            // 
-            this.strainXRadioButton.AutoSize = true;
-            this.strainXRadioButton.Location = new System.Drawing.Point(8, 418);
-            this.strainXRadioButton.Name = "strainXRadioButton";
-            this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
-            this.strainXRadioButton.TabIndex = 20;
-            this.strainXRadioButton.Text = "Strain (X)";
-            this.strainXRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // strainYRadioButton
-            // 
-            this.strainYRadioButton.AutoSize = true;
-            this.strainYRadioButton.Location = new System.Drawing.Point(8, 441);
-            this.strainYRadioButton.Name = "strainYRadioButton";
-            this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
-            this.strainYRadioButton.TabIndex = 21;
-            this.strainYRadioButton.Text = "Strain (Y)";
-            this.strainYRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // strainShearRadioButton
-            // 
-            this.strainShearRadioButton.AutoSize = true;
-            this.strainShearRadioButton.Location = new System.Drawing.Point(8, 464);
-            this.strainShearRadioButton.Name = "strainShearRadioButton";
-            this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
-            this.strainShearRadioButton.TabIndex = 22;
-            this.strainShearRadioButton.Text = "Strain (Shear)";
-            this.strainShearRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // tensionRadioButton
-            // 
-            this.tensionRadioButton.AutoSize = true;
-            this.tensionRadioButton.Location = new System.Drawing.Point(8, 487);
-            this.tensionRadioButton.Name = "tensionRadioButton";
-            this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
-            this.tensionRadioButton.TabIndex = 23;
-            this.tensionRadioButton.Text = "Tension";
-            this.tensionRadioButton.UseVisualStyleBackColor = true;
+            this.displayModeLabel.Text = "DisplayMode:";
             // 
             // MainImagePanel
             // 
@@ -339,6 +249,7 @@
             // 
             // optionsPanel
             // 
+            this.optionsPanel.Controls.Add(this.RadioButtonsPanel);
             this.optionsPanel.Controls.Add(this.zoomTextbox);
             this.optionsPanel.Controls.Add(this.zoomUpButton);
             this.optionsPanel.Controls.Add(this.ZoomDownButton);
@@ -349,23 +260,14 @@
             this.optionsPanel.Controls.Add(this.zoomLabel);
             this.optionsPanel.Controls.Add(this.openImagesButton);
             this.optionsPanel.Controls.Add(this.sizeNumberLabel);
-            this.optionsPanel.Controls.Add(this.tensionRadioButton);
             this.optionsPanel.Controls.Add(this.pointsXLabel);
-            this.optionsPanel.Controls.Add(this.strainShearRadioButton);
             this.optionsPanel.Controls.Add(this.pointsXTextbox);
-            this.optionsPanel.Controls.Add(this.strainYRadioButton);
             this.optionsPanel.Controls.Add(this.pointsYLabel);
-            this.optionsPanel.Controls.Add(this.strainXRadioButton);
             this.optionsPanel.Controls.Add(this.pointsYTextbox);
-            this.optionsPanel.Controls.Add(this.displacementYRadiobutton);
             this.optionsPanel.Controls.Add(this.subsetDeltaLabel);
-            this.optionsPanel.Controls.Add(this.displacementXRadioButton);
             this.optionsPanel.Controls.Add(this.subsetDeltaTextbox);
-            this.optionsPanel.Controls.Add(this.displacementVRadioButton);
             this.optionsPanel.Controls.Add(this.windowDeltaLabel);
-            this.optionsPanel.Controls.Add(this.pointsRadioButton);
             this.optionsPanel.Controls.Add(this.windowDeltaTextbox);
-            this.optionsPanel.Controls.Add(this.imageRadioButton);
             this.optionsPanel.Controls.Add(this.analyzeButton);
             this.optionsPanel.Controls.Add(this.displayModeLabel);
             this.optionsPanel.Controls.Add(this.showCropBoxCheckbox);
@@ -454,6 +356,146 @@
             this.LoadImagesBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.LoadImagesBackgroundWorker_ProgressChanged);
             this.LoadImagesBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.LoadImagesBackgroundWorker_RunWorkerCompleted);
             // 
+            // RadioButtonsPanel
+            // 
+            this.RadioButtonsPanel.AutoSize = true;
+            this.RadioButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.RadioButtonsPanel.ColumnCount = 1;
+            this.RadioButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.RadioButtonsPanel.Controls.Add(this.tensionRadioButton, 0, 8);
+            this.RadioButtonsPanel.Controls.Add(this.strainYRadioButton, 0, 6);
+            this.RadioButtonsPanel.Controls.Add(this.displacementYRadiobutton, 0, 4);
+            this.RadioButtonsPanel.Controls.Add(this.imageRadioButton, 0, 0);
+            this.RadioButtonsPanel.Controls.Add(this.pointsRadioButton, 0, 1);
+            this.RadioButtonsPanel.Controls.Add(this.displacementVRadioButton, 0, 2);
+            this.RadioButtonsPanel.Controls.Add(this.displacementXRadioButton, 0, 3);
+            this.RadioButtonsPanel.Controls.Add(this.strainXRadioButton, 0, 5);
+            this.RadioButtonsPanel.Controls.Add(this.strainShearRadioButton, 0, 7);
+            this.RadioButtonsPanel.Location = new System.Drawing.Point(6, 303);
+            this.RadioButtonsPanel.Name = "RadioButtonsPanel";
+            this.RadioButtonsPanel.RowCount = 9;
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.Size = new System.Drawing.Size(133, 207);
+            this.RadioButtonsPanel.TabIndex = 37;
+            // 
+            // imageRadioButton
+            // 
+            this.imageRadioButton.AutoSize = true;
+            this.imageRadioButton.Checked = true;
+            this.imageRadioButton.Location = new System.Drawing.Point(3, 3);
+            this.imageRadioButton.Name = "imageRadioButton";
+            this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
+            this.imageRadioButton.TabIndex = 16;
+            this.imageRadioButton.TabStop = true;
+            this.imageRadioButton.Tag = "0";
+            this.imageRadioButton.Text = "Image";
+            this.imageRadioButton.UseVisualStyleBackColor = true;
+            this.imageRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // pointsRadioButton
+            // 
+            this.pointsRadioButton.AutoSize = true;
+            this.pointsRadioButton.Location = new System.Drawing.Point(3, 26);
+            this.pointsRadioButton.Name = "pointsRadioButton";
+            this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
+            this.pointsRadioButton.TabIndex = 18;
+            this.pointsRadioButton.Tag = "1";
+            this.pointsRadioButton.Text = "Points";
+            this.pointsRadioButton.UseVisualStyleBackColor = true;
+            this.pointsRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementVRadioButton
+            // 
+            this.displacementVRadioButton.AutoSize = true;
+            this.displacementVRadioButton.Location = new System.Drawing.Point(3, 49);
+            this.displacementVRadioButton.Name = "displacementVRadioButton";
+            this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
+            this.displacementVRadioButton.TabIndex = 19;
+            this.displacementVRadioButton.Tag = "2";
+            this.displacementVRadioButton.Text = "Displacement vectors";
+            this.displacementVRadioButton.UseVisualStyleBackColor = true;
+            this.displacementVRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementXRadioButton
+            // 
+            this.displacementXRadioButton.AutoSize = true;
+            this.displacementXRadioButton.Location = new System.Drawing.Point(3, 72);
+            this.displacementXRadioButton.Name = "displacementXRadioButton";
+            this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
+            this.displacementXRadioButton.TabIndex = 20;
+            this.displacementXRadioButton.Tag = "3";
+            this.displacementXRadioButton.Text = "Displacement (X)";
+            this.displacementXRadioButton.UseVisualStyleBackColor = true;
+            this.displacementXRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementYRadiobutton
+            // 
+            this.displacementYRadiobutton.AutoSize = true;
+            this.displacementYRadiobutton.Location = new System.Drawing.Point(3, 95);
+            this.displacementYRadiobutton.Name = "displacementYRadiobutton";
+            this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
+            this.displacementYRadiobutton.TabIndex = 21;
+            this.displacementYRadiobutton.Tag = "4";
+            this.displacementYRadiobutton.Text = "Displacement (Y)";
+            this.displacementYRadiobutton.UseVisualStyleBackColor = true;
+            this.displacementYRadiobutton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainXRadioButton
+            // 
+            this.strainXRadioButton.AutoSize = true;
+            this.strainXRadioButton.Location = new System.Drawing.Point(3, 118);
+            this.strainXRadioButton.Name = "strainXRadioButton";
+            this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
+            this.strainXRadioButton.TabIndex = 22;
+            this.strainXRadioButton.Tag = "5";
+            this.strainXRadioButton.Text = "Strain (X)";
+            this.strainXRadioButton.UseVisualStyleBackColor = true;
+            this.strainXRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainYRadioButton
+            // 
+            this.strainYRadioButton.AutoSize = true;
+            this.strainYRadioButton.Location = new System.Drawing.Point(3, 141);
+            this.strainYRadioButton.Name = "strainYRadioButton";
+            this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
+            this.strainYRadioButton.TabIndex = 23;
+            this.strainYRadioButton.Tag = "6";
+            this.strainYRadioButton.Text = "Strain (Y)";
+            this.strainYRadioButton.UseVisualStyleBackColor = true;
+            this.strainYRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainShearRadioButton
+            // 
+            this.strainShearRadioButton.AutoSize = true;
+            this.strainShearRadioButton.Location = new System.Drawing.Point(3, 164);
+            this.strainShearRadioButton.Name = "strainShearRadioButton";
+            this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
+            this.strainShearRadioButton.TabIndex = 24;
+            this.strainShearRadioButton.Tag = "7";
+            this.strainShearRadioButton.Text = "Strain (Shear)";
+            this.strainShearRadioButton.UseVisualStyleBackColor = true;
+            this.strainShearRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // tensionRadioButton
+            // 
+            this.tensionRadioButton.AutoSize = true;
+            this.tensionRadioButton.Location = new System.Drawing.Point(3, 187);
+            this.tensionRadioButton.Name = "tensionRadioButton";
+            this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
+            this.tensionRadioButton.TabIndex = 25;
+            this.tensionRadioButton.Tag = "8";
+            this.tensionRadioButton.Text = "Tension";
+            this.tensionRadioButton.UseVisualStyleBackColor = true;
+            this.tensionRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -472,6 +514,8 @@
             this.imageSliderPanel.PerformLayout();
             this.optionsPanel.ResumeLayout(false);
             this.optionsPanel.PerformLayout();
+            this.RadioButtonsPanel.ResumeLayout(false);
+            this.RadioButtonsPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -490,15 +534,6 @@
         private System.Windows.Forms.Button analyzeButton;
         private System.Windows.Forms.CheckBox showCropBoxCheckbox;
         private System.Windows.Forms.Label displayModeLabel;
-        private System.Windows.Forms.RadioButton imageRadioButton;
-        private System.Windows.Forms.RadioButton pointsRadioButton;
-        private System.Windows.Forms.RadioButton displacementVRadioButton;
-        private System.Windows.Forms.RadioButton displacementXRadioButton;
-        private System.Windows.Forms.RadioButton displacementYRadiobutton;
-        private System.Windows.Forms.RadioButton strainXRadioButton;
-        private System.Windows.Forms.RadioButton strainYRadioButton;
-        private System.Windows.Forms.RadioButton strainShearRadioButton;
-        private System.Windows.Forms.RadioButton tensionRadioButton;
         private System.Windows.Forms.Panel MainImagePanel;
         private System.Windows.Forms.PictureBox MainPictureBox;
         private System.Windows.Forms.Panel imageSliderPanel;
@@ -514,6 +549,16 @@
         private System.Windows.Forms.TextBox zoomTextbox;
         private System.Windows.Forms.Button zoomUpButton;
         private System.Windows.Forms.Button ZoomDownButton;
+        private System.Windows.Forms.TableLayoutPanel RadioButtonsPanel;
+        private System.Windows.Forms.RadioButton tensionRadioButton;
+        private System.Windows.Forms.RadioButton strainYRadioButton;
+        private System.Windows.Forms.RadioButton displacementYRadiobutton;
+        private System.Windows.Forms.RadioButton imageRadioButton;
+        private System.Windows.Forms.RadioButton pointsRadioButton;
+        private System.Windows.Forms.RadioButton displacementVRadioButton;
+        private System.Windows.Forms.RadioButton displacementXRadioButton;
+        private System.Windows.Forms.RadioButton strainXRadioButton;
+        private System.Windows.Forms.RadioButton strainShearRadioButton;
     }
 }
 

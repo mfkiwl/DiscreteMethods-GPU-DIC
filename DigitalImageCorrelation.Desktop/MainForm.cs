@@ -78,6 +78,15 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
+        private void DrawCurrentImage(object sender, EventArgs e)
+        {
+            try
+            {
+                SetImage(CurrentImageContainer);
+            }
+            catch (Exception) { }
+        }
+
         private void SetImage(ImageContainer container)
         {
             if (container is null)
@@ -143,7 +152,19 @@ namespace DigitalImageCorrelation.Desktop
 
         private DrawingType GetDrawingType()
         {
-            return DrawingType.Points;
+            try
+            {
+                var checkedButton = RadioButtonsPanel.Controls.OfType<RadioButton>()
+                                          .FirstOrDefault(r => r.Checked) as RadioButton;
+                return (DrawingType)int.Parse(checkedButton.Tag.ToString());
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+                return DrawingType.Image;
+
+            }
+
         }
 
         private AnalyzeRequest CreateAnalyseRequest()
@@ -210,7 +231,7 @@ namespace DigitalImageCorrelation.Desktop
             progresLabel.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
             if (e.ProgressPercentage == 0)
             {
-                SetImage(imageContainers[0]);
+                CurrentImageContainer = imageContainers[0];
                 InitializeImageScale(null, null);
             }
         }

@@ -30,7 +30,7 @@ namespace DigitalImageCorrelation.Core
                 }
                 item.analyzeResult = new AnalyzeResult
                 {
-                    Points = previousContainer.analyzeResult.Points.AsParallel().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, previousContainer.GrayScaleImage, item.GrayScaleImage, point)).ToArray()
+                    Points = previousContainer.analyzeResult.Points.AsParallel().AsOrdered().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, previousContainer.GrayScaleImage, item.GrayScaleImage, point)).ToArray()
                 };
                 previousContainer = item;
                 backgroundWorker.ReportProgress(index + 1);
@@ -61,14 +61,16 @@ namespace DigitalImageCorrelation.Core
         private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Point point, int u, int v)
         {
             var sum = 0;
+            var v0 = 0;
+            var v1 = 0;
             for (var y = -subsetDelta; y <= subsetDelta; y++)
             {
                 for (var x = -subsetDelta; x <= subsetDelta; x++)
                 {
                     try
                     {
-                        var v0 = baseImage[point.X + x, point.Y + y];
-                        var v1 = nextImage[point.X + x + u, point.Y + y + v];
+                        v0 = baseImage[point.Y + y, point.X + x];
+                        v1 = nextImage[point.Y + y + v, point.X + x + u];
                         sum += (v0 - v1) * (v0 - v1);
                     }
                     catch (Exception ex)

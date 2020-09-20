@@ -28,10 +28,10 @@ namespace DigitalImageCorrelation.Desktop
             {
                 _resultPainter = ChooseResultPainter(request.Type);
                 var bmp = request.Image.Bmp;
+                _resultPainter.Paint(bmp, request.Image.analyzeResult, request);
+                DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 bmp = ScaleBitmap(bmp, Position.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
-                DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                _resultPainter.Paint(bmp, request.Image.analyzeResult);
                 return bmp;
             }
             return null;
@@ -43,6 +43,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 case (DrawingType.Points):
                     return new PointResultPainter();
+                case (DrawingType.DisplacementVectors):
+                    return new ArrowResultPainter();
                 case (DrawingType.Image):
                 default:
                     return new EmptyResultPainter();
