@@ -6,7 +6,7 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
 {
     public class EmptyResultPainter : IResultPainter
     {
-        public Bitmap Paint(Bitmap bitmap, AnalyzeResult result, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             return bitmap;
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -17,7 +16,6 @@ namespace DigitalImageCorrelation.Core
             set { BmpRaw = value; }
         }
         public Bitmap BmpRaw { get; private set; }
-        public AnalyzeResult analyzeResult;
         public Position pos = new Position();
         private SelectedCorner DragedCorner = SelectedCorner.None;
 

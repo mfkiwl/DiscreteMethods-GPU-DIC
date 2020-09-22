@@ -10,12 +10,13 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
     {
         private readonly Pen _arrowPen = new Pen(Color.FromArgb(255, 0, 0, 255), 5);
 
-        public Bitmap Paint(Bitmap bitmap, AnalyzeResult result, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
-            var startingPoints = AnalyzeResult.StartingPoints.ToArray();
-            if (result != null)
+            if (request.AnalyzeResults != null && request.AnalyzeResults.ContainsKey(request.Image.Index))
             {
-                Graphics g = Graphics.FromImage(bitmap);
+                var result = request.AnalyzeResults[request.Image.Index];
+                var startingPoints = result.StartingPoints.ToArray();
+                var g = Graphics.FromImage(bitmap);
                 foreach (var (endpoint, index) in result.Points.WithIndex())
                 {
                     _arrowPen.StartCap = LineCap.Flat;

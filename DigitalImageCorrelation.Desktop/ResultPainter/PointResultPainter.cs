@@ -1,5 +1,4 @@
-﻿using DigitalImageCorrelation.Core;
-using DigitalImageCorrelation.Desktop.Requests;
+﻿using DigitalImageCorrelation.Desktop.Requests;
 using System.Drawing;
 
 namespace DigitalImageCorrelation.Desktop.ResultPainter
@@ -8,11 +7,12 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
     {
         private readonly Pen _rectanglePen = new Pen(Color.FromArgb(200, 0, 0, 255), 1);
         private readonly Pen _elipsePen = new Pen(Color.FromArgb(200, 255, 0, 0), 1);
-        public Bitmap Paint(Bitmap bitmap, AnalyzeResult result, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
-            if (result != null)
+            if (request.AnalyzeResults != null && request.AnalyzeResults.ContainsKey(request.Image.Index))
             {
-                Graphics g = Graphics.FromImage(bitmap);
+                var result = request.AnalyzeResults[request.Image.Index];
+                var g = Graphics.FromImage(bitmap);
                 foreach (var point in result.Points)
                 {
                     g.DrawRectangle(_rectanglePen, new Rectangle(point.X - request.SubsetDelta, point.Y - request.SubsetDelta, request.SubsetDelta * 2, request.SubsetDelta * 2));

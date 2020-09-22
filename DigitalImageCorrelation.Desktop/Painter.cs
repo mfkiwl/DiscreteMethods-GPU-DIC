@@ -28,14 +28,13 @@ namespace DigitalImageCorrelation.Desktop
             return request.Image.BmpRaw;
         }
 
-
         public Bitmap DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
                 _resultPainter = ChooseResultPainter(request.Type);
                 var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
-                _resultPainter.Paint(bmp, request.Image.analyzeResult, request);
+                _resultPainter.Paint(bmp, request);
                 DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 bmp = ScaleBitmap(bmp, Position.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);

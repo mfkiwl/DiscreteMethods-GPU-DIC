@@ -1,13 +1,12 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace DigitalImageCorrelation.Core
 {
     public class Worker
     {
-        public delegate void ProgressUpdate(int value);
+        public delegate void ProgressUpdate(object sender, ProgressChangedEventArgs e);
         public event ProgressUpdate OnProgressUpdate;
 
         public delegate void TaskDone(RunWorkerCompletedEventArgs e);
@@ -45,7 +44,7 @@ namespace DigitalImageCorrelation.Core
         }
         public void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            OnProgressUpdate(e.ProgressPercentage);
+            OnProgressUpdate(sender, e);
         }
 
         public void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

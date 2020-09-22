@@ -16,6 +16,7 @@ namespace DigitalImageCorrelation.Desktop
     {
         public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
         public ImageContainer CurrentImageContainer;
+        public Dictionary<int, AnalyzeResult> results = new Dictionary<int, AnalyzeResult>();
         public Painter painter;
         private readonly Worker processor = new Worker();
         private double GetZoom()
@@ -106,7 +107,10 @@ namespace DigitalImageCorrelation.Desktop
         {
             try
             {
-                CurrentImageContainer?.MouseDown(e.Location);
+                if (analyzeButton.Enabled)
+                {
+                    CurrentImageContainer?.MouseDown(e.Location);
+                }
             }
             catch (Exception) { }
         }
@@ -140,6 +144,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new DrawRequest()
             {
+                AnalyzeResults = results,
                 Image = CurrentImageContainer,
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
@@ -173,11 +178,12 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new AnalyzeRequest()
             {
-                imageContainers = imageContainers,
+                Arrays = imageContainers.ToDictionary(x => x.Key, x => x.Value.GrayScaleImage),
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 PointsinX = int.Parse(pointsXTextbox.Text),
-                PointsinY = int.Parse(pointsYTextbox.Text)
+                PointsinY = int.Parse(pointsYTextbox.Text),
+                StartingPoints = imageContainers.First().Value.pos.CalculateStartingPoints(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
             };
         }
 
@@ -218,7 +224,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 Bitmap bitmap = new Bitmap(fileName);
                 var image = new ImageContainer(bitmap, Path.GetFileName(fileName), (int)index);
-                imageContainers.Add((int)index, image);
+                imageContainers[(int)index] = image;
                 worker.ReportProgress((int)index);
             });
             e.Result = imageContainers;
@@ -268,10 +274,19 @@ namespace DigitalImageCorrelation.Desktop
             processor.RunWorker(CreateAnalyseRequest());
         }
 
-        private void OnImageProcessor_ProgressChanged(int progres)
+        private void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progresLabel.Text = progres.ToString() + "/" + imageContainers.Count;
-            progressBar.Value = progres;
+            if (e.UserState is AnalyzeResult)
+            {
+                var result = e.UserState as AnalyzeResult;
+                results[result.Index] = result;
+                if (result.Index == CurrentImageContainer.Index)
+                {
+                    SetImage(CurrentImageContainer);
+                }
+            }
+            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + imageContainers.Count;
+            progressBar.Value = e.ProgressPercentage;
         }
 
         private void OnImageProcessor_RunWorkerCompleted(RunWorkerCompletedEventArgs e)
@@ -289,7 +304,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             else
             {
-                //imageContainers = e.Result as Dictionary<int, AnalyzeResult>;
+                SetImage(CurrentImageContainer);
                 progresLabel.Text = "Done!";
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;

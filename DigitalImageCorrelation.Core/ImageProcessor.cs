@@ -1,5 +1,6 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -18,26 +19,37 @@ namespace DigitalImageCorrelation.Core
 
         public void Analyze(DoWorkEventArgs e)
         {
-            var containers = _request.imageContainers.Values.OrderBy(x => x.Index).ToArray();
-            var previousContainer = containers.First();
-            previousContainer.analyzeResult = new AnalyzeResult();
-            AnalyzeResult.StartingPoints = previousContainer.pos.CalculateStartingPoints(_request.PointsinX, _request.PointsinY);
-            previousContainer.analyzeResult.Points = previousContainer.pos.CalculateStartingPoints(_request.PointsinX, _request.PointsinY);
-            foreach (var (item, index) in containers.WithIndex())
+            List<AnalyzeResult> results = new List<AnalyzeResult>();
+            var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+            AnalyzeResult analyzeResult;
+            foreach (KeyValuePair<int, byte[,]> entry in orderedDictionary)
             {
-                if (index == 0)
+                if (entry.Key == 0)
                 {
-                    continue;
+                    analyzeResult = new AnalyzeResult
+                    {
+                        Index = entry.Key,
+                        Points = _request.StartingPoints,
+                        StartingPoints = _request.StartingPoints.ToList()
+
+                    };
                 }
-                item.analyzeResult = new AnalyzeResult
+                else
                 {
-                    Points = previousContainer.analyzeResult.Points.AsParallel().AsOrdered().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, previousContainer.GrayScaleImage, item.GrayScaleImage, point)).ToArray()
-                };
-                previousContainer = item;
-                backgroundWorker.ReportProgress(index + 1);
+                    var previous = results.Last();
+                    analyzeResult = new AnalyzeResult
+                    {
+                        Index = entry.Key,
+                        Points = previous.Points.AsParallel().AsOrdered().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, point)).ToArray(),
+                        StartingPoints = _request.StartingPoints.ToList()
+                    };
+                }
+                results.Add(analyzeResult);
+                backgroundWorker.ReportProgress(entry.Key, analyzeResult);
             }
-            e.Result = containers.ToDictionary(x => new { x.Index, x.analyzeResult });
+            e.Result = results;
         }
+
         private Point FindPoint(int searchDelta, int subsetDelta, byte[,] baseImage, byte[,] nextImage, Point point)
         {
             int dx = 0;
