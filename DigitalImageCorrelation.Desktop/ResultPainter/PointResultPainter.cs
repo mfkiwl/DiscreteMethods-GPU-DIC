@@ -1,6 +1,5 @@
 ﻿using DigitalImageCorrelation.Desktop.Requests;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop.ResultPainter
 {
@@ -8,7 +7,7 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
     {
         private readonly Pen _rectanglePen = new Pen(Color.FromArgb(200, 0, 0, 255), 1);
         private readonly Pen _elipsePen = new Pen(Color.FromArgb(200, 255, 0, 0), 1);
-        public async Task<Bitmap> Paint(Bitmap bitmap, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {

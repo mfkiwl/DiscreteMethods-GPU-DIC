@@ -3,13 +3,12 @@ using DigitalImageCorrelation.Desktop.Structures;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop.ResultPainter
 {
     public class InterpolateDisplacementdY : IResultPainter
     {
-        public async Task<Bitmap> Paint(Bitmap bitmap, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {

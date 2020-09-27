@@ -3,7 +3,6 @@ using DigitalImageCorrelation.Desktop.Requests;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop.ResultPainter
 {
@@ -12,7 +11,7 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
         private readonly Pen _arrowPen = new Pen(Color.FromArgb(255, 0, 0, 255), 5);
 
 
-        public async Task<Bitmap> Paint(Bitmap bitmap, DrawRequest request)
+        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {

@@ -147,7 +147,6 @@ namespace DigitalImageCorrelation.Core
             image.UnlockBits(bitmapData);
             return grayScaleArray;
         }
-
     }
     enum SelectedCorner
     {

@@ -4,6 +4,7 @@ using DigitalImageCorrelation.Desktop.ResultPainter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop
@@ -14,7 +15,6 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
         private IResultPainter _resultPainter;
-
         public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
@@ -23,25 +23,40 @@ namespace DigitalImageCorrelation.Desktop
             return Math.Min(scaleX, scaleY);
         }
 
-
-        public Bitmap GetBackgroundImage(DrawRequest request)
+        public Bitmap DrawColorScale(int width, int height)
         {
-            return request.Image.BmpRaw;
+            var bmp = new Bitmap(width, height);
+            var g = Graphics.FromImage(bmp);
+            var linGrBrush = new LinearGradientBrush(new Rectangle(0, 0, (width / 4) + 2, height), Color.Blue, Color.Green, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush, new Rectangle(0, 0, (width / 4) + 2, height));
+
+            var linGrBrush2 = new LinearGradientBrush(new Rectangle(width / 4, 0, (width / 4) + 2, height), Color.Green, Color.Yellow, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush2, new Rectangle(width / 4, 0, (width / 4) + 2, height));
+
+            var linGrBrush3 = new LinearGradientBrush(new Rectangle(width / 2, 0, (width / 4) + 2, height), Color.Yellow, Color.Orange, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush3, new Rectangle(width / 2, 0, (width / 4) + 2, height));
+
+            var linGrBrush4 = new LinearGradientBrush(new Rectangle(width * 3 / 4, 0, (width / 4) + 2, height), Color.Orange, Color.Red, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush4, new Rectangle(width * 3 / 4, 0, (width / 4) + 2, height));
+            return bmp;
         }
 
         public async Task<Bitmap> DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
+                //return await Task.Run(() =>
+                //{
                 _resultPainter = ChooseResultPainter(request.Type);
                 var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
-                await _resultPainter.Paint(bmp, request);
+                _resultPainter.Paint(bmp, request);
                 DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 bmp = ScaleBitmap(bmp, Position.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
                 return bmp;
+                //});
             }
-
+            //return await Task.FromResult<Bitmap>(null);
             return null;
         }
 

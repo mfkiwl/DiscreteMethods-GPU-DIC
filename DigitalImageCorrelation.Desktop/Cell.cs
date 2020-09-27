@@ -19,10 +19,6 @@ namespace DigitalImageCorrelation.Desktop
         {
             get { return Vertices.Select(x => x.ColorDy).ToArray(); }
         }
-        public Color[] ColorsXY
-        {
-            get { return Vertices.Select(x => x.ColorXY).ToArray(); }
-        }
 
         public Color InterpolateColor(Color[] Colors)
         {

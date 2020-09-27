@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -27,8 +28,8 @@ namespace DigitalImageCorrelation.Desktop
 
         private void SetZoom(double value)
         {
-            Position.scale = value;
-            zoomTextbox.Text = value.ToString("F");
+            Position.scale = value < 2.0 ? value : 2.0;
+            zoomTextbox.Text = Position.scale.ToString("F");
         }
         private const double ZoomStep = 1.1;
         public MainForm()
@@ -39,6 +40,7 @@ namespace DigitalImageCorrelation.Desktop
             processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
             MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -100,9 +102,23 @@ namespace DigitalImageCorrelation.Desktop
             }
             CurrentImageContainer = container;
             MainPictureBox.BackgroundImage = container.BmpRaw;
-            MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+            var drawRequest = CreateDrawRequest();
+            MainPictureBox.Image = await painter.DrawImage(drawRequest);
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+            if (analyzeResult.ImageResults.Any())
+            {
+                if (drawRequest.Type == DrawingType.DisplacementX)
+                {
+                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDx}";
+                    MinValLabel.Text = $"Min: {analyzeResult.MinDx}";
+                }
+                else if (drawRequest.Type == DrawingType.DisplacementY)
+                {
+                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDy}";
+                    MinValLabel.Text = $"Min: {analyzeResult.MinDy}";
+                }
+            }
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -246,7 +262,6 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-
         private void LoadImagesBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled == true)
@@ -334,5 +349,34 @@ namespace DigitalImageCorrelation.Desktop
                 MainPictureBox.Image = await painter.DrawImage(request);
             }
         }
+
+        private async void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var x = (int)(e.Location.X / GetZoom());
+                var y = (int)(e.Location.Y / GetZoom());
+                XPosLabel.Text = $"X:{x}";
+                YPosLabel.Text = $"Y:{y}";
+                var drawingType = GetDrawingType();
+                StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+                if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                {
+                    var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
+                    if (drawingType == DrawingType.DisplacementX)
+                    {
+                        ValueLabel.Text = $"Value:{closestVertex.dX}";
+                        stringBuilder.AppendLine($"\nValue: {closestVertex.dX}");
+                    }
+                    else if (drawingType == DrawingType.DisplacementY)
+                    {
+                        ValueLabel.Text = $"Value:{closestVertex.dY}";
+                        stringBuilder.AppendLine($"\nValue: {closestVertex.dY}");
+                    }
+                }
+                PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
+            }
+        }
     }
 }
+

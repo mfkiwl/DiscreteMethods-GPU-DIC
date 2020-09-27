@@ -76,7 +76,7 @@ namespace DigitalImageCorrelation.Core
                     }
                 }
             }
-            return new Vertex(vertex.X + dx, vertex.Y + dy, dx, dy);
+            return new Vertex(vertex.X + dx, vertex.Y + dy);
         }
 
         private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex, int u, int v)
