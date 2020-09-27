@@ -13,7 +13,7 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
             {
                 var result = request.AnalyzeResults[request.Image.Index];
                 var g = Graphics.FromImage(bitmap);
-                foreach (var point in result.Points)
+                foreach (var point in result.Vertexes)
                 {
                     g.DrawRectangle(_rectanglePen, new Rectangle(point.X - request.SubsetDelta, point.Y - request.SubsetDelta, request.SubsetDelta * 2, request.SubsetDelta * 2));
                     g.DrawEllipse(_elipsePen, new Rectangle(point.X, point.Y, 1, 1));

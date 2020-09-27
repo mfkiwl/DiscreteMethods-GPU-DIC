@@ -51,6 +51,10 @@ namespace DigitalImageCorrelation.Desktop
                     return new PointResultPainter();
                 case (DrawingType.DisplacementVectors):
                     return new ArrowResultPainter();
+                case (DrawingType.StrainShear):
+                case (DrawingType.StrainX):
+                case (DrawingType.StrainY):
+                    return new ColorInterpolationPainter();
                 case (DrawingType.Image):
                 default:
                     return new EmptyResultPainter();

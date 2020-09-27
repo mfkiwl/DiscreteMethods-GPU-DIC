@@ -17,11 +17,11 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
                 var result = request.AnalyzeResults[request.Image.Index];
                 var startingPoints = result.StartingPoints.ToArray();
                 var g = Graphics.FromImage(bitmap);
-                foreach (var (endpoint, index) in result.Points.WithIndex())
+                foreach (var (endpoint, index) in result.Vertexes.WithIndex())
                 {
                     _arrowPen.StartCap = LineCap.Flat;
                     _arrowPen.EndCap = LineCap.ArrowAnchor;
-                    g.DrawLine(_arrowPen, startingPoints[index], endpoint);
+                    g.DrawLine(_arrowPen, startingPoints[index].Point, endpoint.Point);
                 }
             }
             return bitmap;

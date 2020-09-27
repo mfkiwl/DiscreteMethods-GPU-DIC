@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DigitalImageCorrelation.Desktop.Structures;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace DigitalImageCorrelation.Core
@@ -24,6 +25,18 @@ namespace DigitalImageCorrelation.Core
                 for (int j = 0; j < h; j++)
                 {
                     yield return new Point((int)((i + 1) * spaceX + left), (int)((j + 1) * spaceY + top));
+                }
+            }
+        }
+        public IEnumerable<Vertex> CalculateStartingVertexes(int w, int h)
+        {
+            var spaceX = width / (w + 1);
+            var spaceY = height / (h + 1);
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    yield return new Vertex((int)((i + 1) * spaceX + left), (int)((j + 1) * spaceY + top));
                 }
             }
         }

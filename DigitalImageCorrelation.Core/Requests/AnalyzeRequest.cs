@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using DigitalImageCorrelation.Desktop.Structures;
+using System.Collections.Generic;
 
 namespace DigitalImageCorrelation.Core.Requests
 {
@@ -7,7 +7,7 @@ namespace DigitalImageCorrelation.Core.Requests
     {
         public Dictionary<int, byte[,]> Arrays { get; set; }
 
-        public IEnumerable<Point> StartingPoints { get; set; }
+        public IEnumerable<Vertex> StartingVertexes { get; set; }
         public int PointsinX { get; set; }
         public int PointsinY { get; set; }
         public int SubsetDelta { get; set; }

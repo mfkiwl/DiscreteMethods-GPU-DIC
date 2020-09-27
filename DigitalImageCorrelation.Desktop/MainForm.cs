@@ -183,7 +183,7 @@ namespace DigitalImageCorrelation.Desktop
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
-                StartingPoints = imageContainers.First().Value.pos.CalculateStartingPoints(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
+                StartingVertexes = imageContainers.First().Value.pos.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
             };
         }
 

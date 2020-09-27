@@ -1,8 +1,8 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
+using DigitalImageCorrelation.Desktop.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 
 namespace DigitalImageCorrelation.Core
@@ -29,8 +29,8 @@ namespace DigitalImageCorrelation.Core
                     analyzeResult = new AnalyzeResult
                     {
                         Index = entry.Key,
-                        Points = _request.StartingPoints,
-                        StartingPoints = _request.StartingPoints.ToList()
+                        Vertexes = _request.StartingVertexes,
+                        StartingPoints = _request.StartingVertexes.ToList()
 
                     };
                 }
@@ -40,8 +40,8 @@ namespace DigitalImageCorrelation.Core
                     analyzeResult = new AnalyzeResult
                     {
                         Index = entry.Key,
-                        Points = previous.Points.AsParallel().AsOrdered().Select(point => FindPoint(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, point)).ToArray(),
-                        StartingPoints = _request.StartingPoints.ToList()
+                        Vertexes = previous.Vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, vertex)).ToArray(),
+                        StartingPoints = _request.StartingVertexes.ToList()
                     };
                 }
                 results.Add(analyzeResult);
@@ -50,7 +50,7 @@ namespace DigitalImageCorrelation.Core
             e.Result = results;
         }
 
-        private Point FindPoint(int searchDelta, int subsetDelta, byte[,] baseImage, byte[,] nextImage, Point point)
+        private Vertex FindVertex(int searchDelta, int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex)
         {
             int dx = 0;
             int dy = 0;
@@ -59,7 +59,7 @@ namespace DigitalImageCorrelation.Core
             {
                 for (var u = -searchDelta; u <= searchDelta; u++)
                 {
-                    var sum = FindSubsetDiff(subsetDelta, baseImage, nextImage, point, u, v);
+                    var sum = FindSubsetDiff(subsetDelta, baseImage, nextImage, vertex, u, v);
                     if (sum < diff)
                     {
                         diff = sum;
@@ -68,22 +68,20 @@ namespace DigitalImageCorrelation.Core
                     }
                 }
             }
-            return new Point(point.X + dx, point.Y + dy);
+            return new Vertex(vertex.X + dx, vertex.Y + dy);
         }
 
-        private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Point point, int u, int v)
+        private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex, int u, int v)
         {
             var sum = 0;
-            var v0 = 0;
-            var v1 = 0;
             for (var y = -subsetDelta; y <= subsetDelta; y++)
             {
                 for (var x = -subsetDelta; x <= subsetDelta; x++)
                 {
                     try
                     {
-                        v0 = baseImage[point.Y + y, point.X + x];
-                        v1 = nextImage[point.Y + y + v, point.X + x + u];
+                        int v0 = baseImage[vertex.Y + y, vertex.X + x];
+                        int v1 = nextImage[vertex.Y + y + v, vertex.X + x + u];
                         sum += (v0 - v1) * (v0 - v1);
                     }
                     catch (Exception ex)
