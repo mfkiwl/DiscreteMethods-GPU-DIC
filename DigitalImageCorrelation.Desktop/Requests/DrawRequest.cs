@@ -1,11 +1,11 @@
 ﻿using DigitalImageCorrelation.Core;
-using System.Collections.Generic;
+using DigitalImageCorrelation.Core.Structures;
 
 namespace DigitalImageCorrelation.Desktop.Requests
 {
     public class DrawRequest
     {
-        public Dictionary<int, AnalyzeResult> AnalyzeResults { get; set; }
+        public AnalyzeResult AnalyzeResults { get; set; }
         public ImageContainer Image { get; set; }
         public int PointsinX { get; set; }
         public int PointsinY { get; set; }

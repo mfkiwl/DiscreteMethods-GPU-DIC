@@ -36,7 +36,7 @@ namespace DigitalImageCorrelation.Core
             {
                 for (int j = 0; j < h; j++)
                 {
-                    yield return new Vertex((int)((i + 1) * spaceX + left), (int)((j + 1) * spaceY + top));
+                    yield return new Vertex((int)((i + 1) * spaceX + left), (int)((j + 1) * spaceY + top), 0, 0);
                 }
             }
         }

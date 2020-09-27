@@ -98,7 +98,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\DrawRequest.cs" />
-    <Compile Include="ResultPainter\ColorInterpolationPainter.cs" />
+    <Compile Include="ResultPainter\InterpolateDisplacementdY.cs" />
+    <Compile Include="ResultPainter\InterpolateDisplacementdX.cs" />
     <Compile Include="ResultPainter\ArrowResultPainter.cs" />
     <Compile Include="ResultPainter\PointResultPainter.cs" />
     <Compile Include="ResultPainter\EmptyResultPainter.cs" />

@@ -12,11 +12,12 @@ namespace DigitalImageCorrelation.Desktop.Structures
         }
         public int X;
         public int Y;
+        public int dX;
+        public int dY;
 
-        public Color Color
-        {
-            get { return Color.Red; }
-        }
+        public Color ColorDx;
+        public Color ColorDy;
+        public Color ColorXY;
 
         public Vertex(Point point)
         {
@@ -28,6 +29,15 @@ namespace DigitalImageCorrelation.Desktop.Structures
             X = x;
             Y = y;
         }
+        public Vertex(int x, int y, int dx, int dy)
+        {
+            X = x;
+            Y = y;
+            dX = dx;
+            dY = dy;
+        }
+
+
 
         public Point Point
         {

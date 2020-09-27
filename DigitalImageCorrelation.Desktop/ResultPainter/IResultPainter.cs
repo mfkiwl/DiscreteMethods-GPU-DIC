@@ -1,11 +1,11 @@
-﻿using DigitalImageCorrelation.Core;
-using DigitalImageCorrelation.Desktop.Requests;
+﻿using DigitalImageCorrelation.Desktop.Requests;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop.ResultPainter
 {
     public interface IResultPainter
     {
-        Bitmap Paint(Bitmap bitmap, DrawRequest request);
+        Task<Bitmap> Paint(Bitmap bitmap, DrawRequest request);
     }
 }

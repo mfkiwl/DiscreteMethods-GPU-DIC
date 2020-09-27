@@ -4,6 +4,7 @@ using DigitalImageCorrelation.Desktop.ResultPainter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop
 {
@@ -28,18 +29,19 @@ namespace DigitalImageCorrelation.Desktop
             return request.Image.BmpRaw;
         }
 
-        public Bitmap DrawImage(DrawRequest request)
+        public async Task<Bitmap> DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
                 _resultPainter = ChooseResultPainter(request.Type);
                 var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
-                _resultPainter.Paint(bmp, request);
+                await _resultPainter.Paint(bmp, request);
                 DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 bmp = ScaleBitmap(bmp, Position.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
                 return bmp;
             }
+
             return null;
         }
 
@@ -51,10 +53,13 @@ namespace DigitalImageCorrelation.Desktop
                     return new PointResultPainter();
                 case (DrawingType.DisplacementVectors):
                     return new ArrowResultPainter();
+                case (DrawingType.DisplacementX):
+                    return new InterpolateDisplacementdX();
+                case (DrawingType.DisplacementY):
+                    return new InterpolateDisplacementdY();
                 case (DrawingType.StrainShear):
                 case (DrawingType.StrainX):
                 case (DrawingType.StrainY):
-                    return new ColorInterpolationPainter();
                 case (DrawingType.Image):
                 default:
                     return new EmptyResultPainter();

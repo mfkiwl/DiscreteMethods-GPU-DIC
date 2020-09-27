@@ -1,9 +1,11 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
+using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+
 
 namespace DigitalImageCorrelation.Core
 {
@@ -19,34 +21,40 @@ namespace DigitalImageCorrelation.Core
 
         public void Analyze(DoWorkEventArgs e)
         {
-            List<AnalyzeResult> results = new List<AnalyzeResult>();
+            AnalyzeResult results = new AnalyzeResult()
+            {
+                StartingPoints = _request.StartingVertexes.ToArray()
+            };
             var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-            AnalyzeResult analyzeResult;
+            ImageResult analyzeResult;
             foreach (KeyValuePair<int, byte[,]> entry in orderedDictionary)
             {
                 if (entry.Key == 0)
                 {
-                    analyzeResult = new AnalyzeResult
+                    analyzeResult = new ImageResult
                     {
                         Index = entry.Key,
-                        Vertexes = _request.StartingVertexes,
-                        StartingPoints = _request.StartingVertexes.ToList()
-
+                        Vertexes = results.StartingPoints,
+                        StartingVertexes = results.StartingPoints
                     };
                 }
                 else
                 {
-                    var previous = results.Last();
-                    analyzeResult = new AnalyzeResult
+                    var previous = results.ImageResults.Last().Value;
+                    var vertexes = previous.Vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, vertex)).ToArray();
+
+                    analyzeResult = new ImageResult
                     {
                         Index = entry.Key,
-                        Vertexes = previous.Vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, vertex)).ToArray(),
-                        StartingPoints = _request.StartingVertexes.ToList()
+                        Vertexes = vertexes,
+                        StartingVertexes = _request.StartingVertexes.ToArray()
                     };
                 }
-                results.Add(analyzeResult);
+                results.ImageResults.Add(entry.Key, analyzeResult);
                 backgroundWorker.ReportProgress(entry.Key, analyzeResult);
             }
+            results.CalculateDisplacement();
+            results.CalculateLocalColors();
             e.Result = results;
         }
 
@@ -68,7 +76,7 @@ namespace DigitalImageCorrelation.Core
                     }
                 }
             }
-            return new Vertex(vertex.X + dx, vertex.Y + dy);
+            return new Vertex(vertex.X + dx, vertex.Y + dy, dx, dy);
         }
 
         private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex, int u, int v)
@@ -93,6 +101,5 @@ namespace DigitalImageCorrelation.Core
             }
             return sum;
         }
-
     }
 }
