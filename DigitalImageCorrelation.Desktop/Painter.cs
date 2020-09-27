@@ -1,8 +1,11 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Desktop.Requests;
+using DigitalImageCorrelation.Desktop.ResultPainter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Desktop
 {
@@ -11,28 +14,73 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Pen _rectanglePen = new Pen(Color.Red, 2);
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
-
-        public int CalculateDefaultScale(DrawRequest request)
+        private IResultPainter _resultPainter;
+        public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
-            var scaleX = request.PictureWidth / bmp.Width * 100.0;
-            var scaleY = request.PictureHeight / bmp.Height * 100.0;
-            return Math.Min((int)scaleX, (int)scaleY);
+            var scaleX = (request.PictureWidth / bmp.Width);
+            var scaleY = (request.PictureHeight / bmp.Height);
+            return Math.Min(scaleX, scaleY);
         }
 
+        public Bitmap DrawColorScale(int width, int height)
+        {
+            var bmp = new Bitmap(width, height);
+            var g = Graphics.FromImage(bmp);
+            var linGrBrush = new LinearGradientBrush(new Rectangle(0, 0, (width / 4) + 2, height), Color.Blue, Color.Green, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush, new Rectangle(0, 0, (width / 4) + 2, height));
 
-        public Bitmap DrawImage(DrawRequest request)
+            var linGrBrush2 = new LinearGradientBrush(new Rectangle(width / 4, 0, (width / 4) + 2, height), Color.Green, Color.Yellow, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush2, new Rectangle(width / 4, 0, (width / 4) + 2, height));
+
+            var linGrBrush3 = new LinearGradientBrush(new Rectangle(width / 2, 0, (width / 4) + 2, height), Color.Yellow, Color.Orange, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush3, new Rectangle(width / 2, 0, (width / 4) + 2, height));
+
+            var linGrBrush4 = new LinearGradientBrush(new Rectangle(width * 3 / 4, 0, (width / 4) + 2, height), Color.Orange, Color.Red, LinearGradientMode.Horizontal);
+            g.FillRectangle(linGrBrush4, new Rectangle(width * 3 / 4, 0, (width / 4) + 2, height));
+            return bmp;
+        }
+
+        public async Task<Bitmap> DrawImage(DrawRequest request)
         {
             if (request.Image != null)
             {
-                var bmp = request.Image.Bmp;
-                bmp = ScaleBitmap(bmp, request.Image.scale);
+                //return await Task.Run(() =>
+                //{
+                _resultPainter = ChooseResultPainter(request.Type);
+                var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
+                _resultPainter.Paint(bmp, request);
+                DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                bmp = ScaleBitmap(bmp, Position.scale);
                 DrawRectagle(request, bmp, request.ShowCropBox);
-                DrawPoints(bmp, request.Image.CalculatePoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                 return bmp;
+                //});
             }
+            //return await Task.FromResult<Bitmap>(null);
             return null;
         }
+
+        private IResultPainter ChooseResultPainter(DrawingType type)
+        {
+            switch (type)
+            {
+                case (DrawingType.Points):
+                    return new PointResultPainter();
+                case (DrawingType.DisplacementVectors):
+                    return new ArrowResultPainter();
+                case (DrawingType.DisplacementX):
+                    return new InterpolateDisplacementdX();
+                case (DrawingType.DisplacementY):
+                    return new InterpolateDisplacementdY();
+                case (DrawingType.StrainShear):
+                case (DrawingType.StrainX):
+                case (DrawingType.StrainY):
+                case (DrawingType.Image):
+                default:
+                    return new EmptyResultPainter();
+            }
+        }
+
         private Bitmap ScaleBitmap(Bitmap bmp, double scale)
         {
             var scaleWidth = (int)(bmp.Width * scale);
@@ -45,11 +93,11 @@ namespace DigitalImageCorrelation.Desktop
             if (ShowCropBox)
             {
                 Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.ScaledLeft, (int)r.Image.ScaledTop, (int)r.Image.ScaledWidth, (int)r.Image.ScaledHeight));
-                g.DrawEllipse(_cornerPen, (int)r.Image.ScaledLeft - Utils.DELTA, (int)r.Image.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.ScaledLeft + r.Image.ScaledWidth) - Utils.DELTA, (int)r.Image.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)r.Image.ScaledLeft - Utils.DELTA, (int)(r.Image.ScaledTop + r.Image.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.ScaledLeft + r.Image.ScaledWidth) - Utils.DELTA, (int)(r.Image.ScaledTop + r.Image.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.pos.ScaledLeft, (int)r.Image.pos.ScaledTop, (int)r.Image.pos.ScaledWidth, (int)r.Image.pos.ScaledHeight));
+                g.DrawEllipse(_cornerPen, (int)r.Image.pos.ScaledLeft - Utils.DELTA, (int)r.Image.pos.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.pos.ScaledLeft + r.Image.pos.ScaledWidth) - Utils.DELTA, (int)r.Image.pos.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)r.Image.pos.ScaledLeft - Utils.DELTA, (int)(r.Image.pos.ScaledTop + r.Image.pos.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.pos.ScaledLeft + r.Image.pos.ScaledWidth) - Utils.DELTA, (int)(r.Image.pos.ScaledTop + r.Image.pos.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
             }
             return bmp;
         }

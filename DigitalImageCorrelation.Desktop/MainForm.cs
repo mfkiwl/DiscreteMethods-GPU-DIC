@@ -1,5 +1,6 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Requests;
+using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Requests;
 using System;
 using System.Collections.Generic;
@@ -7,23 +8,39 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
-        private List<Button> _buttons = new List<Button>();
-        public List<ImageContainer> imageContainers = new List<ImageContainer>();
+        public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
         public ImageContainer CurrentImageContainer;
+        public AnalyzeResult analyzeResult = new AnalyzeResult();
         public Painter painter;
-        private readonly WorkerProcessor processor = new WorkerProcessor();
+        private readonly Worker processor = new Worker();
+        private double GetZoom()
+        {
+            return Position.scale;
+        }
+
+        private void SetZoom(double value)
+        {
+            Position.scale = value < 2.0 ? value : 2.0;
+            zoomTextbox.Text = Position.scale.ToString("F");
+        }
+        private const double ZoomStep = 1.1;
         public MainForm()
         {
             InitializeComponent();
             painter = new Painter();
             processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
             processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
+            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -32,10 +49,20 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _buttons = new List<Button>();
                     LoadImagesPanel.Controls.Clear();
                     progressBar.Minimum = 0;
                     progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
+                    for (int i = 0; i < loadImagesFileDialog.FileNames.Count(); i++)
+                    {
+                        Button imageBtn = new Button();
+                        imageBtn.Click += ChangeImage_Click;
+                        imageBtn.Location = new Point(i * 70, 0);
+                        imageBtn.AutoSize = true;
+                        imageBtn.Size = new Size(67, 13);
+                        imageBtn.TabIndex = 0;
+                        imageBtn.Text = (i + 1).ToString();
+                        LoadImagesPanel.Controls.Add(imageBtn);
+                    }
                     LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
             }
@@ -50,8 +77,7 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 Button button = sender as Button;
-                CurrentImageContainer = imageContainers[int.Parse(button.Text) - 1];
-                SetImage(CurrentImageContainer);
+                SetImage(imageContainers[int.Parse(button.Text) - 1]);
             }
             catch (Exception ex)
             {
@@ -59,63 +85,76 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private void SetImage(ImageContainer container)
+        private void DrawCurrentImage(object sender, EventArgs e)
+        {
+            try
+            {
+                SetImage(CurrentImageContainer);
+            }
+            catch (Exception) { }
+        }
+
+        private async Task SetImage(ImageContainer container)
         {
             if (container is null)
             {
                 throw new ArgumentNullException(nameof(container));
             }
-
-            CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
+            CurrentImageContainer = container;
+            MainPictureBox.BackgroundImage = container.BmpRaw;
+            var drawRequest = CreateDrawRequest();
+            MainPictureBox.Image = await painter.DrawImage(drawRequest);
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-            zoomTrackBar.Value = painter.CalculateDefaultScale(CreateDrawRequest());
+            if (analyzeResult.ImageResults.Any())
+            {
+                if (drawRequest.Type == DrawingType.DisplacementX)
+                {
+                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDx}";
+                    MinValLabel.Text = $"Min: {analyzeResult.MinDx}";
+                }
+                else if (drawRequest.Type == DrawingType.DisplacementY)
+                {
+                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDy}";
+                    MinValLabel.Text = $"Min: {analyzeResult.MinDy}";
+                }
+            }
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             try
             {
-                CurrentImageContainer?.MouseDown(e.Location);
+                if (analyzeButton.Enabled)
+                {
+                    CurrentImageContainer?.MouseDown(e.Location);
+                }
             }
             catch (Exception) { }
         }
 
-        private void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
+        private async void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             try
             {
                 CurrentImageContainer?.MouseUp(e.Location);
-                MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
-
+                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
             }
             catch (Exception) { }
         }
 
-        private void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
+        private async void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            MainPictureBox.Image = painter.DrawImage(CreateDrawRequest());
-
+            MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
         }
 
-        private void ZoomTrackBar_ValueChanged(object sender, EventArgs e)
+        private async void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
-                var request = CreateDrawRequest();
-                CurrentImageContainer.SetScaleOfImage(zoomTrackBar.Value);
-                MainPictureBox.Image = painter.DrawImage(request);
-            }
-        }
-
-        private void InitializeImageScale(object sender, EventArgs e)
-        {
-            if (CurrentImageContainer != null)
-            {
-                var request = CreateDrawRequest();
-                zoomTrackBar.Value = painter.CalculateDefaultScale(request);
-                MainPictureBox.Image = painter.DrawImage(request);
+                SetZoom(painter.CalculateDefaultScale(CreateDrawRequest()));
+                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+                MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
             }
         }
 
@@ -123,6 +162,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new DrawRequest()
             {
+                AnalyzeResults = analyzeResult,
                 Image = CurrentImageContainer,
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
@@ -130,20 +170,42 @@ namespace DigitalImageCorrelation.Desktop
                 PictureHeight = MainPictureBox.Parent.ClientSize.Height,
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
-                WindowsDelta = int.Parse(windowDeltaTextbox.Text),
-                Zoom = zoomTrackBar.Value
+                WindowDelta = int.Parse(windowDeltaTextbox.Text),
+                Type = GetDrawingType()
             };
+        }
+
+        private DrawingType GetDrawingType()
+        {
+            try
+            {
+                var checkedButton = RadioButtonsPanel.Controls.OfType<RadioButton>()
+                                          .FirstOrDefault(r => r.Checked);
+                return (DrawingType)int.Parse(checkedButton.Tag.ToString());
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+                return DrawingType.Image;
+
+            }
+
         }
 
         private AnalyzeRequest CreateAnalyseRequest()
         {
             return new AnalyzeRequest()
             {
-                Containers = imageContainers
+                Arrays = imageContainers.ToDictionary(x => x.Key, x => x.Value.GrayScaleImage),
+                SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
+                WindowDelta = int.Parse(windowDeltaTextbox.Text),
+                PointsinX = int.Parse(pointsXTextbox.Text),
+                PointsinY = int.Parse(pointsYTextbox.Text),
+                StartingVertexes = imageContainers.First().Value.pos.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
             };
         }
 
-        private void ValidateTextAndRefreshImage(object sender, EventArgs e)
+        private async void ValidateTextAndRefreshImage(object sender, EventArgs e)
         {
             try
             {
@@ -158,7 +220,7 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                MainPictureBox.Image = painter.DrawImage(request);
+                MainPictureBox.Image = await painter.DrawImage(request);
             }
         }
 
@@ -175,39 +237,28 @@ namespace DigitalImageCorrelation.Desktop
         private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            imageContainers = new List<ImageContainer>();
-            foreach (var (fileName, index) in loadImagesFileDialog.FileNames.WithIndex())
+            imageContainers = new Dictionary<int, ImageContainer>();
+            Parallel.ForEach(loadImagesFileDialog.FileNames, (fileName, state, index) =>
             {
                 Bitmap bitmap = new Bitmap(fileName);
-                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), index);
-                imageContainers.Add(image);
-                worker.ReportProgress(index);
-            }
+                var image = new ImageContainer(bitmap, Path.GetFileName(fileName), (int)index);
+                imageContainers[(int)index] = image;
+                worker.ReportProgress((int)index);
+            });
             e.Result = imageContainers;
         }
 
         private void LoadImagesBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + progressBar.Maximum.ToString();
-            progressBar.Value = e.ProgressPercentage;
-            Button imageBtn = new Button();
-            imageBtn.Click += ChangeImage_Click;
-            if (_buttons.Any())
+            if (progressBar.Value < progressBar.Maximum)
             {
-                var last = _buttons.Last();
-                imageBtn.Location = new Point(last.Location.X + 70, last.Location.Y);
+                progressBar.Value += 1;
             }
-            imageBtn.AutoSize = true;
-            imageBtn.Size = new Size(67, 13);
-            imageBtn.TabIndex = 0;
-            imageBtn.Text = (e.ProgressPercentage + 1).ToString();
-            _buttons.Add(imageBtn);
-            LoadImagesPanel.Controls.Add(imageBtn);
-
+            progresLabel.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
             if (e.ProgressPercentage == 0)
             {
-                CurrentImageContainer = imageContainers.FirstOrDefault();
-                SetImage(CurrentImageContainer);
+                CurrentImageContainer = imageContainers[0];
+                InitializeImageScale(null, null);
             }
         }
 
@@ -240,17 +291,92 @@ namespace DigitalImageCorrelation.Desktop
             processor.RunWorker(CreateAnalyseRequest());
         }
 
-        private void OnImageProcessor_ProgressChanged(int progres)
+        private async void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progresLabel.Text = progres.ToString() + "/" + imageContainers.Count;
-            progressBar.Value = progres;
+            if (e.UserState is ImageResult)
+            {
+                var result = e.UserState as ImageResult;
+                analyzeResult.ImageResults[result.Index] = result;
+                if (result.Index == CurrentImageContainer.Index)
+                {
+                    await SetImage(CurrentImageContainer);
+                }
+            }
+            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + imageContainers.Count;
+            progressBar.Value = e.ProgressPercentage;
         }
 
-        private void OnImageProcessor_RunWorkerCompleted()
+        private async void OnImageProcessor_RunWorkerCompleted(RunWorkerCompletedEventArgs e)
         {
-            progresLabel.Text = "Done!";
-            progressBar.Value = progressBar.Maximum;
-            analyzeButton.Enabled = true;
+            if (e.Cancelled == true)
+            {
+                progresLabel.Text = "Canceled!";
+                analyzeButton.Enabled = true;
+            }
+            else if (e.Error != null)
+            {
+                progresLabel.Text = "Error: " + e.Error.Message;
+                Error(e.Error);
+                analyzeButton.Enabled = true;
+            }
+            else
+            {
+                analyzeResult = e.Result as AnalyzeResult;
+                await SetImage(CurrentImageContainer);
+                progresLabel.Text = "Done!";
+                progressBar.Value = progressBar.Maximum;
+                analyzeButton.Enabled = true;
+            }
+
+        }
+
+        private async void ZoomDownButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                SetZoom(GetZoom() / ZoomStep);
+                MainPictureBox.Image = await painter.DrawImage(request);
+            }
+        }
+
+        private async void ZoomUpButton_Click(object sender, EventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var request = CreateDrawRequest();
+                SetZoom(GetZoom() * ZoomStep);
+                MainPictureBox.Image = await painter.DrawImage(request);
+            }
+        }
+
+        private async void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (CurrentImageContainer != null)
+            {
+                var x = (int)(e.Location.X / GetZoom());
+                var y = (int)(e.Location.Y / GetZoom());
+                XPosLabel.Text = $"X:{x}";
+                YPosLabel.Text = $"Y:{y}";
+                var drawingType = GetDrawingType();
+                StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+                if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                {
+                    var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
+                    if (drawingType == DrawingType.DisplacementX)
+                    {
+                        ValueLabel.Text = $"Value:{closestVertex.dX}";
+                        stringBuilder.AppendLine($"\nValue: {closestVertex.dX}");
+                    }
+                    else if (drawingType == DrawingType.DisplacementY)
+                    {
+                        ValueLabel.Text = $"Value:{closestVertex.dY}";
+                        stringBuilder.AppendLine($"\nValue: {closestVertex.dY}");
+                    }
+                }
+                PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
+            }
         }
     }
 }
+

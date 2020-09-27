@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.openImagesButton = new System.Windows.Forms.Button();
             this.sizeNumberLabel = new System.Windows.Forms.Label();
@@ -42,33 +43,49 @@
             this.analyzeButton = new System.Windows.Forms.Button();
             this.showCropBoxCheckbox = new System.Windows.Forms.CheckBox();
             this.displayModeLabel = new System.Windows.Forms.Label();
-            this.imageRadioButton = new System.Windows.Forms.RadioButton();
-            this.pointsRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementVRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementXRadioButton = new System.Windows.Forms.RadioButton();
-            this.displacementYRadiobutton = new System.Windows.Forms.RadioButton();
-            this.strainXRadioButton = new System.Windows.Forms.RadioButton();
-            this.strainYRadioButton = new System.Windows.Forms.RadioButton();
-            this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
-            this.tensionRadioButton = new System.Windows.Forms.RadioButton();
             this.MainImagePanel = new System.Windows.Forms.Panel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
             this.imageSliderPanel = new System.Windows.Forms.Panel();
             this.LoadImagesPanel = new System.Windows.Forms.Panel();
             this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.optionsPanel = new System.Windows.Forms.Panel();
+            this.ResultPanel = new System.Windows.Forms.Panel();
+            this.YPosLabel = new System.Windows.Forms.Label();
+            this.XPosLabel = new System.Windows.Forms.Label();
+            this.ValueLabel = new System.Windows.Forms.Label();
+            this.ScalePicturebox = new System.Windows.Forms.PictureBox();
+            this.MaxValLabel = new System.Windows.Forms.Label();
+            this.MinValLabel = new System.Windows.Forms.Label();
+            this.RadioButtonsPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.tensionRadioButton = new System.Windows.Forms.RadioButton();
+            this.strainYRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementYRadiobutton = new System.Windows.Forms.RadioButton();
+            this.imageRadioButton = new System.Windows.Forms.RadioButton();
+            this.pointsRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementVRadioButton = new System.Windows.Forms.RadioButton();
+            this.displacementXRadioButton = new System.Windows.Forms.RadioButton();
+            this.strainXRadioButton = new System.Windows.Forms.RadioButton();
+            this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
+            this.zoomTextbox = new System.Windows.Forms.TextBox();
+            this.zoomUpButton = new System.Windows.Forms.Button();
+            this.ZoomDownButton = new System.Windows.Forms.Button();
             this.progresLabel = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.ResetZoomButton = new System.Windows.Forms.Button();
             this.ImageNameLabel = new System.Windows.Forms.Label();
             this.zoomLabel = new System.Windows.Forms.Label();
-            this.zoomTrackBar = new System.Windows.Forms.TrackBar();
             this.LoadImagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.ColorScaleLabel = new System.Windows.Forms.Label();
+            this.PictureboxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.MainImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
             this.imageSliderPanel.SuspendLayout();
             this.optionsPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.zoomTrackBar)).BeginInit();
+            this.ResultPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ScalePicturebox)).BeginInit();
+            this.RadioButtonsPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // openImagesButton
@@ -132,7 +149,7 @@
             this.subsetDeltaTextbox.Name = "subsetDeltaTextbox";
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.subsetDeltaTextbox.TabIndex = 9;
-            this.subsetDeltaTextbox.Text = "15";
+            this.subsetDeltaTextbox.Text = "10";
             this.subsetDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // subsetDeltaLabel
@@ -150,7 +167,7 @@
             this.windowDeltaTextbox.Name = "windowDeltaTextbox";
             this.windowDeltaTextbox.Size = new System.Drawing.Size(68, 20);
             this.windowDeltaTextbox.TabIndex = 11;
-            this.windowDeltaTextbox.Text = "20";
+            this.windowDeltaTextbox.Text = "14";
             this.windowDeltaTextbox.Leave += new System.EventHandler(this.ValidateTextAndRefreshImage);
             // 
             // windowDeltaLabel
@@ -189,103 +206,11 @@
             // displayModeLabel
             // 
             this.displayModeLabel.AutoSize = true;
-            this.displayModeLabel.Location = new System.Drawing.Point(10, 311);
+            this.displayModeLabel.Location = new System.Drawing.Point(5, 287);
             this.displayModeLabel.Name = "displayModeLabel";
-            this.displayModeLabel.Size = new System.Drawing.Size(68, 13);
+            this.displayModeLabel.Size = new System.Drawing.Size(71, 13);
             this.displayModeLabel.TabIndex = 14;
-            this.displayModeLabel.Text = "DisplayMode";
-            // 
-            // imageRadioButton
-            // 
-            this.imageRadioButton.AutoSize = true;
-            this.imageRadioButton.Checked = true;
-            this.imageRadioButton.Location = new System.Drawing.Point(13, 327);
-            this.imageRadioButton.Name = "imageRadioButton";
-            this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
-            this.imageRadioButton.TabIndex = 15;
-            this.imageRadioButton.TabStop = true;
-            this.imageRadioButton.Text = "Image";
-            this.imageRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // pointsRadioButton
-            // 
-            this.pointsRadioButton.AutoSize = true;
-            this.pointsRadioButton.Location = new System.Drawing.Point(13, 350);
-            this.pointsRadioButton.Name = "pointsRadioButton";
-            this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
-            this.pointsRadioButton.TabIndex = 16;
-            this.pointsRadioButton.Text = "Points";
-            this.pointsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementVRadioButton
-            // 
-            this.displacementVRadioButton.AutoSize = true;
-            this.displacementVRadioButton.Location = new System.Drawing.Point(13, 373);
-            this.displacementVRadioButton.Name = "displacementVRadioButton";
-            this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
-            this.displacementVRadioButton.TabIndex = 17;
-            this.displacementVRadioButton.Text = "Displacement vectors";
-            this.displacementVRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementXRadioButton
-            // 
-            this.displacementXRadioButton.AutoSize = true;
-            this.displacementXRadioButton.Location = new System.Drawing.Point(13, 396);
-            this.displacementXRadioButton.Name = "displacementXRadioButton";
-            this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
-            this.displacementXRadioButton.TabIndex = 18;
-            this.displacementXRadioButton.Text = "Displacement (X)";
-            this.displacementXRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // displacementYRadiobutton
-            // 
-            this.displacementYRadiobutton.AutoSize = true;
-            this.displacementYRadiobutton.Location = new System.Drawing.Point(13, 419);
-            this.displacementYRadiobutton.Name = "displacementYRadiobutton";
-            this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
-            this.displacementYRadiobutton.TabIndex = 19;
-            this.displacementYRadiobutton.Text = "Displacement (Y)";
-            this.displacementYRadiobutton.UseVisualStyleBackColor = true;
-            // 
-            // strainXRadioButton
-            // 
-            this.strainXRadioButton.AutoSize = true;
-            this.strainXRadioButton.Location = new System.Drawing.Point(13, 442);
-            this.strainXRadioButton.Name = "strainXRadioButton";
-            this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
-            this.strainXRadioButton.TabIndex = 20;
-            this.strainXRadioButton.Text = "Strain (X)";
-            this.strainXRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // strainYRadioButton
-            // 
-            this.strainYRadioButton.AutoSize = true;
-            this.strainYRadioButton.Location = new System.Drawing.Point(13, 465);
-            this.strainYRadioButton.Name = "strainYRadioButton";
-            this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
-            this.strainYRadioButton.TabIndex = 21;
-            this.strainYRadioButton.Text = "Strain (Y)";
-            this.strainYRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // strainShearRadioButton
-            // 
-            this.strainShearRadioButton.AutoSize = true;
-            this.strainShearRadioButton.Location = new System.Drawing.Point(13, 488);
-            this.strainShearRadioButton.Name = "strainShearRadioButton";
-            this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
-            this.strainShearRadioButton.TabIndex = 22;
-            this.strainShearRadioButton.Text = "Strain (Shear)";
-            this.strainShearRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // tensionRadioButton
-            // 
-            this.tensionRadioButton.AutoSize = true;
-            this.tensionRadioButton.Location = new System.Drawing.Point(13, 511);
-            this.tensionRadioButton.Name = "tensionRadioButton";
-            this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
-            this.tensionRadioButton.TabIndex = 23;
-            this.tensionRadioButton.Text = "Tension";
-            this.tensionRadioButton.UseVisualStyleBackColor = true;
+            this.displayModeLabel.Text = "DisplayMode:";
             // 
             // MainImagePanel
             // 
@@ -295,9 +220,8 @@
             this.MainImagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MainImagePanel.Location = new System.Drawing.Point(0, 53);
             this.MainImagePanel.Name = "MainImagePanel";
-            this.MainImagePanel.Size = new System.Drawing.Size(890, 714);
+            this.MainImagePanel.Size = new System.Drawing.Size(1079, 909);
             this.MainImagePanel.TabIndex = 34;
-            this.MainImagePanel.SizeChanged += new System.EventHandler(this.InitializeImageScale);
             // 
             // MainPictureBox
             // 
@@ -309,6 +233,7 @@
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);
+            this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
             this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
             // imageSliderPanel
@@ -318,7 +243,7 @@
             this.imageSliderPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.imageSliderPanel.Location = new System.Drawing.Point(0, 0);
             this.imageSliderPanel.Name = "imageSliderPanel";
-            this.imageSliderPanel.Size = new System.Drawing.Size(1108, 53);
+            this.imageSliderPanel.Size = new System.Drawing.Size(1297, 53);
             this.imageSliderPanel.TabIndex = 35;
             // 
             // LoadImagesPanel
@@ -328,7 +253,7 @@
             this.LoadImagesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LoadImagesPanel.Location = new System.Drawing.Point(0, 0);
             this.LoadImagesPanel.Name = "LoadImagesPanel";
-            this.LoadImagesPanel.Size = new System.Drawing.Size(1108, 53);
+            this.LoadImagesPanel.Size = new System.Drawing.Size(1297, 53);
             this.LoadImagesPanel.TabIndex = 0;
             // 
             // loadImagesFileDialog
@@ -339,44 +264,254 @@
             // 
             // optionsPanel
             // 
-            this.optionsPanel.Controls.Add(this.progresLabel);
-            this.optionsPanel.Controls.Add(this.progressBar);
-            this.optionsPanel.Controls.Add(this.ResetZoomButton);
-            this.optionsPanel.Controls.Add(this.ImageNameLabel);
-            this.optionsPanel.Controls.Add(this.zoomLabel);
-            this.optionsPanel.Controls.Add(this.zoomTrackBar);
-            this.optionsPanel.Controls.Add(this.openImagesButton);
-            this.optionsPanel.Controls.Add(this.sizeNumberLabel);
-            this.optionsPanel.Controls.Add(this.tensionRadioButton);
-            this.optionsPanel.Controls.Add(this.pointsXLabel);
-            this.optionsPanel.Controls.Add(this.strainShearRadioButton);
-            this.optionsPanel.Controls.Add(this.pointsXTextbox);
-            this.optionsPanel.Controls.Add(this.strainYRadioButton);
-            this.optionsPanel.Controls.Add(this.pointsYLabel);
-            this.optionsPanel.Controls.Add(this.strainXRadioButton);
-            this.optionsPanel.Controls.Add(this.pointsYTextbox);
-            this.optionsPanel.Controls.Add(this.displacementYRadiobutton);
-            this.optionsPanel.Controls.Add(this.subsetDeltaLabel);
-            this.optionsPanel.Controls.Add(this.displacementXRadioButton);
-            this.optionsPanel.Controls.Add(this.subsetDeltaTextbox);
-            this.optionsPanel.Controls.Add(this.displacementVRadioButton);
-            this.optionsPanel.Controls.Add(this.windowDeltaLabel);
-            this.optionsPanel.Controls.Add(this.pointsRadioButton);
-            this.optionsPanel.Controls.Add(this.windowDeltaTextbox);
-            this.optionsPanel.Controls.Add(this.imageRadioButton);
-            this.optionsPanel.Controls.Add(this.analyzeButton);
-            this.optionsPanel.Controls.Add(this.displayModeLabel);
-            this.optionsPanel.Controls.Add(this.showCropBoxCheckbox);
+            this.optionsPanel.Controls.Add(this.panel1);
+            this.optionsPanel.Controls.Add(this.ResultPanel);
             this.optionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.optionsPanel.Location = new System.Drawing.Point(890, 53);
+            this.optionsPanel.Location = new System.Drawing.Point(1079, 53);
             this.optionsPanel.Name = "optionsPanel";
-            this.optionsPanel.Size = new System.Drawing.Size(218, 714);
+            this.optionsPanel.Size = new System.Drawing.Size(218, 909);
             this.optionsPanel.TabIndex = 36;
+            // 
+            // ResultPanel
+            // 
+            this.ResultPanel.Controls.Add(this.ColorScaleLabel);
+            this.ResultPanel.Controls.Add(this.YPosLabel);
+            this.ResultPanel.Controls.Add(this.ScalePicturebox);
+            this.ResultPanel.Controls.Add(this.MinValLabel);
+            this.ResultPanel.Controls.Add(this.XPosLabel);
+            this.ResultPanel.Controls.Add(this.MaxValLabel);
+            this.ResultPanel.Controls.Add(this.ValueLabel);
+            this.ResultPanel.Location = new System.Drawing.Point(0, 561);
+            this.ResultPanel.Name = "ResultPanel";
+            this.ResultPanel.Size = new System.Drawing.Size(218, 93);
+            this.ResultPanel.TabIndex = 38;
+            // 
+            // YPosLabel
+            // 
+            this.YPosLabel.AutoSize = true;
+            this.YPosLabel.Location = new System.Drawing.Point(163, 11);
+            this.YPosLabel.Name = "YPosLabel";
+            this.YPosLabel.Size = new System.Drawing.Size(26, 13);
+            this.YPosLabel.TabIndex = 14;
+            this.YPosLabel.Text = "Y: 0";
+            // 
+            // XPosLabel
+            // 
+            this.XPosLabel.AutoSize = true;
+            this.XPosLabel.Location = new System.Drawing.Point(78, 11);
+            this.XPosLabel.Name = "XPosLabel";
+            this.XPosLabel.Size = new System.Drawing.Size(26, 13);
+            this.XPosLabel.TabIndex = 13;
+            this.XPosLabel.Text = "X: 0";
+            // 
+            // ValueLabel
+            // 
+            this.ValueLabel.AutoSize = true;
+            this.ValueLabel.Location = new System.Drawing.Point(5, 11);
+            this.ValueLabel.Name = "ValueLabel";
+            this.ValueLabel.Size = new System.Drawing.Size(46, 13);
+            this.ValueLabel.TabIndex = 12;
+            this.ValueLabel.Text = "Value: 0";
+            // 
+            // ScalePicturebox
+            // 
+            this.ScalePicturebox.Location = new System.Drawing.Point(0, 67);
+            this.ScalePicturebox.Name = "ScalePicturebox";
+            this.ScalePicturebox.Size = new System.Drawing.Size(218, 20);
+            this.ScalePicturebox.TabIndex = 11;
+            this.ScalePicturebox.TabStop = false;
+            // 
+            // MaxValLabel
+            // 
+            this.MaxValLabel.AutoSize = true;
+            this.MaxValLabel.Location = new System.Drawing.Point(163, 51);
+            this.MaxValLabel.Name = "MaxValLabel";
+            this.MaxValLabel.Size = new System.Drawing.Size(36, 13);
+            this.MaxValLabel.TabIndex = 10;
+            this.MaxValLabel.Text = "Max:0";
+            // 
+            // MinValLabel
+            // 
+            this.MinValLabel.AutoSize = true;
+            this.MinValLabel.Location = new System.Drawing.Point(4, 51);
+            this.MinValLabel.Name = "MinValLabel";
+            this.MinValLabel.Size = new System.Drawing.Size(33, 13);
+            this.MinValLabel.TabIndex = 9;
+            this.MinValLabel.Text = "Min:0";
+            // 
+            // RadioButtonsPanel
+            // 
+            this.RadioButtonsPanel.AutoSize = true;
+            this.RadioButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.RadioButtonsPanel.ColumnCount = 1;
+            this.RadioButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.RadioButtonsPanel.Controls.Add(this.tensionRadioButton, 0, 8);
+            this.RadioButtonsPanel.Controls.Add(this.strainYRadioButton, 0, 6);
+            this.RadioButtonsPanel.Controls.Add(this.displacementYRadiobutton, 0, 4);
+            this.RadioButtonsPanel.Controls.Add(this.imageRadioButton, 0, 0);
+            this.RadioButtonsPanel.Controls.Add(this.pointsRadioButton, 0, 1);
+            this.RadioButtonsPanel.Controls.Add(this.displacementVRadioButton, 0, 2);
+            this.RadioButtonsPanel.Controls.Add(this.displacementXRadioButton, 0, 3);
+            this.RadioButtonsPanel.Controls.Add(this.strainXRadioButton, 0, 5);
+            this.RadioButtonsPanel.Controls.Add(this.strainShearRadioButton, 0, 7);
+            this.RadioButtonsPanel.Location = new System.Drawing.Point(6, 303);
+            this.RadioButtonsPanel.Name = "RadioButtonsPanel";
+            this.RadioButtonsPanel.RowCount = 9;
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.RadioButtonsPanel.Size = new System.Drawing.Size(133, 207);
+            this.RadioButtonsPanel.TabIndex = 37;
+            // 
+            // tensionRadioButton
+            // 
+            this.tensionRadioButton.AutoSize = true;
+            this.tensionRadioButton.Location = new System.Drawing.Point(3, 187);
+            this.tensionRadioButton.Name = "tensionRadioButton";
+            this.tensionRadioButton.Size = new System.Drawing.Size(63, 17);
+            this.tensionRadioButton.TabIndex = 25;
+            this.tensionRadioButton.Tag = "8";
+            this.tensionRadioButton.Text = "Tension";
+            this.tensionRadioButton.UseVisualStyleBackColor = true;
+            this.tensionRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainYRadioButton
+            // 
+            this.strainYRadioButton.AutoSize = true;
+            this.strainYRadioButton.Location = new System.Drawing.Point(3, 141);
+            this.strainYRadioButton.Name = "strainYRadioButton";
+            this.strainYRadioButton.Size = new System.Drawing.Size(68, 17);
+            this.strainYRadioButton.TabIndex = 23;
+            this.strainYRadioButton.Tag = "6";
+            this.strainYRadioButton.Text = "Strain (Y)";
+            this.strainYRadioButton.UseVisualStyleBackColor = true;
+            this.strainYRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementYRadiobutton
+            // 
+            this.displacementYRadiobutton.AutoSize = true;
+            this.displacementYRadiobutton.Location = new System.Drawing.Point(3, 95);
+            this.displacementYRadiobutton.Name = "displacementYRadiobutton";
+            this.displacementYRadiobutton.Size = new System.Drawing.Size(105, 17);
+            this.displacementYRadiobutton.TabIndex = 21;
+            this.displacementYRadiobutton.Tag = "4";
+            this.displacementYRadiobutton.Text = "Displacement (Y)";
+            this.displacementYRadiobutton.UseVisualStyleBackColor = true;
+            this.displacementYRadiobutton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // imageRadioButton
+            // 
+            this.imageRadioButton.AutoSize = true;
+            this.imageRadioButton.Checked = true;
+            this.imageRadioButton.Location = new System.Drawing.Point(3, 3);
+            this.imageRadioButton.Name = "imageRadioButton";
+            this.imageRadioButton.Size = new System.Drawing.Size(54, 17);
+            this.imageRadioButton.TabIndex = 16;
+            this.imageRadioButton.TabStop = true;
+            this.imageRadioButton.Tag = "0";
+            this.imageRadioButton.Text = "Image";
+            this.imageRadioButton.UseVisualStyleBackColor = true;
+            this.imageRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // pointsRadioButton
+            // 
+            this.pointsRadioButton.AutoSize = true;
+            this.pointsRadioButton.Location = new System.Drawing.Point(3, 26);
+            this.pointsRadioButton.Name = "pointsRadioButton";
+            this.pointsRadioButton.Size = new System.Drawing.Size(54, 17);
+            this.pointsRadioButton.TabIndex = 18;
+            this.pointsRadioButton.Tag = "1";
+            this.pointsRadioButton.Text = "Points";
+            this.pointsRadioButton.UseVisualStyleBackColor = true;
+            this.pointsRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementVRadioButton
+            // 
+            this.displacementVRadioButton.AutoSize = true;
+            this.displacementVRadioButton.Location = new System.Drawing.Point(3, 49);
+            this.displacementVRadioButton.Name = "displacementVRadioButton";
+            this.displacementVRadioButton.Size = new System.Drawing.Size(127, 17);
+            this.displacementVRadioButton.TabIndex = 19;
+            this.displacementVRadioButton.Tag = "2";
+            this.displacementVRadioButton.Text = "Displacement vectors";
+            this.displacementVRadioButton.UseVisualStyleBackColor = true;
+            this.displacementVRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // displacementXRadioButton
+            // 
+            this.displacementXRadioButton.AutoSize = true;
+            this.displacementXRadioButton.Location = new System.Drawing.Point(3, 72);
+            this.displacementXRadioButton.Name = "displacementXRadioButton";
+            this.displacementXRadioButton.Size = new System.Drawing.Size(105, 17);
+            this.displacementXRadioButton.TabIndex = 20;
+            this.displacementXRadioButton.Tag = "3";
+            this.displacementXRadioButton.Text = "Displacement (X)";
+            this.displacementXRadioButton.UseVisualStyleBackColor = true;
+            this.displacementXRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainXRadioButton
+            // 
+            this.strainXRadioButton.AutoSize = true;
+            this.strainXRadioButton.Location = new System.Drawing.Point(3, 118);
+            this.strainXRadioButton.Name = "strainXRadioButton";
+            this.strainXRadioButton.Size = new System.Drawing.Size(68, 17);
+            this.strainXRadioButton.TabIndex = 22;
+            this.strainXRadioButton.Tag = "5";
+            this.strainXRadioButton.Text = "Strain (X)";
+            this.strainXRadioButton.UseVisualStyleBackColor = true;
+            this.strainXRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // strainShearRadioButton
+            // 
+            this.strainShearRadioButton.AutoSize = true;
+            this.strainShearRadioButton.Location = new System.Drawing.Point(3, 164);
+            this.strainShearRadioButton.Name = "strainShearRadioButton";
+            this.strainShearRadioButton.Size = new System.Drawing.Size(89, 17);
+            this.strainShearRadioButton.TabIndex = 24;
+            this.strainShearRadioButton.Tag = "7";
+            this.strainShearRadioButton.Text = "Strain (Shear)";
+            this.strainShearRadioButton.UseVisualStyleBackColor = true;
+            this.strainShearRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // zoomTextbox
+            // 
+            this.zoomTextbox.Enabled = false;
+            this.zoomTextbox.Location = new System.Drawing.Point(134, 255);
+            this.zoomTextbox.Name = "zoomTextbox";
+            this.zoomTextbox.Size = new System.Drawing.Size(74, 20);
+            this.zoomTextbox.TabIndex = 32;
+            // 
+            // zoomUpButton
+            // 
+            this.zoomUpButton.Location = new System.Drawing.Point(88, 253);
+            this.zoomUpButton.Name = "zoomUpButton";
+            this.zoomUpButton.Size = new System.Drawing.Size(29, 23);
+            this.zoomUpButton.TabIndex = 31;
+            this.zoomUpButton.Text = "+";
+            this.zoomUpButton.UseVisualStyleBackColor = true;
+            this.zoomUpButton.Click += new System.EventHandler(this.ZoomUpButton_Click);
+            // 
+            // ZoomDownButton
+            // 
+            this.ZoomDownButton.Location = new System.Drawing.Point(53, 253);
+            this.ZoomDownButton.Name = "ZoomDownButton";
+            this.ZoomDownButton.Size = new System.Drawing.Size(29, 23);
+            this.ZoomDownButton.TabIndex = 30;
+            this.ZoomDownButton.Text = "-";
+            this.ZoomDownButton.UseVisualStyleBackColor = true;
+            this.ZoomDownButton.Click += new System.EventHandler(this.ZoomDownButton_Click);
             // 
             // progresLabel
             // 
             this.progresLabel.AutoSize = true;
-            this.progresLabel.Location = new System.Drawing.Point(6, 539);
+            this.progresLabel.Location = new System.Drawing.Point(1, 515);
             this.progresLabel.Name = "progresLabel";
             this.progresLabel.Size = new System.Drawing.Size(51, 13);
             this.progresLabel.TabIndex = 29;
@@ -384,9 +519,9 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(7, 555);
+            this.progressBar.Location = new System.Drawing.Point(2, 531);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(203, 23);
+            this.progressBar.Size = new System.Drawing.Size(213, 23);
             this.progressBar.TabIndex = 28;
             // 
             // ResetZoomButton
@@ -397,7 +532,7 @@
             this.ResetZoomButton.TabIndex = 27;
             this.ResetZoomButton.Text = "Reset zoom";
             this.ResetZoomButton.UseVisualStyleBackColor = true;
-            this.ResetZoomButton.Click += new System.EventHandler(this.ZoomTrackBar_ValueChanged);
+            this.ResetZoomButton.Click += new System.EventHandler(this.InitializeImageScale);
             // 
             // ImageNameLabel
             // 
@@ -411,24 +546,11 @@
             // zoomLabel
             // 
             this.zoomLabel.AutoSize = true;
-            this.zoomLabel.Location = new System.Drawing.Point(9, 247);
+            this.zoomLabel.Location = new System.Drawing.Point(10, 259);
             this.zoomLabel.Name = "zoomLabel";
             this.zoomLabel.Size = new System.Drawing.Size(37, 13);
             this.zoomLabel.TabIndex = 25;
             this.zoomLabel.Text = "Zoom:";
-            // 
-            // zoomTrackBar
-            // 
-            this.zoomTrackBar.LargeChange = 20;
-            this.zoomTrackBar.Location = new System.Drawing.Point(7, 263);
-            this.zoomTrackBar.Maximum = 250;
-            this.zoomTrackBar.Minimum = 10;
-            this.zoomTrackBar.Name = "zoomTrackBar";
-            this.zoomTrackBar.Size = new System.Drawing.Size(199, 45);
-            this.zoomTrackBar.SmallChange = 2;
-            this.zoomTrackBar.TabIndex = 24;
-            this.zoomTrackBar.Value = 100;
-            this.zoomTrackBar.ValueChanged += new System.EventHandler(this.ZoomTrackBar_ValueChanged);
             // 
             // LoadImagesBackgroundWorker
             // 
@@ -437,11 +559,56 @@
             this.LoadImagesBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.LoadImagesBackgroundWorker_ProgressChanged);
             this.LoadImagesBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.LoadImagesBackgroundWorker_RunWorkerCompleted);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.zoomUpButton);
+            this.panel1.Controls.Add(this.zoomLabel);
+            this.panel1.Controls.Add(this.pointsXTextbox);
+            this.panel1.Controls.Add(this.windowDeltaTextbox);
+            this.panel1.Controls.Add(this.sizeNumberLabel);
+            this.panel1.Controls.Add(this.progresLabel);
+            this.panel1.Controls.Add(this.subsetDeltaTextbox);
+            this.panel1.Controls.Add(this.progressBar);
+            this.panel1.Controls.Add(this.openImagesButton);
+            this.panel1.Controls.Add(this.analyzeButton);
+            this.panel1.Controls.Add(this.windowDeltaLabel);
+            this.panel1.Controls.Add(this.showCropBoxCheckbox);
+            this.panel1.Controls.Add(this.pointsYTextbox);
+            this.panel1.Controls.Add(this.displayModeLabel);
+            this.panel1.Controls.Add(this.subsetDeltaLabel);
+            this.panel1.Controls.Add(this.ImageNameLabel);
+            this.panel1.Controls.Add(this.pointsYLabel);
+            this.panel1.Controls.Add(this.pointsXLabel);
+            this.panel1.Controls.Add(this.ResetZoomButton);
+            this.panel1.Controls.Add(this.zoomTextbox);
+            this.panel1.Controls.Add(this.ZoomDownButton);
+            this.panel1.Controls.Add(this.RadioButtonsPanel);
+            this.panel1.Location = new System.Drawing.Point(0, 6);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(218, 555);
+            this.panel1.TabIndex = 15;
+            // 
+            // ColorScaleLabel
+            // 
+            this.ColorScaleLabel.AutoSize = true;
+            this.ColorScaleLabel.Location = new System.Drawing.Point(5, 33);
+            this.ColorScaleLabel.Name = "ColorScaleLabel";
+            this.ColorScaleLabel.Size = new System.Drawing.Size(67, 13);
+            this.ColorScaleLabel.TabIndex = 15;
+            this.ColorScaleLabel.Text = "Color Scale: ";
+            // 
+            // PictureboxToolTip
+            // 
+            this.PictureboxToolTip.AutomaticDelay = 0;
+            this.PictureboxToolTip.ShowAlways = true;
+            this.PictureboxToolTip.UseAnimation = false;
+            this.PictureboxToolTip.UseFading = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1108, 767);
+            this.ClientSize = new System.Drawing.Size(1297, 962);
             this.Controls.Add(this.MainImagePanel);
             this.Controls.Add(this.optionsPanel);
             this.Controls.Add(this.imageSliderPanel);
@@ -454,8 +621,13 @@
             this.imageSliderPanel.ResumeLayout(false);
             this.imageSliderPanel.PerformLayout();
             this.optionsPanel.ResumeLayout(false);
-            this.optionsPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.zoomTrackBar)).EndInit();
+            this.ResultPanel.ResumeLayout(false);
+            this.ResultPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ScalePicturebox)).EndInit();
+            this.RadioButtonsPanel.ResumeLayout(false);
+            this.RadioButtonsPanel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -474,15 +646,6 @@
         private System.Windows.Forms.Button analyzeButton;
         private System.Windows.Forms.CheckBox showCropBoxCheckbox;
         private System.Windows.Forms.Label displayModeLabel;
-        private System.Windows.Forms.RadioButton imageRadioButton;
-        private System.Windows.Forms.RadioButton pointsRadioButton;
-        private System.Windows.Forms.RadioButton displacementVRadioButton;
-        private System.Windows.Forms.RadioButton displacementXRadioButton;
-        private System.Windows.Forms.RadioButton displacementYRadiobutton;
-        private System.Windows.Forms.RadioButton strainXRadioButton;
-        private System.Windows.Forms.RadioButton strainYRadioButton;
-        private System.Windows.Forms.RadioButton strainShearRadioButton;
-        private System.Windows.Forms.RadioButton tensionRadioButton;
         private System.Windows.Forms.Panel MainImagePanel;
         private System.Windows.Forms.PictureBox MainPictureBox;
         private System.Windows.Forms.Panel imageSliderPanel;
@@ -490,12 +653,34 @@
         private System.Windows.Forms.Panel optionsPanel;
         private System.Windows.Forms.Panel LoadImagesPanel;
         private System.Windows.Forms.Label zoomLabel;
-        private System.Windows.Forms.TrackBar zoomTrackBar;
         private System.Windows.Forms.Label ImageNameLabel;
         private System.Windows.Forms.Button ResetZoomButton;
         private System.Windows.Forms.Label progresLabel;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.ComponentModel.BackgroundWorker LoadImagesBackgroundWorker;
+        private System.Windows.Forms.TextBox zoomTextbox;
+        private System.Windows.Forms.Button zoomUpButton;
+        private System.Windows.Forms.Button ZoomDownButton;
+        private System.Windows.Forms.TableLayoutPanel RadioButtonsPanel;
+        private System.Windows.Forms.RadioButton tensionRadioButton;
+        private System.Windows.Forms.RadioButton strainYRadioButton;
+        private System.Windows.Forms.RadioButton displacementYRadiobutton;
+        private System.Windows.Forms.RadioButton imageRadioButton;
+        private System.Windows.Forms.RadioButton pointsRadioButton;
+        private System.Windows.Forms.RadioButton displacementVRadioButton;
+        private System.Windows.Forms.RadioButton displacementXRadioButton;
+        private System.Windows.Forms.RadioButton strainXRadioButton;
+        private System.Windows.Forms.RadioButton strainShearRadioButton;
+        private System.Windows.Forms.Panel ResultPanel;
+        private System.Windows.Forms.Label YPosLabel;
+        private System.Windows.Forms.Label XPosLabel;
+        private System.Windows.Forms.Label ValueLabel;
+        private System.Windows.Forms.PictureBox ScalePicturebox;
+        private System.Windows.Forms.Label MaxValLabel;
+        private System.Windows.Forms.Label MinValLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label ColorScaleLabel;
+        private System.Windows.Forms.ToolTip PictureboxToolTip;
     }
 }
 
