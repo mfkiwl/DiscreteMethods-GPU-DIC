@@ -15,6 +15,7 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
         private IResultPainter _resultPainter;
+        private object _painterLock = new object();
         public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
@@ -45,19 +46,21 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (request.Image != null)
             {
-                //return await Task.Run(() =>
-                //{
-                _resultPainter = ChooseResultPainter(request.Type);
-                var bmp = new Bitmap(request.Image.BmpRaw.Width, request.Image.BmpRaw.Height);
-                _resultPainter.Paint(bmp, request);
-                DrawPoints(bmp, request.Image.pos.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                bmp = ScaleBitmap(bmp, Position.scale);
-                DrawRectagle(request, bmp, request.ShowCropBox);
-                return bmp;
-                //});
+                return await Task.Run(() =>
+                {
+                    lock (_painterLock)
+                    {
+                        _resultPainter = ChooseResultPainter(request.Type);
+                        var bmp = new Bitmap(request.Image.BitmapWidth, request.Image.BitmapHeight);
+                        _resultPainter.Paint(bmp, request);
+                        DrawPoints(bmp, request.Image.square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                        bmp = ScaleBitmap(bmp, SquareLocation.Scale);
+                        DrawRectagle(request, bmp, request.ShowCropBox);
+                        return bmp;
+                    }
+                });
             }
-            //return await Task.FromResult<Bitmap>(null);
-            return null;
+            return await Task.FromResult<Bitmap>(null);
         }
 
         private IResultPainter ChooseResultPainter(DrawingType type)
@@ -93,11 +96,11 @@ namespace DigitalImageCorrelation.Desktop
             if (ShowCropBox)
             {
                 Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.pos.ScaledLeft, (int)r.Image.pos.ScaledTop, (int)r.Image.pos.ScaledWidth, (int)r.Image.pos.ScaledHeight));
-                g.DrawEllipse(_cornerPen, (int)r.Image.pos.ScaledLeft - Utils.DELTA, (int)r.Image.pos.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.pos.ScaledLeft + r.Image.pos.ScaledWidth) - Utils.DELTA, (int)r.Image.pos.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)r.Image.pos.ScaledLeft - Utils.DELTA, (int)(r.Image.pos.ScaledTop + r.Image.pos.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.pos.ScaledLeft + r.Image.pos.ScaledWidth) - Utils.DELTA, (int)(r.Image.pos.ScaledTop + r.Image.pos.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.square.ScaledLeft, (int)r.Image.square.ScaledTop, (int)r.Image.square.ScaledWidth, (int)r.Image.square.ScaledHeight));
+                g.DrawEllipse(_cornerPen, (int)r.Image.square.ScaledLeft - Utils.DELTA, (int)r.Image.square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.square.ScaledLeft + r.Image.square.ScaledWidth) - Utils.DELTA, (int)r.Image.square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)r.Image.square.ScaledLeft - Utils.DELTA, (int)(r.Image.square.ScaledTop + r.Image.square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Image.square.ScaledLeft + r.Image.square.ScaledWidth) - Utils.DELTA, (int)(r.Image.square.ScaledTop + r.Image.square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
             }
             return bmp;
         }

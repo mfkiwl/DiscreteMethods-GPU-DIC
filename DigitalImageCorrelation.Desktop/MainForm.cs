@@ -23,13 +23,13 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Worker processor = new Worker();
         private double GetZoom()
         {
-            return Position.scale;
+            return SquareLocation.Scale;
         }
 
         private void SetZoom(double value)
         {
-            Position.scale = value < 2.0 ? value : 2.0;
-            zoomTextbox.Text = Position.scale.ToString("F");
+            SquareLocation.Scale = value < 2.0 ? value : 2.0;
+            zoomTextbox.Text = SquareLocation.Scale.ToString("F");
         }
         private const double ZoomStep = 1.1;
         public MainForm()
@@ -201,7 +201,7 @@ namespace DigitalImageCorrelation.Desktop
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
-                StartingVertexes = imageContainers.First().Value.pos.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
+                StartingVertexes = imageContainers.First().Value.square.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
             };
         }
 
