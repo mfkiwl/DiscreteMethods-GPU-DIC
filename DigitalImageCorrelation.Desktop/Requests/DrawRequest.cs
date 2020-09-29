@@ -1,5 +1,6 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Structures;
+using DigitalImageCorrelation.Desktop.Drawing;
 
 namespace DigitalImageCorrelation.Desktop.Requests
 {

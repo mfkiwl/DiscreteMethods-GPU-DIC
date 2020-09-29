@@ -1,6 +1,7 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Structures;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ namespace DigitalImageCorrelation.Core
     {
         private readonly BackgroundWorker backgroundWorker;
         private AnalyzeRequest _request;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
             _request = request;
@@ -21,6 +23,7 @@ namespace DigitalImageCorrelation.Core
 
         public void Analyze(DoWorkEventArgs e)
         {
+            _logger.Info("Analyze started");
             AnalyzeResult results = new AnalyzeResult()
             {
                 StartingPoints = _request.StartingVertexes.ToArray()
@@ -52,9 +55,13 @@ namespace DigitalImageCorrelation.Core
                 }
                 results.ImageResults.Add(entry.Key, analyzeResult);
                 backgroundWorker.ReportProgress(entry.Key, analyzeResult);
+                _logger.Info("Processing {0}/{1}", entry.Key + 1, orderedDictionary.Count);
             }
+            _logger.Info("Calculate displacement");
             results.CalculateDisplacement();
+            _logger.Info("Calculate Colors");
             results.CalculateLocalColors();
+            _logger.Info("Analyze complited, returning results");
             e.Result = results;
         }
 

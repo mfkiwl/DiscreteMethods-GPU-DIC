@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DigitalImageCorrelation.Core;
+using DigitalImageCorrelation.Desktop.Drawing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using System;
 using System.Windows.Forms;
-
 namespace DigitalImageCorrelation.Desktop
 {
     static class Program
@@ -14,9 +16,26 @@ namespace DigitalImageCorrelation.Desktop
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            var host = new HostBuilder()
+                   .ConfigureServices((hostContext, services) =>
+                   {
+                       services.AddScoped<MainForm>();
+                       services.AddScoped<Worker>();
+                       services.AddSingleton<Painter>();
+                       services.AddLogging(option =>
+                       {
+                           option.SetMinimumLevel(LogLevel.Information);
+                           option.AddNLog("nlog.config");
+                       });
+                   }).Build();
+
+            using (var serviceScope = host.Services.CreateScope())
+            {
+                var services = serviceScope.ServiceProvider;
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(services.GetRequiredService<MainForm>());
+            }
         }
     }
 }

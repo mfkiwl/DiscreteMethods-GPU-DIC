@@ -1,13 +1,13 @@
 ﻿using DigitalImageCorrelation.Core;
+using DigitalImageCorrelation.Desktop.Drawing.ResultPainter;
 using DigitalImageCorrelation.Desktop.Requests;
-using DigitalImageCorrelation.Desktop.ResultPainter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
 
-namespace DigitalImageCorrelation.Desktop
+namespace DigitalImageCorrelation.Desktop.Drawing
 {
     public class Painter
     {
@@ -15,7 +15,7 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Pen _cornerPen = new Pen(Color.Yellow, 2);
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
         private IResultPainter _resultPainter;
-        private object _painterLock = new object();
+        private readonly object _painterLock = new object();
         public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
@@ -65,23 +65,14 @@ namespace DigitalImageCorrelation.Desktop
 
         private IResultPainter ChooseResultPainter(DrawingType type)
         {
-            switch (type)
+            return type switch
             {
-                case (DrawingType.Points):
-                    return new PointResultPainter();
-                case (DrawingType.DisplacementVectors):
-                    return new ArrowResultPainter();
-                case (DrawingType.DisplacementX):
-                    return new InterpolateDisplacementdX();
-                case (DrawingType.DisplacementY):
-                    return new InterpolateDisplacementdY();
-                case (DrawingType.StrainShear):
-                case (DrawingType.StrainX):
-                case (DrawingType.StrainY):
-                case (DrawingType.Image):
-                default:
-                    return new EmptyResultPainter();
-            }
+                (DrawingType.Points) => new PointResultPainter(),
+                (DrawingType.DisplacementVectors) => new ArrowResultPainter(),
+                (DrawingType.DisplacementX) => new InterpolateDisplacementdX(),
+                (DrawingType.DisplacementY) => new InterpolateDisplacementdY(),
+                _ => new EmptyResultPainter(),
+            };
         }
 
         private Bitmap ScaleBitmap(Bitmap bmp, double scale)

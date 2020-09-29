@@ -1,7 +1,9 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
+using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,10 +19,25 @@ namespace DigitalImageCorrelation.Desktop
     public partial class MainForm : Form
     {
         public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
-        public ImageContainer CurrentImageContainer;
         public AnalyzeResult analyzeResult = new AnalyzeResult();
-        public Painter painter;
-        private readonly Worker processor = new Worker();
+        public ImageContainer CurrentImageContainer;
+        private readonly Painter _painter;
+        private readonly Worker _worker;
+        private const double ZoomStep = 1.1;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
+        public MainForm(Painter painter, Worker worker)
+        {
+            InitializeComponent();
+            _worker = worker;
+            _worker.OnProgressUpdate += OnImageProcessor_ProgressChanged;
+            _worker.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
+            _painter = painter;
+            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
+        }
+
         private double GetZoom()
         {
             return SquareLocation.Scale;
@@ -30,17 +47,6 @@ namespace DigitalImageCorrelation.Desktop
         {
             SquareLocation.Scale = value < 2.0 ? value : 2.0;
             zoomTextbox.Text = SquareLocation.Scale.ToString("F");
-        }
-        private const double ZoomStep = 1.1;
-        public MainForm()
-        {
-            InitializeComponent();
-            painter = new Painter();
-            processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
-            processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
-            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -72,12 +78,12 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private void ChangeImage_Click(object sender, EventArgs e)
+        private async void ChangeImage_Click(object sender, EventArgs e)
         {
             try
             {
                 Button button = sender as Button;
-                SetImage(imageContainers[int.Parse(button.Text) - 1]);
+                await SetImage(imageContainers[int.Parse(button.Text) - 1]);
             }
             catch (Exception ex)
             {
@@ -85,11 +91,11 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private void DrawCurrentImage(object sender, EventArgs e)
+        private async void DrawCurrentImage(object sender, EventArgs e)
         {
             try
             {
-                SetImage(CurrentImageContainer);
+                await SetImage(CurrentImageContainer);
             }
             catch (Exception) { }
         }
@@ -103,7 +109,7 @@ namespace DigitalImageCorrelation.Desktop
             CurrentImageContainer = container;
             MainPictureBox.BackgroundImage = container.BmpRaw;
             var drawRequest = CreateDrawRequest();
-            MainPictureBox.Image = await painter.DrawImage(drawRequest);
+            MainPictureBox.Image = await _painter.DrawImage(drawRequest);
             ImageNameLabel.Text = CurrentImageContainer.Filename;
             sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
             if (analyzeResult.ImageResults.Any())
@@ -138,22 +144,22 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 CurrentImageContainer?.MouseUp(e.Location);
-                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
             }
             catch (Exception) { }
         }
 
         private async void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+            MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
         }
 
         private async void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
-                SetZoom(painter.CalculateDefaultScale(CreateDrawRequest()));
-                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+                SetZoom(_painter.CalculateDefaultScale(CreateDrawRequest()));
+                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
                 MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
             }
         }
@@ -220,18 +226,14 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
-        public void Error(Exception ex, string title = "exception occured")
+        public void Error(Exception ex)
         {
-            Error(ex.Message + "Stack trace: " + ex.StackTrace, title);
-        }
-
-        public void Error(string message, string title)
-        {
-            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message + " More information in logs.", "Exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _logger.Error(ex);
         }
 
         private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -276,6 +278,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             else
             {
+                _logger.Info("Loaded images");
                 progresLabel.Text = "Done!";
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
@@ -288,7 +291,7 @@ namespace DigitalImageCorrelation.Desktop
             progresLabel.Text = "0/" + imageContainers.Count;
             progressBar.Maximum = imageContainers.Count;
             progressBar.Value = 0;
-            processor.RunWorker(CreateAnalyseRequest());
+            _worker.RunWorker(CreateAnalyseRequest());
         }
 
         private async void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -327,7 +330,6 @@ namespace DigitalImageCorrelation.Desktop
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
             }
-
         }
 
         private async void ZoomDownButton_Click(object sender, EventArgs e)
@@ -336,7 +338,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 SetZoom(GetZoom() / ZoomStep);
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
@@ -346,11 +348,11 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 SetZoom(GetZoom() * ZoomStep);
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
-        private async void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (CurrentImageContainer != null)
             {

@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
-namespace DigitalImageCorrelation.Desktop.ResultPainter
+namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
-    public class InterpolateDisplacementdY : IResultPainter
+    public class InterpolateDisplacementdX : IResultPainter
     {
         public Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
@@ -19,8 +19,8 @@ namespace DigitalImageCorrelation.Desktop.ResultPainter
                 {
                     PathGradientBrush pthGrBrush = new PathGradientBrush(triangle.Points)
                     {
-                        SurroundColors = triangle.ColorsDy,
-                        CenterColor = triangle.InterpolateColor(triangle.ColorsDy)
+                        SurroundColors = triangle.ColorsDx,
+                        CenterColor = triangle.InterpolateColor(triangle.ColorsDx)
                     };
                     g.FillPolygon(pthGrBrush, triangle.Points);
                 }

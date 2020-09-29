@@ -3,7 +3,7 @@ using MIConvexHull;
 using System.Drawing;
 using System.Linq;
 
-namespace DigitalImageCorrelation.Desktop
+namespace DigitalImageCorrelation.Desktop.Drawing
 {
     public class Cell : TriangulationCell<Vertex, Cell>
     {
