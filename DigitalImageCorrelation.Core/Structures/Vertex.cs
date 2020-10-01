@@ -1,4 +1,5 @@
-﻿using MIConvexHull;
+﻿using DigitalImageCorrelation.Core.Structures;
+using MIConvexHull;
 using System.Drawing;
 
 namespace DigitalImageCorrelation.Desktop.Structures
@@ -14,6 +15,7 @@ namespace DigitalImageCorrelation.Desktop.Structures
         public int Y;
         public int dX;
         public int dY;
+        public Strain strain = new Strain();
         public Color ColorDx;
         public Color ColorDy;
 

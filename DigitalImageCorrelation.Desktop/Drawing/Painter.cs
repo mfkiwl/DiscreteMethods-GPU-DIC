@@ -71,6 +71,9 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                 (DrawingType.DisplacementVectors) => new ArrowResultPainter(),
                 (DrawingType.DisplacementX) => new InterpolateDisplacementdX(),
                 (DrawingType.DisplacementY) => new InterpolateDisplacementdY(),
+                (DrawingType.StrainX) => new InterpolateStrainXX(),
+                (DrawingType.StrainY) => new InterpolateStrainYY(),
+                (DrawingType.StrainShear) => new InterpolateStrainXY(),
                 _ => new EmptyResultPainter(),
             };
         }

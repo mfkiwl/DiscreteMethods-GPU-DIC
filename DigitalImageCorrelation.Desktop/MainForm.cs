@@ -3,9 +3,10 @@ using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
+using DigitalImageCorrelation.Desktop.Structures;
 using NLog;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -18,7 +19,7 @@ namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
-        public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
+        public ConcurrentDictionary<int, ImageContainer> imageContainers = new ConcurrentDictionary<int, ImageContainer>();
         public AnalyzeResult analyzeResult = new AnalyzeResult();
         public ImageContainer CurrentImageContainer;
         private readonly Painter _painter;
@@ -93,38 +94,35 @@ namespace DigitalImageCorrelation.Desktop
 
         private async void DrawCurrentImage(object sender, EventArgs e)
         {
-            try
-            {
-                await SetImage(CurrentImageContainer);
-            }
-            catch (Exception) { }
+            await SetImage(CurrentImageContainer);
         }
 
-        private async Task SetImage(ImageContainer container)
+        private async Task<bool> SetImage(ImageContainer container)
         {
-            if (container is null)
+            try
             {
-                throw new ArgumentNullException(nameof(container));
+                if (container is null)
+                {
+                    throw new ArgumentNullException(nameof(container));
+                }
+                CurrentImageContainer = container;
+                MainPictureBox.BackgroundImage = container.BmpRaw;
+                var drawRequest = CreateDrawRequest();
+                MainPictureBox.Image = await _painter.DrawImage(drawRequest);
+                ImageNameLabel.Text = CurrentImageContainer.Filename;
+                sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+                if (analyzeResult.ImageResults.Any())
+                {
+                    MaxValLabel.Text = $"Max: {Math.Round(GetMaxValue(drawRequest.Type), 2)}";
+                    MinValLabel.Text = $"Min: {Math.Round(GetMinValue(drawRequest.Type), 2)}";
+                }
+                return true;
             }
-            CurrentImageContainer = container;
-            MainPictureBox.BackgroundImage = container.BmpRaw;
-            var drawRequest = CreateDrawRequest();
-            MainPictureBox.Image = await _painter.DrawImage(drawRequest);
-            ImageNameLabel.Text = CurrentImageContainer.Filename;
-            sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-            if (analyzeResult.ImageResults.Any())
+            catch (Exception ex)
             {
-                if (drawRequest.Type == DrawingType.DisplacementX)
-                {
-                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDx}";
-                    MinValLabel.Text = $"Min: {analyzeResult.MinDx}";
-                }
-                else if (drawRequest.Type == DrawingType.DisplacementY)
-                {
-                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDy}";
-                    MinValLabel.Text = $"Min: {analyzeResult.MinDy}";
-                }
+                _logger.Warn(ex, "Unable to SetImage");
             }
+            return false;
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -136,7 +134,10 @@ namespace DigitalImageCorrelation.Desktop
                     CurrentImageContainer?.MouseDown(e.Location);
                 }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
         }
 
         private async void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -146,7 +147,10 @@ namespace DigitalImageCorrelation.Desktop
                 CurrentImageContainer?.MouseUp(e.Location);
                 MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
         }
 
         private async void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -193,9 +197,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 Error(ex);
                 return DrawingType.Image;
-
             }
-
         }
 
         private AnalyzeRequest CreateAnalyseRequest()
@@ -213,13 +215,8 @@ namespace DigitalImageCorrelation.Desktop
 
         private async void ValidateTextAndRefreshImage(object sender, EventArgs e)
         {
-            try
-            {
-                int val = int.Parse(pointsXTextbox.Text);
-                if (val <= 0)
-                    throw new ArgumentException();
-            }
-            catch (Exception)
+            int.TryParse(pointsXTextbox.Text, out int val);
+            if (val <= 0)
             {
                 (sender as TextBox).Text = "1";
             }
@@ -239,7 +236,7 @@ namespace DigitalImageCorrelation.Desktop
         private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            imageContainers = new Dictionary<int, ImageContainer>();
+            imageContainers = new ConcurrentDictionary<int, ImageContainer>();
             Parallel.ForEach(loadImagesFileDialog.FileNames, (fileName, state, index) =>
             {
                 Bitmap bitmap = new Bitmap(fileName);
@@ -362,22 +359,53 @@ namespace DigitalImageCorrelation.Desktop
                 YPosLabel.Text = $"Y:{y}";
                 var drawingType = GetDrawingType();
                 StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+
                 if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
                 {
                     var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
-                    if (drawingType == DrawingType.DisplacementX)
-                    {
-                        ValueLabel.Text = $"Value:{closestVertex.dX}";
-                        stringBuilder.AppendLine($"\nValue: {closestVertex.dX}");
-                    }
-                    else if (drawingType == DrawingType.DisplacementY)
-                    {
-                        ValueLabel.Text = $"Value:{closestVertex.dY}";
-                        stringBuilder.AppendLine($"\nValue: {closestVertex.dY}");
-                    }
+                    ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
+                    stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
                 }
                 PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
             }
+        }
+        private double GetValue(DrawingType type, Vertex vertex)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => vertex.dX,
+                (DrawingType.DisplacementY) => vertex.dY,
+                (DrawingType.StrainX) => vertex.strain.XX,
+                (DrawingType.StrainY) => vertex.strain.YY,
+                (DrawingType.StrainShear) => vertex.strain.XY,
+                _ => 0,
+            };
+        }
+
+        private double GetMaxValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => analyzeResult.MaxDx,
+                (DrawingType.DisplacementY) => analyzeResult.MaxDy,
+                (DrawingType.StrainX) => analyzeResult.MaxStrainXX,
+                (DrawingType.StrainY) => analyzeResult.MaxStrainYY,
+                (DrawingType.StrainShear) => analyzeResult.MaxStrainXY,
+                _ => 0,
+            };
+        }
+
+        private double GetMinValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => analyzeResult.MinDx,
+                (DrawingType.DisplacementY) => analyzeResult.MinDy,
+                (DrawingType.StrainX) => analyzeResult.MinStrainXX,
+                (DrawingType.StrainY) => analyzeResult.MinStrainYY,
+                (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
+                _ => 0,
+            };
         }
     }
 }

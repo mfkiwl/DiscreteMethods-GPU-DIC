@@ -13,6 +13,9 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
+                double maxdY = request.AnalyzeResults.MaxDy;
+                double mindY = request.AnalyzeResults.MinDy;
+                result.CalculateDisplacementColorsDY(maxdY, mindY);
                 var g = Graphics.FromImage(bitmap);
                 var trianguled = MIConvexHull.DelaunayTriangulation<Vertex, Cell>.Create(result.Vertexes.ToList(), 0.001);
                 foreach (var triangle in trianguled.Cells)

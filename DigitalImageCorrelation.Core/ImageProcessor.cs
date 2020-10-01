@@ -13,7 +13,7 @@ namespace DigitalImageCorrelation.Core
     public class ImageProcessor
     {
         private readonly BackgroundWorker backgroundWorker;
-        private AnalyzeRequest _request;
+        private readonly AnalyzeRequest _request;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
@@ -53,14 +53,17 @@ namespace DigitalImageCorrelation.Core
                         StartingVertexes = _request.StartingVertexes.ToArray()
                     };
                 }
-                results.ImageResults.Add(entry.Key, analyzeResult);
+                if (!results.ImageResults.TryAdd(entry.Key, analyzeResult))
+                {
+                    throw new Exception("Unable to add result to CocurentDictionary");
+                }
                 backgroundWorker.ReportProgress(entry.Key, analyzeResult);
                 _logger.Info("Processing {0}/{1}", entry.Key + 1, orderedDictionary.Count);
             }
             _logger.Info("Calculate displacement");
             results.CalculateDisplacement();
-            _logger.Info("Calculate Colors");
-            results.CalculateLocalColors();
+            _logger.Info("Calculate strain");
+            results.CalculateStrain(_request.PointsinX, _request.PointsinY);
             _logger.Info("Analyze complited, returning results");
             e.Result = results;
         }
