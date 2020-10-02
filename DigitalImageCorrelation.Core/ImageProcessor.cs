@@ -104,7 +104,7 @@ namespace DigitalImageCorrelation.Core
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        _logger.Warn(ex);
                         return sum;
                     }
                 }
