@@ -16,8 +16,10 @@ namespace DigitalImageCorrelation.Core
             set { BmpRaw = value; }
         }
         public Bitmap BmpRaw { get; private set; }
-        public Position pos = new Position();
+        public SquareLocation square = new SquareLocation();
         private SelectedCorner DragedCorner = SelectedCorner.None;
+        public int BitmapWidth;
+        public int BitmapHeight;
 
         public ImageContainer(Bitmap bitmap, string name, int index)
         {
@@ -26,6 +28,9 @@ namespace DigitalImageCorrelation.Core
             ReloadSizes(bitmap);
             Index = index;
             GrayScaleImage = ToGrayScale(bitmap);
+            BitmapWidth = bitmap.Width;
+            BitmapHeight = bitmap.Height;
+
         }
 
         public void MouseDown(Point point)
@@ -38,30 +43,30 @@ namespace DigitalImageCorrelation.Core
 
         private void ReloadSizes(Bitmap bmp)
         {
-            Position.width = Convert.ToInt32(bmp.Width * 0.8);
-            Position.height = Convert.ToInt32(bmp.Height * 0.8);
-            Position.left = Convert.ToInt32(bmp.Width * 0.1);
-            Position.top = Convert.ToInt32(bmp.Height * 0.1);
+            SquareLocation.Width = Convert.ToInt32(bmp.Width * 0.8);
+            SquareLocation.Height = Convert.ToInt32(bmp.Height * 0.8);
+            SquareLocation.Left = Convert.ToInt32(bmp.Width * 0.1);
+            SquareLocation.Top = Convert.ToInt32(bmp.Height * 0.1);
         }
 
         public bool IsInCorner(Point point)
         {
-            if (Math.Abs(pos.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop - point.Y) < Utils.DELTA)
+            if (Math.Abs(square.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftTop;
                 return true;
             }
-            else if (Math.Abs(pos.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop + pos.ScaledHeight - point.Y) < Utils.DELTA)
+            else if (Math.Abs(square.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop + square.ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.LeftBottom;
                 return true;
             }
-            else if (Math.Abs(pos.ScaledLeft + pos.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop - point.Y) < Utils.DELTA)
+            else if (Math.Abs(square.ScaledLeft + square.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightTop;
                 return true;
             }
-            else if (Math.Abs(pos.ScaledLeft + pos.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(pos.ScaledTop + pos.ScaledHeight - point.Y) < Utils.DELTA)
+            else if (Math.Abs(square.ScaledLeft + square.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop + square.ScaledHeight - point.Y) < Utils.DELTA)
             {
                 DragedCorner = SelectedCorner.RightBottom;
                 return true;
@@ -73,7 +78,7 @@ namespace DigitalImageCorrelation.Core
         {
             if (isMouseDown)
             {
-                var point = new Point() { X = (int)(p.X * 1.0 / Position.scale), Y = (int)(p.Y * 1.0 / Position.scale) };
+                var point = new Point() { X = (int)(p.X * 1.0 / SquareLocation.Scale), Y = (int)(p.Y * 1.0 / SquareLocation.Scale) };
                 if (point.X <= 0 || point.Y <= 0 || point.X >= BmpRaw.Width || point.Y >= BmpRaw.Height)
                 {
                     return;
@@ -82,30 +87,30 @@ namespace DigitalImageCorrelation.Core
                 var yVector = 0;
                 if (DragedCorner == SelectedCorner.LeftTop)
                 {
-                    xVector = Position.left - point.X;
-                    yVector = Position.top - point.Y;
-                    Position.left = point.X;
-                    Position.top = point.Y;
+                    xVector = SquareLocation.Left - point.X;
+                    yVector = SquareLocation.Top - point.Y;
+                    SquareLocation.Left = point.X;
+                    SquareLocation.Top = point.Y;
                 }
                 else if (DragedCorner == SelectedCorner.LeftBottom)
                 {
-                    xVector = Position.left - point.X;
-                    yVector = point.Y - Position.top - Position.height;
-                    Position.left = point.X;
+                    xVector = SquareLocation.Left - point.X;
+                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                    SquareLocation.Left = point.X;
                 }
                 else if (DragedCorner == SelectedCorner.RightTop)
                 {
-                    xVector = point.X - Position.left - Position.width;
-                    yVector = Position.top - point.Y;
-                    Position.top = point.Y;
+                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                    yVector = SquareLocation.Top - point.Y;
+                    SquareLocation.Top = point.Y;
                 }
                 else if (DragedCorner == SelectedCorner.RightBottom)
                 {
-                    xVector = point.X - Position.left - Position.width;
-                    yVector = point.Y - Position.top - Position.height;
+                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
                 }
-                Position.width += xVector;
-                Position.height += yVector;
+                SquareLocation.Width += xVector;
+                SquareLocation.Height += yVector;
                 DragedCorner = SelectedCorner.None;
                 isMouseDown = false;
             }

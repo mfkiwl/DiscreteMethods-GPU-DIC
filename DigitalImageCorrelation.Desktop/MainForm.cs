@@ -1,9 +1,12 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
+using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
+using DigitalImageCorrelation.Desktop.Structures;
+using NLog;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -16,31 +19,35 @@ namespace DigitalImageCorrelation.Desktop
 {
     public partial class MainForm : Form
     {
-        public Dictionary<int, ImageContainer> imageContainers = new Dictionary<int, ImageContainer>();
-        public ImageContainer CurrentImageContainer;
+        public ConcurrentDictionary<int, ImageContainer> imageContainers = new ConcurrentDictionary<int, ImageContainer>();
         public AnalyzeResult analyzeResult = new AnalyzeResult();
-        public Painter painter;
-        private readonly Worker processor = new Worker();
+        public ImageContainer CurrentImageContainer;
+        private readonly Painter _painter;
+        private readonly Worker _worker;
+        private const double ZoomStep = 1.1;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
+        public MainForm(Painter painter, Worker worker)
+        {
+            InitializeComponent();
+            _worker = worker;
+            _worker.OnProgressUpdate += OnImageProcessor_ProgressChanged;
+            _worker.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
+            _painter = painter;
+            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
+        }
+
         private double GetZoom()
         {
-            return Position.scale;
+            return SquareLocation.Scale;
         }
 
         private void SetZoom(double value)
         {
-            Position.scale = value < 2.0 ? value : 2.0;
-            zoomTextbox.Text = Position.scale.ToString("F");
-        }
-        private const double ZoomStep = 1.1;
-        public MainForm()
-        {
-            InitializeComponent();
-            painter = new Painter();
-            processor.OnProgressUpdate += OnImageProcessor_ProgressChanged;
-            processor.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
-            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
+            SquareLocation.Scale = value < 2.0 ? value : 2.0;
+            zoomTextbox.Text = SquareLocation.Scale.ToString("F");
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -72,12 +79,12 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private void ChangeImage_Click(object sender, EventArgs e)
+        private async void ChangeImage_Click(object sender, EventArgs e)
         {
             try
             {
                 Button button = sender as Button;
-                SetImage(imageContainers[int.Parse(button.Text) - 1]);
+                await SetImage(imageContainers[int.Parse(button.Text) - 1]);
             }
             catch (Exception ex)
             {
@@ -85,40 +92,37 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private void DrawCurrentImage(object sender, EventArgs e)
+        private async void DrawCurrentImage(object sender, EventArgs e)
+        {
+            await SetImage(CurrentImageContainer);
+        }
+
+        private async Task<bool> SetImage(ImageContainer container)
         {
             try
             {
-                SetImage(CurrentImageContainer);
-            }
-            catch (Exception) { }
-        }
-
-        private async Task SetImage(ImageContainer container)
-        {
-            if (container is null)
-            {
-                throw new ArgumentNullException(nameof(container));
-            }
-            CurrentImageContainer = container;
-            MainPictureBox.BackgroundImage = container.BmpRaw;
-            var drawRequest = CreateDrawRequest();
-            MainPictureBox.Image = await painter.DrawImage(drawRequest);
-            ImageNameLabel.Text = CurrentImageContainer.Filename;
-            sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-            if (analyzeResult.ImageResults.Any())
-            {
-                if (drawRequest.Type == DrawingType.DisplacementX)
+                if (container is null)
                 {
-                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDx}";
-                    MinValLabel.Text = $"Min: {analyzeResult.MinDx}";
+                    throw new ArgumentNullException(nameof(container));
                 }
-                else if (drawRequest.Type == DrawingType.DisplacementY)
+                CurrentImageContainer = container;
+                MainPictureBox.BackgroundImage = container.BmpRaw;
+                var drawRequest = CreateDrawRequest();
+                MainPictureBox.Image = await _painter.DrawImage(drawRequest);
+                ImageNameLabel.Text = CurrentImageContainer.Filename;
+                sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+                if (analyzeResult.ImageResults.Any())
                 {
-                    MaxValLabel.Text = $"Max: {analyzeResult.MaxDy}";
-                    MinValLabel.Text = $"Min: {analyzeResult.MinDy}";
+                    MaxValLabel.Text = $"Max: {Math.Round(GetMaxValue(drawRequest.Type), 2)}";
+                    MinValLabel.Text = $"Min: {Math.Round(GetMinValue(drawRequest.Type), 2)}";
                 }
+                return true;
             }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex, "Unable to SetImage");
+            }
+            return false;
         }
 
         private void MainPictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -130,7 +134,10 @@ namespace DigitalImageCorrelation.Desktop
                     CurrentImageContainer?.MouseDown(e.Location);
                 }
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
         }
 
         private async void MainPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -138,22 +145,25 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 CurrentImageContainer?.MouseUp(e.Location);
-                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
         }
 
         private async void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+            MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
         }
 
         private async void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
-                SetZoom(painter.CalculateDefaultScale(CreateDrawRequest()));
-                MainPictureBox.Image = await painter.DrawImage(CreateDrawRequest());
+                SetZoom(_painter.CalculateDefaultScale(CreateDrawRequest()));
+                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
                 MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
             }
         }
@@ -187,9 +197,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 Error(ex);
                 return DrawingType.Image;
-
             }
-
         }
 
         private AnalyzeRequest CreateAnalyseRequest()
@@ -201,43 +209,34 @@ namespace DigitalImageCorrelation.Desktop
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
-                StartingVertexes = imageContainers.First().Value.pos.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
+                StartingVertexes = imageContainers.First().Value.square.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text))
             };
         }
 
         private async void ValidateTextAndRefreshImage(object sender, EventArgs e)
         {
-            try
-            {
-                int val = int.Parse(pointsXTextbox.Text);
-                if (val <= 0)
-                    throw new ArgumentException();
-            }
-            catch (Exception)
+            int.TryParse(pointsXTextbox.Text, out int val);
+            if (val <= 0)
             {
                 (sender as TextBox).Text = "1";
             }
             if (CurrentImageContainer != null)
             {
                 var request = CreateDrawRequest();
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
-        public void Error(Exception ex, string title = "exception occured")
+        public void Error(Exception ex)
         {
-            Error(ex.Message + "Stack trace: " + ex.StackTrace, title);
-        }
-
-        public void Error(string message, string title)
-        {
-            MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(ex.Message + " More information in logs.", "Exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _logger.Error(ex);
         }
 
         private void LoadImagesBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            imageContainers = new Dictionary<int, ImageContainer>();
+            imageContainers = new ConcurrentDictionary<int, ImageContainer>();
             Parallel.ForEach(loadImagesFileDialog.FileNames, (fileName, state, index) =>
             {
                 Bitmap bitmap = new Bitmap(fileName);
@@ -276,6 +275,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             else
             {
+                _logger.Info("Loaded images");
                 progresLabel.Text = "Done!";
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
@@ -288,7 +288,7 @@ namespace DigitalImageCorrelation.Desktop
             progresLabel.Text = "0/" + imageContainers.Count;
             progressBar.Maximum = imageContainers.Count;
             progressBar.Value = 0;
-            processor.RunWorker(CreateAnalyseRequest());
+            _worker.RunWorker(CreateAnalyseRequest());
         }
 
         private async void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -327,7 +327,6 @@ namespace DigitalImageCorrelation.Desktop
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
             }
-
         }
 
         private async void ZoomDownButton_Click(object sender, EventArgs e)
@@ -336,7 +335,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 SetZoom(GetZoom() / ZoomStep);
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
@@ -346,11 +345,11 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var request = CreateDrawRequest();
                 SetZoom(GetZoom() * ZoomStep);
-                MainPictureBox.Image = await painter.DrawImage(request);
+                MainPictureBox.Image = await _painter.DrawImage(request);
             }
         }
 
-        private async void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
+        private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             if (CurrentImageContainer != null)
             {
@@ -360,22 +359,53 @@ namespace DigitalImageCorrelation.Desktop
                 YPosLabel.Text = $"Y:{y}";
                 var drawingType = GetDrawingType();
                 StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+
                 if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
                 {
                     var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
-                    if (drawingType == DrawingType.DisplacementX)
-                    {
-                        ValueLabel.Text = $"Value:{closestVertex.dX}";
-                        stringBuilder.AppendLine($"\nValue: {closestVertex.dX}");
-                    }
-                    else if (drawingType == DrawingType.DisplacementY)
-                    {
-                        ValueLabel.Text = $"Value:{closestVertex.dY}";
-                        stringBuilder.AppendLine($"\nValue: {closestVertex.dY}");
-                    }
+                    ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
+                    stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
                 }
                 PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
             }
+        }
+        private double GetValue(DrawingType type, Vertex vertex)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => vertex.dX,
+                (DrawingType.DisplacementY) => vertex.dY,
+                (DrawingType.StrainX) => vertex.strain.XX,
+                (DrawingType.StrainY) => vertex.strain.YY,
+                (DrawingType.StrainShear) => vertex.strain.XY,
+                _ => 0,
+            };
+        }
+
+        private double GetMaxValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => analyzeResult.MaxDx,
+                (DrawingType.DisplacementY) => analyzeResult.MaxDy,
+                (DrawingType.StrainX) => analyzeResult.MaxStrainXX,
+                (DrawingType.StrainY) => analyzeResult.MaxStrainYY,
+                (DrawingType.StrainShear) => analyzeResult.MaxStrainXY,
+                _ => 0,
+            };
+        }
+
+        private double GetMinValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => analyzeResult.MinDx,
+                (DrawingType.DisplacementY) => analyzeResult.MinDy,
+                (DrawingType.StrainX) => analyzeResult.MinStrainXX,
+                (DrawingType.StrainY) => analyzeResult.MinStrainYY,
+                (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
+                _ => 0,
+            };
         }
     }
 }

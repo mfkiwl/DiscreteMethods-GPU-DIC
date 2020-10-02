@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
-namespace DigitalImageCorrelation.Desktop.ResultPainter
+namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
     public class ArrowResultPainter : IResultPainter
     {

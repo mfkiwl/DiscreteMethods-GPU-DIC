@@ -3,7 +3,7 @@ using MIConvexHull;
 using System.Drawing;
 using System.Linq;
 
-namespace DigitalImageCorrelation.Desktop
+namespace DigitalImageCorrelation.Desktop.Drawing
 {
     public class Cell : TriangulationCell<Vertex, Cell>
     {
@@ -19,10 +19,21 @@ namespace DigitalImageCorrelation.Desktop
         {
             get { return Vertices.Select(x => x.ColorDy).ToArray(); }
         }
+        public Color[] ColorsXX
+        {
+            get { return Vertices.Select(x => x.strain.ColorXX).ToArray(); }
+        }
+        public Color[] ColorsYY
+        {
+            get { return Vertices.Select(x => x.strain.ColorYY).ToArray(); }
+        }
+        public Color[] ColorsXY
+        {
+            get { return Vertices.Select(x => x.strain.ColorXY).ToArray(); }
+        }
 
         public Color InterpolateColor(Color[] Colors)
         {
-
             var Color1 = Colors[0];
             var Color2 = Colors[1];
             var Color3 = Colors[2];

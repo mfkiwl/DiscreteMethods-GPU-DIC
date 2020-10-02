@@ -1,0 +1,44 @@
+﻿using DigitalImageCorrelation.Desktop.Structures;
+using System.Collections.Generic;
+using System.Drawing;
+
+namespace DigitalImageCorrelation.Core
+{
+    public class SquareLocation
+    {
+        public static int Left;
+        public static int Top;
+        public static int Width;
+        public static int Height;
+        public static double Scale = 1.0;
+        public double ScaledLeft { get => Left * Scale; }
+        public double ScaledTop { get => Top * Scale; }
+        public double ScaledWidth { get => Width * Scale; }
+        public double ScaledHeight { get => Height * Scale; }
+
+        public IEnumerable<Point> CalculateStartingPoints(int w, int h)
+        {
+            var spaceX = Width / (w + 1);
+            var spaceY = Height / (h + 1);
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    yield return new Point((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top));
+                }
+            }
+        }
+        public IEnumerable<Vertex> CalculateStartingVertexes(int w, int h)
+        {
+            var spaceX = Width / (w + 1);
+            var spaceY = Height / (h + 1);
+            for (int i = 0; i < w; i++)
+            {
+                for (int j = 0; j < h; j++)
+                {
+                    yield return new Vertex((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top), 0, 0);
+                }
+            }
+        }
+    }
+}

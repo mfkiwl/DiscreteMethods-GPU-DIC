@@ -1,4 +1,4 @@
-﻿namespace DigitalImageCorrelation.Desktop
+﻿namespace DigitalImageCorrelation.Desktop.Drawing
 {
     public enum DrawingType
     {

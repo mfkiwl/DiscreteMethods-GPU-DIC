@@ -1,4 +1,5 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
+using NLog;
 using System;
 using System.ComponentModel;
 
@@ -8,10 +9,11 @@ namespace DigitalImageCorrelation.Core
     {
         public delegate void ProgressUpdate(object sender, ProgressChangedEventArgs e);
         public event ProgressUpdate OnProgressUpdate;
-
         public delegate void TaskDone(RunWorkerCompletedEventArgs e);
         public event TaskDone OnTaskDone;
         private readonly BackgroundWorker BackgroundWorker;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         public Worker()
         {
             BackgroundWorker = new BackgroundWorker();
@@ -38,8 +40,7 @@ namespace DigitalImageCorrelation.Core
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                _logger.Error(ex);
             }
         }
         public void ProgressChanged(object sender, ProgressChangedEventArgs e)

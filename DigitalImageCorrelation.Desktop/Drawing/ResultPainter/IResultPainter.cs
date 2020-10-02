@@ -1,7 +1,7 @@
 ﻿using DigitalImageCorrelation.Desktop.Requests;
 using System.Drawing;
 
-namespace DigitalImageCorrelation.Desktop.ResultPainter
+namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
     public interface IResultPainter
     {
