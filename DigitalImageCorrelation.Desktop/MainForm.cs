@@ -4,6 +4,7 @@ using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
 using DigitalImageCorrelation.Desktop.Structures;
+using DigitalImageCorrelation.GpuAccelerator;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -204,6 +205,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new AnalyzeRequest()
             {
+                FindPoints = ResolveFindPoints("GPU"),
                 Arrays = imageContainers.ToDictionary(x => x.Key, x => x.Value.GrayScaleImage),
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
@@ -212,6 +214,17 @@ namespace DigitalImageCorrelation.Desktop
                 StartingVertexes = imageContainers.First().Value.square.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text)),
                 BitmpHeight = CurrentImageContainer.BitmapHeight,
                 BitmpWidth = CurrentImageContainer.BitmapWidth
+            };
+        }
+
+        private IFindPoints ResolveFindPoints(string key)
+        {
+
+            return key switch
+            {
+                ("CPU") => new FindPointCpu(),
+                ("GPU") => new FindPointGpu(),
+                _ => new FindPointCpu(),
             };
         }
 

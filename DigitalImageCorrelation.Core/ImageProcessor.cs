@@ -1,6 +1,5 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
-using DigitalImageCorrelation.Desktop.Structures;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -15,9 +14,12 @@ namespace DigitalImageCorrelation.Core
         private readonly BackgroundWorker backgroundWorker;
         private readonly AnalyzeRequest _request;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        IFindPoints _findPoints;
+
         internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
             _request = request;
+            _findPoints = request.FindPoints;
             backgroundWorker = bw;
         }
 
@@ -44,7 +46,7 @@ namespace DigitalImageCorrelation.Core
                 else
                 {
                     var previous = results.ImageResults.Last().Value;
-                    var vertexes = previous.Vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, vertex)).ToArray();
+                    var vertexes = _findPoints.FindPoint(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, previous.Vertexes, _request.BitmpWidth, _request.BitmpHeight); ;
 
                     analyzeResult = new ImageResult
                     {
@@ -66,50 +68,6 @@ namespace DigitalImageCorrelation.Core
             results.CalculateStrain(_request.PointsinX, _request.PointsinY);
             _logger.Info("Analyze complited, returning results");
             e.Result = results;
-        }
-
-        private Vertex FindVertex(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex vertex)
-        {
-            int dx = 0;
-            int dy = 0;
-            int diff = int.MaxValue;
-            for (var v = -searchDelta; v <= searchDelta; v++)
-            {
-                for (var u = -searchDelta; u <= searchDelta; u++)
-                {
-                    var sum = FindSubsetDiff(subsetDelta, baseImage, nextImage, vertex, u, v);
-                    if (sum < diff)
-                    {
-                        diff = sum;
-                        dx = u;
-                        dy = v;
-                    }
-                }
-            }
-            return new Vertex(vertex.X + dx, vertex.Y + dy);
-        }
-
-        private int FindSubsetDiff(int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex vertex, int u, int v)
-        {
-            var sum = 0;
-            for (var y = -subsetDelta; y <= subsetDelta; y++)
-            {
-                for (var x = -subsetDelta; x <= subsetDelta; x++)
-                {
-                    try
-                    {
-                        int v0 = baseImage[(vertex.X + x) * _request.BitmpHeight + vertex.Y + y];
-                        int v1 = nextImage[(vertex.X + x + u) * _request.BitmpHeight + vertex.Y + y + v];
-                        sum += (v0 - v1) * (v0 - v1);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Warn(ex);
-                        return sum;
-                    }
-                }
-            }
-            return sum;
         }
     }
 }

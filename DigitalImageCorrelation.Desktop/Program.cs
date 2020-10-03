@@ -11,6 +11,7 @@ namespace DigitalImageCorrelation.Desktop
 {
     static class Program
     {
+        public delegate IFindPoints ServiceResolver(string key);
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         /// <summary>
