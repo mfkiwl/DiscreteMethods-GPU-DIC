@@ -8,32 +8,20 @@ namespace DigitalImageCorrelation.GpuAccelerator
 {
     public class FindPointGpu : IFindPoints
     {
-        public FindPointGpu()
+        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
-            //ComputeContextPropertyList cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
-            //context = new ComputeContext(ComputeDeviceTypes.All, cpl, null, IntPtr.Zero);
-            //program = new ComputeProgram(context, new string[] { FindPointCalculationGpu });
-            //program.Build(null, null, null, IntPtr.Zero);
-            //commands = new ComputeCommandQueue(context, context.Devices[0], ComputeCommandQueueFlags.None);
-            //events = new ComputeEventList();
-            //kernel = program.CreateKernel("FindPointCalculationGpu");
-        }
-
-
-        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] vertexes, int BitmapWidth, int BitmapHeight)
-        {
-            int[] X = vertexes.Select(x => x.X).ToArray();
-            int[] Y = vertexes.Select(x => x.Y).ToArray();
-            FindPoints(baseImage, nextImage, X, Y, searchDelta, subsetDelta, BitmapHeight);
-            for (int i = 0; i < vertexes.Length; i++)
+            int[] X = previousVertexes.Select(x => x.X).ToArray();
+            int[] Y = previousVertexes.Select(x => x.Y).ToArray();
+            FindPoints(baseImage, nextImage, X, Y, searchDelta, subsetDelta, BitmapWidth, BitmapHeight, PointsinX, PointsinY);
+            Vertex[] vertexes = new Vertex[X.Length];
+            for (int i = 0; i < previousVertexes.Length; i++)
             {
-                vertexes[i].X = X[i];
-                vertexes[i].Y = Y[i];
+                vertexes[i] = new Vertex(X[i], Y[i]);
             }
             return vertexes;
         }
 
-        public void FindPoints(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int BitmapHeight)
+        public void FindPoints(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             var cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
             using var context = new ComputeContext(ComputeDeviceTypes.Default, cpl, null, IntPtr.Zero);
@@ -41,8 +29,8 @@ namespace DigitalImageCorrelation.GpuAccelerator
             program.Build(null, null, null, IntPtr.Zero);
             using var commands = new ComputeCommandQueue(context, context.Devices[0], ComputeCommandQueueFlags.None);
             using var kernel = program.CreateKernel("FindPointCalculationGpu");
-            using ComputeBuffer<byte> baseImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.UseHostPointer, baseImage);
-            using ComputeBuffer<byte> nextImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.UseHostPointer, nextImage);
+            using ComputeBuffer<byte> baseImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.CopyHostPointer, baseImage);
+            using ComputeBuffer<byte> nextImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.CopyHostPointer, nextImage);
             using ComputeBuffer<int> XBuffer = new ComputeBuffer<int>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.UseHostPointer, X);
             using ComputeBuffer<int> YBuffer = new ComputeBuffer<int>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.UseHostPointer, Y);
             kernel.SetMemoryArgument(0, baseImageBuffer);
@@ -52,9 +40,9 @@ namespace DigitalImageCorrelation.GpuAccelerator
             kernel.SetValueArgument(4, searchDelta);
             kernel.SetValueArgument(5, subsetDelta);
             kernel.SetValueArgument(6, BitmapHeight);
-            commands.Execute(kernel, null, new long[] { X.Length }, null, null);
+            kernel.SetValueArgument(7, PointsinX);
+            commands.Execute(kernel, null, new long[] { PointsinX, PointsinY }, null, null);
             commands.Finish();
-            context.Dispose();
         }
 
         static string FindPointCalculationGpu
@@ -62,12 +50,12 @@ namespace DigitalImageCorrelation.GpuAccelerator
             get
             {
                 return @"
-            kernel void FindPointCalculationGpu(global char* baseImage, global char* nextImage, global int* X, global int* Y, int searchDelta,int subsetDelta, int BitmapHeight) 
+            kernel void FindPointCalculationGpu(global char* baseImage, global char* nextImage, global int* X, global int* Y, int searchDelta, int subsetDelta, int BitmapHeight, int PointsinX) 
             {
-                int id = get_global_id(0);
                 int dx = 0;
                 int dy = 0;
                 int diff = 2147483647;
+                int pos = get_global_id(0) * PointsinX + get_global_id(1);
                 for (int v = -searchDelta; v <= searchDelta; v++)
                 {
                     for (int u = -searchDelta; u <= searchDelta; u++)
@@ -77,8 +65,8 @@ namespace DigitalImageCorrelation.GpuAccelerator
                         {
                             for (int x = -subsetDelta; x <= subsetDelta; x++)
                             {
-                                int v0 = (int)baseImage[(X[id] + x) * BitmapHeight + Y[id] + y];
-                                int v1 = (int)nextImage[(X[id] + x + u) * BitmapHeight + Y[id] + y + v];
+                                int v0 = (int)baseImage[(X[pos] + x) * BitmapHeight + Y[pos] + y];
+                                int v1 = (int)nextImage[(X[pos] + x + u) * BitmapHeight + Y[pos] + y + v];
                                 sum += (v0 - v1) * (v0 - v1);
                             }
                         }
@@ -90,8 +78,8 @@ namespace DigitalImageCorrelation.GpuAccelerator
                         }
                     }
                 }
-                X[id] += dx;
-                Y[id] += dy;
+                X[pos] += dx;
+                Y[pos] += dy;
             }";
             }
         }

@@ -46,7 +46,15 @@ namespace DigitalImageCorrelation.Core
                 else
                 {
                     var previous = results.ImageResults.Last().Value;
-                    var vertexes = _findPoints.FindPoint(_request.WindowDelta, _request.SubsetDelta, orderedDictionary[entry.Key - 1], entry.Value, previous.Vertexes, _request.BitmpWidth, _request.BitmpHeight); ;
+                    var vertexes = _findPoints.FindPoint(_request.WindowDelta,
+                                    _request.SubsetDelta,
+                                    orderedDictionary[entry.Key - 1],
+                                    entry.Value,
+                                    previous.Vertexes,
+                                    _request.BitmpWidth,
+                                    _request.BitmpHeight,
+                                    _request.PointsinX,
+                                    _request.PointsinY);
 
                     analyzeResult = new ImageResult
                     {

@@ -7,7 +7,7 @@ namespace DigitalImageCorrelation.GpuAccelerator
     public class FindPointCpu : IFindPoints
     {
 
-        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] vertexes, int BitmapWidth, int BitmapHeight)
+        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] vertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             return vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(searchDelta, subsetDelta, baseImage, nextImage, vertex, BitmapHeight)).ToArray();
         }
