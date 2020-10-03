@@ -5,6 +5,7 @@ using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
 using DigitalImageCorrelation.Desktop.Structures;
 using DigitalImageCorrelation.GpuAccelerator;
+using DigitalImageCorrelation.Requests;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -57,7 +58,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    LoadImagesPanel.Controls.Clear();
+                    SetImageButtonsPanel.Controls.Clear();
                     progressBar.Minimum = 0;
                     progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
                     for (int i = 0; i < loadImagesFileDialog.FileNames.Count(); i++)
@@ -69,7 +70,7 @@ namespace DigitalImageCorrelation.Desktop
                         imageBtn.Size = new Size(67, 13);
                         imageBtn.TabIndex = 0;
                         imageBtn.Text = (i + 1).ToString();
-                        LoadImagesPanel.Controls.Add(imageBtn);
+                        SetImageButtonsPanel.Controls.Add(imageBtn);
                     }
                     LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
@@ -104,7 +105,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (container is null)
                 {
-                    throw new ArgumentNullException(nameof(container));
+                    return false;
                 }
                 CurrentImageContainer = container;
                 MainPictureBox.BackgroundImage = container.BmpRaw;
@@ -205,7 +206,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             return new AnalyzeRequest()
             {
-                FindPoints = ResolveFindPoints("GPU"),
+                FindPoints = ResolveFindPoints(),
                 Arrays = imageContainers.ToDictionary(x => x.Key, x => x.Value.GrayScaleImage),
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
@@ -217,13 +218,23 @@ namespace DigitalImageCorrelation.Desktop
             };
         }
 
-        private IFindPoints ResolveFindPoints(string key)
+        private IFindPoints ResolveFindPoints()
         {
-
-            return key switch
+            var type = CalculationType.Cpu;
+            try
             {
-                ("CPU") => new FindPointCpu(),
-                ("GPU") => new FindPointGpu(),
+                var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+                type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unable to resolve Calculation type");
+            }
+
+            return type switch
+            {
+                (CalculationType.Cpu) => new FindPointCpu(),
+                (CalculationType.Gpu) => new FindPointGpu(),
                 _ => new FindPointCpu(),
             };
         }

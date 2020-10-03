@@ -8,6 +8,19 @@ namespace DigitalImageCorrelation.GpuAccelerator
 {
     public class FindPointGpu : IFindPoints
     {
+        ComputeContextPropertyList cpl;
+        ComputeContext context;
+        ComputeProgram program;
+        ComputeKernel kernel;
+        public FindPointGpu()
+        {
+            cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
+            context = new ComputeContext(ComputeDeviceTypes.Default, cpl, null, IntPtr.Zero);
+            program = new ComputeProgram(context, new string[] { FindPointCalculationGpu });
+            program.Build(null, null, null, IntPtr.Zero);
+            kernel = program.CreateKernel("FindPointCalculationGpu");
+        }
+
         public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             int[] X = previousVertexes.Select(x => x.X).ToArray();
@@ -23,12 +36,8 @@ namespace DigitalImageCorrelation.GpuAccelerator
 
         public void FindPoints(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
-            var cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
-            using var context = new ComputeContext(ComputeDeviceTypes.Default, cpl, null, IntPtr.Zero);
-            using var program = new ComputeProgram(context, new string[] { FindPointCalculationGpu });
-            program.Build(null, null, null, IntPtr.Zero);
             using var commands = new ComputeCommandQueue(context, context.Devices[0], ComputeCommandQueueFlags.None);
-            using var kernel = program.CreateKernel("FindPointCalculationGpu");
+
             using ComputeBuffer<byte> baseImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.CopyHostPointer, baseImage);
             using ComputeBuffer<byte> nextImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.CopyHostPointer, nextImage);
             using ComputeBuffer<int> XBuffer = new ComputeBuffer<int>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.UseHostPointer, X);

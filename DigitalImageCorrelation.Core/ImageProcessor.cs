@@ -31,6 +31,7 @@ namespace DigitalImageCorrelation.Core
                 StartingPoints = _request.StartingVertexes.ToArray()
             };
             var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+            _logger.Info("using {0} processor", _findPoints.GetType().Name);
             ImageResult analyzeResult;
             foreach (KeyValuePair<int, byte[]> entry in orderedDictionary)
             {
