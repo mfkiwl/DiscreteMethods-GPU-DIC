@@ -5,15 +5,15 @@ using System.Diagnostics;
 
 namespace DigitalImageCorrelation.Tests
 {
-    public class TestMoreAdvancedExample
+    public class FindPointGpuTest
     {
-        MoreAdvancedExample gpu;
+        FindPointGpu gpu;
         Stopwatch sw;
 
         [SetUp]
         public void Setup()
         {
-            gpu = new MoreAdvancedExample();
+            gpu = new FindPointGpu();
             sw = new Stopwatch();
         }
 
@@ -28,7 +28,7 @@ namespace DigitalImageCorrelation.Tests
             int subsetDelta = 6;
             int width = 3;
             sw.Start();
-            gpu.Mycalculation(baseImage, nextImage, X, Y, searchDelta, subsetDelta, width);
+            gpu.FindPoints(baseImage, nextImage, X, Y, searchDelta, subsetDelta, width);
             sw.Stop();
             Console.WriteLine($"PrimeGPUTest: {0} - {sw.ElapsedMilliseconds} ms");
         }

@@ -3,15 +3,14 @@ using System;
 
 namespace DigitalImageCorrelation.GpuAccelerator
 {
-    public class MoreAdvancedExample
+    public class FindPointGpu
     {
-
-        ComputeContext context;
-        ComputeEventList events;
-        ComputeKernel kernel;
-        ComputeCommandQueue commands;
-        ComputeProgram program;
-        public MoreAdvancedExample()
+        readonly ComputeContext context;
+        readonly ComputeEventList events;
+        readonly ComputeKernel kernel;
+        readonly ComputeCommandQueue commands;
+        readonly ComputeProgram program;
+        public FindPointGpu()
         {
             ComputeContextPropertyList cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
             context = new ComputeContext(ComputeDeviceTypes.Gpu, cpl, null, IntPtr.Zero);
@@ -22,7 +21,7 @@ namespace DigitalImageCorrelation.GpuAccelerator
             kernel = program.CreateKernel("FindPoint");
         }
 
-        public void Mycalculation(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int width)
+        public void FindPoints(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int width)
         {
             ComputeBuffer<byte> baseImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.UseHostPointer, baseImage);
             ComputeBuffer<byte> nextImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.UseHostPointer, nextImage);

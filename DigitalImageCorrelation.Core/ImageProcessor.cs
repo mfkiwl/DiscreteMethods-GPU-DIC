@@ -30,7 +30,7 @@ namespace DigitalImageCorrelation.Core
             };
             var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             ImageResult analyzeResult;
-            foreach (KeyValuePair<int, byte[,]> entry in orderedDictionary)
+            foreach (KeyValuePair<int, byte[]> entry in orderedDictionary)
             {
                 if (entry.Key == 0)
                 {
@@ -68,7 +68,7 @@ namespace DigitalImageCorrelation.Core
             e.Result = results;
         }
 
-        private Vertex FindVertex(int searchDelta, int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex)
+        private Vertex FindVertex(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex vertex)
         {
             int dx = 0;
             int dy = 0;
@@ -89,7 +89,7 @@ namespace DigitalImageCorrelation.Core
             return new Vertex(vertex.X + dx, vertex.Y + dy);
         }
 
-        private int FindSubsetDiff(int subsetDelta, byte[,] baseImage, byte[,] nextImage, Vertex vertex, int u, int v)
+        private int FindSubsetDiff(int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex vertex, int u, int v)
         {
             var sum = 0;
             for (var y = -subsetDelta; y <= subsetDelta; y++)
@@ -98,8 +98,8 @@ namespace DigitalImageCorrelation.Core
                 {
                     try
                     {
-                        int v0 = baseImage[vertex.Y + y, vertex.X + x];
-                        int v1 = nextImage[vertex.Y + y + v, vertex.X + x + u];
+                        int v0 = baseImage[(vertex.X + x) * _request.BitmpHeight + vertex.Y + y];
+                        int v1 = nextImage[(vertex.X + x + u) * _request.BitmpHeight + vertex.Y + y + v];
                         sum += (v0 - v1) * (v0 - v1);
                     }
                     catch (Exception ex)
