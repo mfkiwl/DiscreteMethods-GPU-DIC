@@ -673,10 +673,12 @@
             // GpuRadioBtn
             // 
             this.GpuRadioBtn.AutoSize = true;
+            this.GpuRadioBtn.Checked = true;
             this.GpuRadioBtn.Location = new System.Drawing.Point(163, 125);
             this.GpuRadioBtn.Name = "GpuRadioBtn";
             this.GpuRadioBtn.Size = new System.Drawing.Size(47, 19);
             this.GpuRadioBtn.TabIndex = 27;
+            this.GpuRadioBtn.TabStop = true;
             this.GpuRadioBtn.Tag = "1";
             this.GpuRadioBtn.Text = "Gpu";
             this.GpuRadioBtn.UseVisualStyleBackColor = true;
@@ -684,12 +686,10 @@
             // CpuRadioBtn
             // 
             this.CpuRadioBtn.AutoSize = true;
-            this.CpuRadioBtn.Checked = true;
             this.CpuRadioBtn.Location = new System.Drawing.Point(12, 125);
             this.CpuRadioBtn.Name = "CpuRadioBtn";
             this.CpuRadioBtn.Size = new System.Drawing.Size(47, 19);
             this.CpuRadioBtn.TabIndex = 27;
-            this.CpuRadioBtn.TabStop = true;
             this.CpuRadioBtn.Tag = "0";
             this.CpuRadioBtn.Text = "Cpu";
             this.CpuRadioBtn.UseVisualStyleBackColor = true;
