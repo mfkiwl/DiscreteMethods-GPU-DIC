@@ -4,6 +4,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -14,7 +15,8 @@ namespace DigitalImageCorrelation.Core
         private readonly BackgroundWorker backgroundWorker;
         private readonly AnalyzeRequest _request;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        IFindPoints _findPoints;
+        private IFindPoints _findPoints;
+        private readonly Stopwatch sw = new Stopwatch();
 
         internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
@@ -25,7 +27,9 @@ namespace DigitalImageCorrelation.Core
 
         public void Analyze(DoWorkEventArgs e)
         {
+            sw.Reset();
             _logger.Info("Analyze started");
+            sw.Start();
             AnalyzeResult results = new AnalyzeResult()
             {
                 StartingPoints = _request.StartingVertexes.ToArray()
@@ -69,13 +73,14 @@ namespace DigitalImageCorrelation.Core
                     throw new Exception("Unable to add result to CocurentDictionary");
                 }
                 backgroundWorker.ReportProgress(entry.Key, analyzeResult);
-                _logger.Info("Processing {0}/{1}", entry.Key + 1, orderedDictionary.Count);
+                _logger.Debug("Processing {0}/{1}", entry.Key + 1, orderedDictionary.Count);
             }
             _logger.Info("Calculate displacement");
             results.CalculateDisplacement();
             _logger.Info("Calculate strain");
             results.CalculateStrain(_request.PointsinX, _request.PointsinY);
-            _logger.Info("Analyze complited, returning results");
+            sw.Stop();
+            _logger.Info("Analyze complited. Time: {0} ms, number of processed images: {1}, Processor: {2}", sw.ElapsedMilliseconds, results.ImageResults.Count, _findPoints.GetType().Name);
             e.Result = results;
         }
     }

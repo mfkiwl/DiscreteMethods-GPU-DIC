@@ -13,10 +13,4 @@
     <ProjectReference Include="..\DigitalImageCorrelation.Core\DigitalImageCorrelation.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="OpenCLlib">
-      <HintPath>OpenCLLib\OpenCLlib.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

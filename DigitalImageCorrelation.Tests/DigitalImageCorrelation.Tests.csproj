@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DigitalImageCorrelation.Calculation\DigitalImageCorrelation.Calculation.csproj" />
     <ProjectReference Include="..\DigitalImageCorrelation.GpuAccelerator\DigitalImageCorrelation.GpuAccelerator.csproj" />
   </ItemGroup>
 

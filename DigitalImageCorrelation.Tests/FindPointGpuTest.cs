@@ -27,8 +27,11 @@ namespace DigitalImageCorrelation.Tests
             int searchDelta = 5;
             int subsetDelta = 6;
             int width = 3;
+            int PointsinX = 3;
+            int PointsinY = 3;
+            int height = 3;
             sw.Start();
-            gpu.FindPoints(baseImage, nextImage, X, Y, searchDelta, subsetDelta, width);
+            gpu.FindPoints(baseImage, nextImage, X, Y, searchDelta, subsetDelta, width, height, PointsinX, PointsinY);
             sw.Stop();
             Console.WriteLine($"PrimeGPUTest: {0} - {sw.ElapsedMilliseconds} ms");
         }

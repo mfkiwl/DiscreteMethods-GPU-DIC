@@ -8,14 +8,14 @@ namespace DigitalImageCorrelation.GpuAccelerator
 {
     public class FindPointGpu : IFindPoints
     {
-        ComputeContextPropertyList cpl;
-        ComputeContext context;
-        ComputeProgram program;
-        ComputeKernel kernel;
+        readonly ComputeContextPropertyList cpl;
+        readonly ComputeContext context;
+        readonly ComputeProgram program;
+        readonly ComputeKernel kernel;
         public FindPointGpu()
         {
             cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
-            context = new ComputeContext(ComputeDeviceTypes.Default, cpl, null, IntPtr.Zero);
+            context = new ComputeContext(ComputeDeviceTypes.Gpu, cpl, null, IntPtr.Zero);
             program = new ComputeProgram(context, new string[] { FindPointCalculationGpu });
             program.Build(null, null, null, IntPtr.Zero);
             kernel = program.CreateKernel("FindPointCalculationGpu");
