@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DigitalImageCorrelation.Calculation\DigitalImageCorrelation.Calculation.csproj" />
     <ProjectReference Include="..\DigitalImageCorrelation.Core\DigitalImageCorrelation.Core.csproj" />
   </ItemGroup>
 

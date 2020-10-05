@@ -8,7 +8,7 @@ namespace DigitalImageCorrelation.Core
     {
         public string Filename { get; set; }
         private bool isMouseDown = false;
-        public byte[,] GrayScaleImage;
+        public byte[] GrayScaleImage;
         public int Index;
         public Bitmap Bmp
         {
@@ -27,7 +27,7 @@ namespace DigitalImageCorrelation.Core
             Filename = name;
             ReloadSizes(bitmap);
             Index = index;
-            GrayScaleImage = ToGrayScale(bitmap);
+            GrayScaleImage = ToGrayScaleArray(bitmap);
             BitmapWidth = bitmap.Width;
             BitmapHeight = bitmap.Height;
 
@@ -116,36 +116,29 @@ namespace DigitalImageCorrelation.Core
             }
         }
 
-        private byte[,] ToGrayScale(Bitmap image)
+        private byte[] ToGrayScaleArray(Bitmap image)
         {
             BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
-
             int pixelsize = Image.GetPixelFormatSize(bitmapData.PixelFormat) / 8;
-
             IntPtr pointer = bitmapData.Scan0;
             int nbytes = bitmapData.Height * bitmapData.Stride;
             byte[] imagebytes = new byte[nbytes];
             System.Runtime.InteropServices.Marshal.Copy(pointer, imagebytes, 0, nbytes);
-
             double red;
             double green;
             double blue;
-            double gray;
-
-            var grayScaleArray = new byte[bitmapData.Height, bitmapData.Width];
-
+            var grayScaleArray = new byte[bitmapData.Width * bitmapData.Height];
             if (pixelsize >= 3)
             {
-                for (int I = 0; I < bitmapData.Height; I++)
+                for (int I = 0; I < bitmapData.Width; I++)
                 {
-                    for (int J = 0; J < bitmapData.Width; J++)
+                    for (int J = 0; J < bitmapData.Height; J++)
                     {
-                        int position = (I * bitmapData.Stride) + (J * pixelsize);
+                        int position = (J * bitmapData.Stride) + (I * pixelsize);
                         blue = imagebytes[position];
                         green = imagebytes[position + 1];
                         red = imagebytes[position + 2];
-                        gray = 0.299 * red + 0.587 * green + 0.114 * blue;
-                        grayScaleArray[I, J] = (byte)gray;
+                        grayScaleArray[(I * bitmapData.Height) + J] = (byte)(0.299 * red + 0.587 * green + 0.114 * blue);
                     }
                 }
             }
@@ -153,6 +146,7 @@ namespace DigitalImageCorrelation.Core
             return grayScaleArray;
         }
     }
+
     enum SelectedCorner
     {
         None,
