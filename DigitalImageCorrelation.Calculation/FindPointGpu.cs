@@ -59,7 +59,7 @@ namespace DigitalImageCorrelation.GpuAccelerator
             get
             {
                 return @"
-            kernel void FindPointCalculationGpu(global char* baseImage, global char* nextImage, global int* X, global int* Y, int searchDelta, int subsetDelta, int BitmapHeight, int PointsinX) 
+            kernel void FindPointCalculationGpu(global uchar* baseImage, global uchar* nextImage, global int* X, global int* Y, int searchDelta, int subsetDelta, int BitmapHeight, int PointsinX) 
             {
                 int dx = 0;
                 int dy = 0;
