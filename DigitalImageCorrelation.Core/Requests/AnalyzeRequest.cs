@@ -7,7 +7,7 @@ namespace DigitalImageCorrelation.Core.Requests
     {
         public IFindPoints FindPoints { get; set; }
         public Dictionary<int, byte[]> Arrays { get; set; }
-        public IEnumerable<Vertex> StartingVertexes { get; set; }
+        public Vertex[] StartingVertexes { get; set; }
         public int PointsinX { get; set; }
         public int PointsinY { get; set; }
         public int SubsetDelta { get; set; }

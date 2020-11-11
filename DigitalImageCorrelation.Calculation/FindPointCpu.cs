@@ -9,7 +9,11 @@ namespace DigitalImageCorrelation.GpuAccelerator
 
         public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] vertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
-            return vertexes.AsParallel().AsOrdered().Select(vertex => FindVertex(searchDelta, subsetDelta, baseImage, nextImage, vertex, BitmapHeight)).ToArray();
+            return vertexes
+                .AsParallel()
+                .AsOrdered()
+                .Select(vertex => FindVertex(searchDelta, subsetDelta, baseImage, nextImage, vertex, BitmapHeight))
+                .ToArray();
         }
 
         private Vertex FindVertex(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex vertex, int bitmapHeight)

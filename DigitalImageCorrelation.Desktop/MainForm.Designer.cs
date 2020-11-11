@@ -717,7 +717,6 @@
             // LoadImagesBackgroundWorker
             // 
             this.LoadImagesBackgroundWorker.WorkerReportsProgress = true;
-            this.LoadImagesBackgroundWorker.WorkerSupportsCancellation = false;
             this.LoadImagesBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.LoadImagesBackgroundWorker_DoWork);
             this.LoadImagesBackgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.LoadImagesBackgroundWorker_ProgressChanged);
             this.LoadImagesBackgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.LoadImagesBackgroundWorker_RunWorkerCompleted);
@@ -741,6 +740,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainForm";
             this.Text = "Digital Image Correlation";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MainImagePanel.ResumeLayout(false);
             this.MainImagePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
