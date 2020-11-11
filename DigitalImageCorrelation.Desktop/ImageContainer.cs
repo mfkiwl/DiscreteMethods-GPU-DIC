@@ -85,29 +85,28 @@ namespace DigitalImageCorrelation.Core
                 }
                 var xVector = 0;
                 var yVector = 0;
-                if (DragedCorner == SelectedCorner.LeftTop)
+                switch (DragedCorner)
                 {
-                    xVector = SquareLocation.Left - point.X;
-                    yVector = SquareLocation.Top - point.Y;
-                    SquareLocation.Left = point.X;
-                    SquareLocation.Top = point.Y;
-                }
-                else if (DragedCorner == SelectedCorner.LeftBottom)
-                {
-                    xVector = SquareLocation.Left - point.X;
-                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
-                    SquareLocation.Left = point.X;
-                }
-                else if (DragedCorner == SelectedCorner.RightTop)
-                {
-                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                    yVector = SquareLocation.Top - point.Y;
-                    SquareLocation.Top = point.Y;
-                }
-                else if (DragedCorner == SelectedCorner.RightBottom)
-                {
-                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                    case SelectedCorner.LeftTop:
+                        xVector = SquareLocation.Left - point.X;
+                        yVector = SquareLocation.Top - point.Y;
+                        SquareLocation.Left = point.X;
+                        SquareLocation.Top = point.Y;
+                        break;
+                    case SelectedCorner.LeftBottom:
+                        xVector = SquareLocation.Left - point.X;
+                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                        SquareLocation.Left = point.X;
+                        break;
+                    case SelectedCorner.RightTop:
+                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                        yVector = SquareLocation.Top - point.Y;
+                        SquareLocation.Top = point.Y;
+                        break;
+                    case SelectedCorner.RightBottom:
+                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                        break;
                 }
                 SquareLocation.Width += xVector;
                 SquareLocation.Height += yVector;

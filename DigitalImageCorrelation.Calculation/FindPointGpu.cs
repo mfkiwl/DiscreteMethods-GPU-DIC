@@ -37,7 +37,6 @@ namespace DigitalImageCorrelation.GpuAccelerator
         public void FindPoints(byte[] baseImage, byte[] nextImage, int[] X, int[] Y, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             using var commands = new ComputeCommandQueue(context, context.Devices[0], ComputeCommandQueueFlags.None);
-
             using ComputeBuffer<byte> baseImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.WriteOnly | ComputeMemoryFlags.CopyHostPointer, baseImage);
             using ComputeBuffer<byte> nextImageBuffer = new ComputeBuffer<byte>(context, ComputeMemoryFlags.WriteOnly | ComputeMemoryFlags.CopyHostPointer, nextImage);
             using ComputeBuffer<int> XBuffer = new ComputeBuffer<int>(context, ComputeMemoryFlags.ReadWrite | ComputeMemoryFlags.UseHostPointer, X);
