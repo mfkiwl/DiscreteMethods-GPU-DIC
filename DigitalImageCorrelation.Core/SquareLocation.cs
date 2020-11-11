@@ -28,17 +28,19 @@ namespace DigitalImageCorrelation.Core
                 }
             }
         }
-        public IEnumerable<Vertex> CalculateStartingVertexes(int w, int h)
+        public Vertex[] CalculateStartingVertexes(int w, int h)
         {
+            var result = new Vertex[w * h];
             var spaceX = Width / (w + 1);
             var spaceY = Height / (h + 1);
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
                 {
-                    yield return new Vertex((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top), 0, 0);
+                    result[i * w + j] = new Vertex((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top), 0, 0);
                 }
             }
+            return result;
         }
     }
 }

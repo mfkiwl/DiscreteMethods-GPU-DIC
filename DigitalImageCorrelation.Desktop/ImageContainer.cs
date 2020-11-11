@@ -8,7 +8,7 @@ namespace DigitalImageCorrelation.Core
     {
         public string Filename { get; set; }
         private bool isMouseDown = false;
-        public byte[,] GrayScaleImage;
+        public byte[] GrayScaleImage;
         public int Index;
         public Bitmap Bmp
         {
@@ -27,7 +27,7 @@ namespace DigitalImageCorrelation.Core
             Filename = name;
             ReloadSizes(bitmap);
             Index = index;
-            GrayScaleImage = ToGrayScale(bitmap);
+            GrayScaleImage = ToGrayScaleArray(bitmap);
             BitmapWidth = bitmap.Width;
             BitmapHeight = bitmap.Height;
 
@@ -85,29 +85,28 @@ namespace DigitalImageCorrelation.Core
                 }
                 var xVector = 0;
                 var yVector = 0;
-                if (DragedCorner == SelectedCorner.LeftTop)
+                switch (DragedCorner)
                 {
-                    xVector = SquareLocation.Left - point.X;
-                    yVector = SquareLocation.Top - point.Y;
-                    SquareLocation.Left = point.X;
-                    SquareLocation.Top = point.Y;
-                }
-                else if (DragedCorner == SelectedCorner.LeftBottom)
-                {
-                    xVector = SquareLocation.Left - point.X;
-                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
-                    SquareLocation.Left = point.X;
-                }
-                else if (DragedCorner == SelectedCorner.RightTop)
-                {
-                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                    yVector = SquareLocation.Top - point.Y;
-                    SquareLocation.Top = point.Y;
-                }
-                else if (DragedCorner == SelectedCorner.RightBottom)
-                {
-                    xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                    yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                    case SelectedCorner.LeftTop:
+                        xVector = SquareLocation.Left - point.X;
+                        yVector = SquareLocation.Top - point.Y;
+                        SquareLocation.Left = point.X;
+                        SquareLocation.Top = point.Y;
+                        break;
+                    case SelectedCorner.LeftBottom:
+                        xVector = SquareLocation.Left - point.X;
+                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                        SquareLocation.Left = point.X;
+                        break;
+                    case SelectedCorner.RightTop:
+                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                        yVector = SquareLocation.Top - point.Y;
+                        SquareLocation.Top = point.Y;
+                        break;
+                    case SelectedCorner.RightBottom:
+                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
+                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
+                        break;
                 }
                 SquareLocation.Width += xVector;
                 SquareLocation.Height += yVector;
@@ -116,36 +115,29 @@ namespace DigitalImageCorrelation.Core
             }
         }
 
-        private byte[,] ToGrayScale(Bitmap image)
+        private byte[] ToGrayScaleArray(Bitmap image)
         {
             BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
-
             int pixelsize = Image.GetPixelFormatSize(bitmapData.PixelFormat) / 8;
-
             IntPtr pointer = bitmapData.Scan0;
             int nbytes = bitmapData.Height * bitmapData.Stride;
             byte[] imagebytes = new byte[nbytes];
             System.Runtime.InteropServices.Marshal.Copy(pointer, imagebytes, 0, nbytes);
-
             double red;
             double green;
             double blue;
-            double gray;
-
-            var grayScaleArray = new byte[bitmapData.Height, bitmapData.Width];
-
+            var grayScaleArray = new byte[bitmapData.Width * bitmapData.Height];
             if (pixelsize >= 3)
             {
-                for (int I = 0; I < bitmapData.Height; I++)
+                for (int I = 0; I < bitmapData.Width; I++)
                 {
-                    for (int J = 0; J < bitmapData.Width; J++)
+                    for (int J = 0; J < bitmapData.Height; J++)
                     {
-                        int position = (I * bitmapData.Stride) + (J * pixelsize);
+                        int position = (J * bitmapData.Stride) + (I * pixelsize);
                         blue = imagebytes[position];
                         green = imagebytes[position + 1];
                         red = imagebytes[position + 2];
-                        gray = 0.299 * red + 0.587 * green + 0.114 * blue;
-                        grayScaleArray[I, J] = (byte)gray;
+                        grayScaleArray[(I * bitmapData.Height) + J] = (byte)(0.299 * red + 0.587 * green + 0.114 * blue);
                     }
                 }
             }
@@ -153,6 +145,7 @@ namespace DigitalImageCorrelation.Core
             return grayScaleArray;
         }
     }
+
     enum SelectedCorner
     {
         None,
