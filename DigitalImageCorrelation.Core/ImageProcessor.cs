@@ -18,7 +18,7 @@ namespace DigitalImageCorrelation.Core
         private IFindPoints _findPoints;
         private readonly Stopwatch sw = new Stopwatch();
 
-        internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
+        public ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
             _request = request;
             _findPoints = request.FindPoints;

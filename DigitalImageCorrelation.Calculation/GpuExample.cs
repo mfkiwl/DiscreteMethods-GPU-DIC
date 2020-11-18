@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace DigitalImageCorrelation.GpuAccelerator
+namespace DigitalImageCorrelation.Calculation
 {
     public class GpuExample
     {

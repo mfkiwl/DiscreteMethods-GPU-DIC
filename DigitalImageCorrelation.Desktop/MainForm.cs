@@ -1,11 +1,10 @@
-﻿using DigitalImageCorrelation.Core;
+﻿using DigitalImageCorrelation.Calculation;
+using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
 using DigitalImageCorrelation.Desktop.Structures;
-using DigitalImageCorrelation.GpuAccelerator;
-using DigitalImageCorrelation.Requests;
 using NLog;
 using System;
 using System.Collections.Concurrent;

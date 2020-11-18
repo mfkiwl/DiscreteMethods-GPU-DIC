@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>DiscreteMethods.BenchmarkTests.Benchmarker-20201118-194655</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.12.1, OS=Windows 10.0.18363.1198 (1909/November2018Update/19H2)
+Intel Core i5-4460 CPU 3.20GHz (Haswell), 1 CPU, 4 logical and 4 physical cores
+.NET Core SDK=5.0.100
+  [Host]     : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT  [AttachedDebugger]
+  Job-SGDPMN : .NET Core 5.0.0 (CoreCLR 5.0.20.51904, CoreFX 5.0.20.51904), X64 RyuJIT
+</code></pre>
+<pre><code>IterationCount=3  LaunchCount=1  RunStrategy=ColdStart  
+WarmupCount=0  
+</code></pre>
+
+<table>
+<thead><tr><th> Method</th><th>SubsetDelta</th><th>WindowDelta</th><th>PointsinX</th><th>PointsinY</th><th>calculationType</th><th>  Mean</th><th> Error</th><th>StdDev</th><th>Median</th>
+</tr>
+</thead><tbody><tr><td>AnalyzeImages</td><td>10</td><td>10</td><td>10</td><td>10</td><td>Cpu</td><td>48.63 ms</td><td>1,057.73 ms</td><td>57.98 ms</td><td>15.51 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>10</td><td>10</td><td>10</td><td>10</td><td>Gpu</td><td>820.60 ms</td><td>17,543.55 ms</td><td>961.62 ms</td><td>274.45 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>20</td><td>20</td><td>20</td><td>20</td><td>Cpu</td><td>789.58 ms</td><td>941.61 ms</td><td>51.61 ms</td><td>760.07 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>20</td><td>20</td><td>20</td><td>20</td><td>Gpu</td><td>2,454.02 ms</td><td>8,483.47 ms</td><td>465.01 ms</td><td>2,193.06 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>30</td><td>30</td><td>30</td><td>30</td><td>Cpu</td><td>8,588.84 ms</td><td>730.68 ms</td><td>40.05 ms</td><td>8,567.14 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>30</td><td>30</td><td>30</td><td>30</td><td>Gpu</td><td>18,489.55 ms</td><td>9,113.40 ms</td><td>499.54 ms</td><td>18,248.31 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>40</td><td>40</td><td>40</td><td>40</td><td>Cpu</td><td>46,845.05 ms</td><td>5,207.11 ms</td><td>285.42 ms</td><td>46,691.13 ms</td>
+</tr><tr><td>AnalyzeImages</td><td>40</td><td>40</td><td>40</td><td>40</td><td>Gpu</td><td>98,073.58 ms</td><td>9,875.32 ms</td><td>541.30 ms</td><td>97,797.37 ms</td>
+</tr></tbody></table>
+</body>
+</html>

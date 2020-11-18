@@ -2,7 +2,7 @@
 using DigitalImageCorrelation.Desktop.Structures;
 using System.Linq;
 
-namespace DigitalImageCorrelation.GpuAccelerator
+namespace DigitalImageCorrelation.Calculation
 {
     public class FindPointCpu : IFindPoints
     {
