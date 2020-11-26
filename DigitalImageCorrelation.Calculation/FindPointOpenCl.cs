@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace DigitalImageCorrelation.Calculation
 {
-    public class FindPointGpu : IFindPoints
+    public class FindPointOpenCl : IFindPoints
     {
         readonly ComputeContextPropertyList cpl;
         readonly ComputeContext context;
         readonly ComputeProgram program;
         readonly ComputeKernel kernel;
-        public FindPointGpu()
+        public FindPointOpenCl()
         {
             cpl = new ComputeContextPropertyList(ComputePlatform.Platforms[0]);
             context = new ComputeContext(ComputeDeviceTypes.Gpu, cpl, null, IntPtr.Zero);

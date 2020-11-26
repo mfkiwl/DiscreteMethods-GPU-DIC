@@ -63,7 +63,7 @@ namespace DiscreteMethods.BenchmarkTests
             return type switch
             {
                 (CalculationType.Cpu) => new FindPointCpu(),
-                (CalculationType.Gpu) => new FindPointGpu(),
+                (CalculationType.Gpu) => new FindPointOpenCl(),
                 _ => new FindPointCpu(),
             };
         }

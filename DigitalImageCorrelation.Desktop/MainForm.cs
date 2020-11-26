@@ -220,20 +220,14 @@ namespace DigitalImageCorrelation.Desktop
         private IFindPoints ResolveFindPoints()
         {
             var type = CalculationType.Cpu;
-            try
-            {
-                var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
-                type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Unable to resolve Calculation type");
-            }
+            var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+            type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
+
 
             return type switch
             {
                 (CalculationType.Cpu) => new FindPointCpu(),
-                (CalculationType.Gpu) => new FindPointGpu(),
+                (CalculationType.Gpu) => new FindPointCuda(),
                 _ => new FindPointCpu(),
             };
         }
@@ -309,11 +303,19 @@ namespace DigitalImageCorrelation.Desktop
 
         private void AnalyzeButton_Click(object sender, EventArgs e)
         {
-            analyzeButton.Enabled = false;
-            progresLabel.Text = "0/" + imageContainers.Count;
-            progressBar.Maximum = imageContainers.Count;
-            progressBar.Value = 0;
-            _worker.RunWorker(CreateAnalyseRequest());
+            try
+            {
+                analyzeButton.Enabled = false;
+                progresLabel.Text = "0/" + imageContainers.Count;
+                progressBar.Maximum = imageContainers.Count;
+                progressBar.Value = 0;
+                var request = CreateAnalyseRequest();
+                _worker.RunWorker(request);
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private async void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
