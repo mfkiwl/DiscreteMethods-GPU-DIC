@@ -11,7 +11,6 @@ namespace DigitalImageCorrelation.Calculation.Cuda
         private const string methodName = "FindPointCalculationGpu";
         CudaContext ctx;
         CudaKernel kernel;
-
         CudaDeviceVariable<byte> baseImageBuffer;
         CudaDeviceVariable<byte> nextImageBuffer;
         CudaDeviceVariable<ResultPoint> pointsBuffer;
@@ -36,7 +35,7 @@ namespace DigitalImageCorrelation.Calculation.Cuda
             }
         }
 
-        public void FindPoints(byte[] baseImage, byte[] nextImage, ResultPoint[] points, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
+        public ResultPoint[] FindPoints(byte[] baseImage, byte[] nextImage, ResultPoint[] points, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             baseImageBuffer = new CudaDeviceVariable<byte>(BitmapWidth * BitmapHeight);
             baseImageBuffer.CopyToDevice(baseImage);
@@ -52,26 +51,25 @@ namespace DigitalImageCorrelation.Calculation.Cuda
             kernel.Run(new object[] {
                 baseImageBuffer.DevicePointer,nextImageBuffer.DevicePointer, pointsBuffer.DevicePointer,searchDelta,subsetDelta,BitmapHeight,PointsinX
             });
+            var result = new ResultPoint[PointsinX * PointsinY];
+            pointsBuffer.CopyToHost(result);
+            return result;
         }
-
-        internal void CopyToHost(ref ResultPoint[] results)
-        {
-            pointsBuffer.CopyToHost(results);
-        }
-
-        internal void Synchronize()
-        {
-            ctx.Synchronize();
-        }
-
-        public void Dispose()
+        public void Dispose() => Dispose(true);
+        private void Dispose(bool disposing)
         {
             DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(baseImageBuffer.DevicePointer);
             DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(nextImageBuffer.DevicePointer);
             DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(pointsBuffer.DevicePointer);
+            GC.SuppressFinalize(this);
             baseImageBuffer.Dispose();
             nextImageBuffer.Dispose();
             pointsBuffer.Dispose();
+            ctx.Dispose();
+            baseImageBuffer = null;
+            nextImageBuffer = null;
+            pointsBuffer = null;
+            ctx = null;
         }
     }
 }

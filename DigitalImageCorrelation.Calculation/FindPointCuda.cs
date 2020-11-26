@@ -25,15 +25,9 @@ namespace DigitalImageCorrelation.Calculation
 
         ResultPoint[] FindPoints(byte[] baseImage, byte[] nextImage, ResultPoint[] points, int searchDelta, int subsetDelta, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
-            var result = new ResultPoint[PointsinX * PointsinY];
-            using (var cudaProcessor = new CudaProcessor())
-            {
-                cudaProcessor.LoadKernel();
-                cudaProcessor.FindPoints(baseImage, nextImage, points, searchDelta, subsetDelta, BitmapWidth, BitmapHeight, PointsinX, PointsinY);
-                cudaProcessor.CopyToHost(ref result);
-                cudaProcessor.Synchronize();
-            }
-            return result;
+            using var cudaProcessor = new CudaProcessor();
+            cudaProcessor.LoadKernel();
+            return cudaProcessor.FindPoints(baseImage, nextImage, points, searchDelta, subsetDelta, BitmapWidth, BitmapHeight, PointsinX, PointsinY);
         }
     }
 }

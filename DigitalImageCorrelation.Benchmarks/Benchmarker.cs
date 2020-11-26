@@ -32,14 +32,23 @@ namespace DiscreteMethods.BenchmarkTests
         }
 
         [Benchmark]
-        [Arguments(10, 10, 10, 10, CalculationType.Cpu)]
-        [Arguments(20, 20, 20, 20, CalculationType.Cpu)]
-        [Arguments(30, 30, 30, 30, CalculationType.Cpu)]
-        [Arguments(40, 40, 40, 40, CalculationType.Cpu)]
-        [Arguments(10, 10, 10, 10, CalculationType.Gpu)]
-        [Arguments(20, 20, 20, 20, CalculationType.Gpu)]
-        [Arguments(30, 30, 30, 30, CalculationType.Gpu)]
-        [Arguments(40, 40, 40, 40, CalculationType.Gpu)]
+        //[Arguments(10, 10, 10, 10, CalculationType.Cpu)]
+        //[Arguments(50, 50, 10, 10, CalculationType.Cpu)]
+        //[Arguments(100, 100, 10, 10, CalculationType.Cpu)]
+        //[Arguments(10, 10, 50, 50, CalculationType.Cpu)]
+        [Arguments(10, 10, 100, 100, CalculationType.Cpu)]
+        [Arguments(10, 10, 200, 200, CalculationType.Cpu)]
+        [Arguments(10, 10, 400, 400, CalculationType.Cpu)]
+        [Arguments(10, 10, 600, 600, CalculationType.Cpu)]
+
+        //[Arguments(10, 10, 10, 10, CalculationType.Gpu)]
+        //[Arguments(50, 50, 10, 10, CalculationType.Gpu)]
+        //[Arguments(100, 100, 10, 10, CalculationType.Gpu)]
+        //[Arguments(10, 10, 50, 50, CalculationType.Gpu)]
+        [Arguments(10, 10, 100, 100, CalculationType.Gpu)]
+        [Arguments(10, 10, 200, 200, CalculationType.Gpu)]
+        [Arguments(10, 10, 400, 400, CalculationType.Gpu)]
+        [Arguments(10, 10, 600, 600, CalculationType.Gpu)]
         public void AnalyzeImages(int SubsetDelta, int WindowDelta, int PointsinX, int PointsinY, CalculationType calculationType)
         {
             var firstImage = ImageContainers.First().Value;
@@ -63,7 +72,7 @@ namespace DiscreteMethods.BenchmarkTests
             return type switch
             {
                 (CalculationType.Cpu) => new FindPointCpu(),
-                (CalculationType.Gpu) => new FindPointOpenCl(),
+                (CalculationType.Gpu) => new FindPointCuda(),
                 _ => new FindPointCpu(),
             };
         }
