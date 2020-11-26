@@ -1,4 +1,4 @@
-﻿using ManagedCuda;
+using ManagedCuda;
 using ManagedCuda.NVRTC;
 using System;
 using System.IO;
@@ -7,7 +7,7 @@ namespace DigitalImageCorrelation.Calculation.Cuda
 {
     unsafe sealed class CudaProcessor : IDisposable
     {
-        private const string path = "./Cuda/MyKernels.c";
+        private const string path = "./Cuda/KernelFindPoints.c";
         private const string methodName = "FindPointCalculationGpu";
         CudaContext ctx;
         CudaKernel kernel;
@@ -17,7 +17,7 @@ namespace DigitalImageCorrelation.Calculation.Cuda
 
         public CudaProcessor()
         {
-            ctx = new CudaContext(0, true);
+            ctx = new CudaContext(0, false);
             ctx.GetDeviceInfo();
         }
 
@@ -49,7 +49,7 @@ namespace DigitalImageCorrelation.Calculation.Cuda
             kernel.BlockDimensions = new ManagedCuda.VectorTypes.dim3(PointsinX, 1, 1);
             kernel.GridDimensions = new ManagedCuda.VectorTypes.dim3(PointsinY, 1, 1);
             kernel.Run(new object[] {
-                baseImageBuffer.DevicePointer,nextImageBuffer.DevicePointer, pointsBuffer.DevicePointer,searchDelta,subsetDelta,BitmapHeight,PointsinX
+                baseImageBuffer.DevicePointer,nextImageBuffer.DevicePointer, pointsBuffer.DevicePointer,searchDelta,subsetDelta,BitmapWidth, BitmapHeight,PointsinX,PointsinY
             });
             var result = new ResultPoint[PointsinX * PointsinY];
             pointsBuffer.CopyToHost(result);

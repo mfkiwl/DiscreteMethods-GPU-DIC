@@ -18,26 +18,26 @@ namespace DigitalImageCorrelation.Core
 
         public IEnumerable<Point> CalculateStartingPoints(int w, int h)
         {
-            var spaceX = Width / (w + 1);
-            var spaceY = Height / (h + 1);
+            double spaceX = Width / (w + 1.0);
+            double spaceY = Height / (h + 1.0);
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
                 {
-                    yield return new Point((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top));
+                    yield return new Point((int)((i + 1.0) * spaceX + Left), (int)((j + 1.0) * spaceY + Top));
                 }
             }
         }
         public Vertex[] CalculateStartingVertexes(int w, int h)
         {
             var result = new Vertex[w * h];
-            var spaceX = Width / (w + 1);
-            var spaceY = Height / (h + 1);
+            double spaceX = Width / (w + 1.0);
+            double spaceY = Height / (h + 1.0);
             for (int i = 0; i < w; i++)
             {
                 for (int j = 0; j < h; j++)
                 {
-                    result[i * w + j] = new Vertex((int)((i + 1) * spaceX + Left), (int)((j + 1) * spaceY + Top), 0, 0);
+                    result[i * w + j] = new Vertex((int)((i + 1.0) * spaceX + Left), (int)((j + 1.0) * spaceY + Top), 0, 0);
                 }
             }
             return result;

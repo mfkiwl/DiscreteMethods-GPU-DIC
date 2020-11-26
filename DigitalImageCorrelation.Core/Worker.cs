@@ -1,6 +1,5 @@
 ﻿using DigitalImageCorrelation.Core.Requests;
 using NLog;
-using System;
 using System.ComponentModel;
 
 namespace DigitalImageCorrelation.Core
@@ -31,17 +30,11 @@ namespace DigitalImageCorrelation.Core
 
         public void DoWork(object sender, DoWorkEventArgs e)
         {
-            try
-            {
-                var request = e.Argument as AnalyzeRequest;
-                var bw = sender as BackgroundWorker;
-                ImageProcessor processor = new ImageProcessor(bw, request);
-                processor.Analyze(e);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-            }
+            var request = e.Argument as AnalyzeRequest;
+            var bw = sender as BackgroundWorker;
+            ImageProcessor processor = new ImageProcessor(bw, request);
+            processor.Analyze(e);
+
         }
         public void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {

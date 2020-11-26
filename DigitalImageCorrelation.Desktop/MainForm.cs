@@ -378,22 +378,29 @@ namespace DigitalImageCorrelation.Desktop
 
         private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (CurrentImageContainer != null)
+            try
             {
-                var x = (int)(e.Location.X / GetZoom());
-                var y = (int)(e.Location.Y / GetZoom());
-                XPosLabel.Text = $"X:{x}";
-                YPosLabel.Text = $"Y:{y}";
-                var drawingType = GetDrawingType();
-                StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
-
-                if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                if (CurrentImageContainer != null)
                 {
-                    var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
-                    ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
-                    stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
+                    var x = (int)(e.Location.X / GetZoom());
+                    var y = (int)(e.Location.Y / GetZoom());
+                    XPosLabel.Text = $"X:{x}";
+                    YPosLabel.Text = $"Y:{y}";
+                    var drawingType = GetDrawingType();
+                    StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+
+                    if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                    {
+                        var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
+                        ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
+                        stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
+                    }
+                    PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
                 }
-                PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
             }
         }
         private double GetValue(DrawingType type, Vertex vertex)
