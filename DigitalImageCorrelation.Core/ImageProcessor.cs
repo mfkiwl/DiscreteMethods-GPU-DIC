@@ -15,13 +15,13 @@ namespace DigitalImageCorrelation.Core
         private readonly BackgroundWorker backgroundWorker;
         private readonly AnalyzeRequest _request;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private IFindPoints _findPoints;
+        private ICalculation _calculation;
         private readonly Stopwatch sw = new Stopwatch();
 
-        internal ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
+        public ImageProcessor(BackgroundWorker bw, AnalyzeRequest request)
         {
             _request = request;
-            _findPoints = request.FindPoints;
+            _calculation = request.FindPoints;
             backgroundWorker = bw;
         }
 
@@ -35,7 +35,7 @@ namespace DigitalImageCorrelation.Core
                 StartingPoints = _request.StartingVertexes.ToArray()
             };
             var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-            _logger.Info("using {0} processor", _findPoints.GetType().Name);
+            _logger.Info("using {0} processor", _calculation.GetType().Name);
             ImageResult analyzeResult;
             foreach (KeyValuePair<int, byte[]> entry in orderedDictionary)
             {
@@ -51,7 +51,7 @@ namespace DigitalImageCorrelation.Core
                 else
                 {
                     var previous = results.ImageResults.Last().Value;
-                    var vertexes = _findPoints.FindPoint(_request.WindowDelta,
+                    var vertexes = _calculation.FindPoint(_request.WindowDelta,
                                     _request.SubsetDelta,
                                     orderedDictionary[entry.Key - 1],
                                     entry.Value,
@@ -67,6 +67,9 @@ namespace DigitalImageCorrelation.Core
                         Vertexes = vertexes,
                         StartingVertexes = _request.StartingVertexes.ToArray()
                     };
+                    _calculation.CalculateDisplacement(analyzeResult);
+                    _calculation.CalculateStrain(analyzeResult, _request.PointsinX, _request.PointsinY);
+                    //_calculation.CalculateStress(analyzeResult);
                 }
                 if (!results.ImageResults.TryAdd(entry.Key, analyzeResult))
                 {
@@ -75,12 +78,8 @@ namespace DigitalImageCorrelation.Core
                 backgroundWorker.ReportProgress(entry.Key, analyzeResult);
                 _logger.Debug("Processing {0}/{1}", entry.Key + 1, orderedDictionary.Count);
             }
-            _logger.Info("Calculate displacement");
-            results.CalculateDisplacement();
-            _logger.Info("Calculate strain");
-            results.CalculateStrain(_request.PointsinX, _request.PointsinY);
             sw.Stop();
-            _logger.Info("Analyze complited. Time: {0} ms, number of processed images: {1}, Processor: {2}", sw.ElapsedMilliseconds, results.ImageResults.Count, _findPoints.GetType().Name);
+            _logger.Info("Analyze complited. Time: {0} ms, number of processed images: {1}, Processor: {2}", sw.ElapsedMilliseconds, results.ImageResults.Count, _calculation.GetType().Name);
             e.Result = results;
         }
     }

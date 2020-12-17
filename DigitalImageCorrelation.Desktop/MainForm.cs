@@ -1,11 +1,10 @@
-﻿using DigitalImageCorrelation.Core;
+﻿using DigitalImageCorrelation.Calculation;
+using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
 using DigitalImageCorrelation.Desktop.Structures;
-using DigitalImageCorrelation.GpuAccelerator;
-using DigitalImageCorrelation.Requests;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -218,23 +217,17 @@ namespace DigitalImageCorrelation.Desktop
             };
         }
 
-        private IFindPoints ResolveFindPoints()
+        private ICalculation ResolveFindPoints()
         {
             var type = CalculationType.Cpu;
-            try
-            {
-                var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
-                type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Unable to resolve Calculation type");
-            }
+            var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+            type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
+
 
             return type switch
             {
                 (CalculationType.Cpu) => new FindPointCpu(),
-                (CalculationType.Gpu) => new FindPointGpu(),
+                (CalculationType.Gpu) => new FindPointCuda(),
                 _ => new FindPointCpu(),
             };
         }
@@ -310,11 +303,19 @@ namespace DigitalImageCorrelation.Desktop
 
         private void AnalyzeButton_Click(object sender, EventArgs e)
         {
-            analyzeButton.Enabled = false;
-            progresLabel.Text = "0/" + imageContainers.Count;
-            progressBar.Maximum = imageContainers.Count;
-            progressBar.Value = 0;
-            _worker.RunWorker(CreateAnalyseRequest());
+            try
+            {
+                analyzeButton.Enabled = false;
+                progresLabel.Text = "0/" + imageContainers.Count;
+                progressBar.Maximum = imageContainers.Count;
+                progressBar.Value = 0;
+                var request = CreateAnalyseRequest();
+                _worker.RunWorker(request);
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private async void OnImageProcessor_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -377,22 +378,29 @@ namespace DigitalImageCorrelation.Desktop
 
         private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (CurrentImageContainer != null)
+            try
             {
-                var x = (int)(e.Location.X / GetZoom());
-                var y = (int)(e.Location.Y / GetZoom());
-                XPosLabel.Text = $"X:{x}";
-                YPosLabel.Text = $"Y:{y}";
-                var drawingType = GetDrawingType();
-                StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
-
-                if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                if (CurrentImageContainer != null)
                 {
-                    var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
-                    ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
-                    stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
+                    var x = (int)(e.Location.X / GetZoom());
+                    var y = (int)(e.Location.Y / GetZoom());
+                    XPosLabel.Text = $"X:{x}";
+                    YPosLabel.Text = $"Y:{y}";
+                    var drawingType = GetDrawingType();
+                    StringBuilder stringBuilder = new StringBuilder($"X: {x} Y: {y}");
+
+                    if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
+                    {
+                        var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
+                        ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
+                        stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
+                    }
+                    PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
                 }
-                PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
             }
         }
         private double GetValue(DrawingType type, Vertex vertex)

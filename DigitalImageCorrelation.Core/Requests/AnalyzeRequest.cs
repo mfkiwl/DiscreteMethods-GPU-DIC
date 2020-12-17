@@ -5,7 +5,7 @@ namespace DigitalImageCorrelation.Core.Requests
 {
     public class AnalyzeRequest
     {
-        public IFindPoints FindPoints { get; set; }
+        public ICalculation FindPoints { get; set; }
         public Dictionary<int, byte[]> Arrays { get; set; }
         public Vertex[] StartingVertexes { get; set; }
         public int PointsinX { get; set; }
