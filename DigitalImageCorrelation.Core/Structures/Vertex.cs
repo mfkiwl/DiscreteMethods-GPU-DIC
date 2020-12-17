@@ -16,14 +16,10 @@ namespace DigitalImageCorrelation.Desktop.Structures
         public int dX;
         public int dY;
         public Strain strain = new Strain();
+        public Stress stress = new Stress();
         public Color ColorDx;
         public Color ColorDy;
 
-        public Vertex(Point point)
-        {
-            X = point.X;
-            Y = point.Y;
-        }
         public Vertex(int x, int y)
         {
             X = x;

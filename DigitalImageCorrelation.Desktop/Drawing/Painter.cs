@@ -1,6 +1,7 @@
 ﻿using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Desktop.Drawing.ResultPainter;
 using DigitalImageCorrelation.Desktop.Requests;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,6 +17,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing
         private readonly Pen _circlePen = new Pen(Color.Red, 2);
         private IResultPainter _resultPainter;
         private readonly object _painterLock = new object();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public double CalculateDefaultScale(DrawRequest request)
         {
             var bmp = request.Image.Bmp;
@@ -61,6 +63,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                 });
             }
             return await Task.FromResult<Bitmap>(null);
+
         }
 
         private IResultPainter ChooseResultPainter(DrawingType type)

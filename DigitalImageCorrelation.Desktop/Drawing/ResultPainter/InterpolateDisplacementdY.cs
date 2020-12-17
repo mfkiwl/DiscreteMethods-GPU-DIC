@@ -2,7 +2,6 @@
 using DigitalImageCorrelation.Desktop.Structures;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
 
 namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
@@ -17,7 +16,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
                 double mindY = request.AnalyzeResults.MinDy;
                 result.CalculateDisplacementColorsDY(maxdY, mindY);
                 var g = Graphics.FromImage(bitmap);
-                var trianguled = MIConvexHull.DelaunayTriangulation<Vertex, Cell>.Create(result.Vertexes.ToList(), 0.001);
+                var trianguled = MIConvexHull.DelaunayTriangulation<Vertex, Cell>.Create(result.Vertexes, 0.001);
                 foreach (var triangle in trianguled.Cells)
                 {
                     PathGradientBrush pthGrBrush = new PathGradientBrush(triangle.Points)

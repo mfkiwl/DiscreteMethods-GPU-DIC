@@ -358,21 +358,35 @@ namespace DigitalImageCorrelation.Desktop
 
         private async void ZoomDownButton_Click(object sender, EventArgs e)
         {
-            if (CurrentImageContainer != null)
+            try
             {
-                var request = CreateDrawRequest();
-                SetZoom(GetZoom() / ZoomStep);
-                MainPictureBox.Image = await _painter.DrawImage(request);
+                if (CurrentImageContainer != null)
+                {
+                    var request = CreateDrawRequest();
+                    SetZoom(GetZoom() / ZoomStep);
+                    MainPictureBox.Image = await _painter.DrawImage(request);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
             }
         }
 
         private async void ZoomUpButton_Click(object sender, EventArgs e)
         {
-            if (CurrentImageContainer != null)
+            try
             {
-                var request = CreateDrawRequest();
-                SetZoom(GetZoom() * ZoomStep);
-                MainPictureBox.Image = await _painter.DrawImage(request);
+                if (CurrentImageContainer != null)
+                {
+                    var request = CreateDrawRequest();
+                    SetZoom(GetZoom() * ZoomStep);
+                    MainPictureBox.Image = await _painter.DrawImage(request);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
             }
         }
 

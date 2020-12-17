@@ -7,7 +7,7 @@ namespace DigitalImageCorrelation.Core.Structures
     public class AnalyzeResult
     {
         public ConcurrentDictionary<int, ImageResult> ImageResults = new ConcurrentDictionary<int, ImageResult>();
-        public Vertex[] StartingPoints;
+        public Vertex[] StartingVertexes;
         public double MaxDx => ImageResults.Max(x => x.Value.MaxDx);
         public double MinDx => ImageResults.Min(x => x.Value.MinDx);
         public double MaxDy => ImageResults.Max(x => x.Value.MaxDy);
