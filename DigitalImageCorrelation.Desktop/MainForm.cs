@@ -217,7 +217,7 @@ namespace DigitalImageCorrelation.Desktop
             };
         }
 
-        private IFindPoints ResolveFindPoints()
+        private ICalculation ResolveFindPoints()
         {
             var type = CalculationType.Cpu;
             var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);

@@ -55,21 +55,13 @@ namespace DigitalImageCorrelation.Calculation.Cuda
             pointsBuffer.CopyToHost(result);
             return result;
         }
-        public void Dispose() => Dispose(true);
-        private void Dispose(bool disposing)
+
+        public void Dispose()
         {
-            DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(baseImageBuffer.DevicePointer);
-            DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(nextImageBuffer.DevicePointer);
-            DriverAPINativeMethods.MemoryManagement.cuMemFree_v2(pointsBuffer.DevicePointer);
-            GC.SuppressFinalize(this);
             baseImageBuffer.Dispose();
             nextImageBuffer.Dispose();
             pointsBuffer.Dispose();
             ctx.Dispose();
-            baseImageBuffer = null;
-            nextImageBuffer = null;
-            pointsBuffer = null;
-            ctx = null;
         }
     }
 }

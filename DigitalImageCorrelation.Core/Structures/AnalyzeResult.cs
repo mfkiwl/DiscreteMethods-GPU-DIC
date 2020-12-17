@@ -1,8 +1,6 @@
 ﻿using DigitalImageCorrelation.Desktop.Structures;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DigitalImageCorrelation.Core.Structures
 {
@@ -20,27 +18,5 @@ namespace DigitalImageCorrelation.Core.Structures
         public double MinStrainYY => ImageResults.Min(x => x.Value.MinStrainYY);
         public double MaxStrainXY => ImageResults.Max(x => x.Value.MaxStrainXY);
         public double MinStrainXY => ImageResults.Min(x => x.Value.MinStrainXY);
-
-        public ConcurrentDictionary<int, ImageResult> CalculateDisplacement()
-        {
-
-            Parallel.ForEach(ImageResults.Cast<KeyValuePair<int, ImageResult>>(),
-            entry =>
-            {
-                entry.Value.CalculateDisplacement(StartingPoints);
-            });
-            return ImageResults;
-        }
-
-        public ConcurrentDictionary<int, ImageResult> CalculateStrain(int pointsinX, int pointsinY)
-        {
-
-            Parallel.ForEach(ImageResults.Cast<KeyValuePair<int, ImageResult>>(),
-            entry =>
-            {
-                entry.Value.CalculateStrain(pointsinX, pointsinY);
-            });
-            return ImageResults;
-        }
     }
 }

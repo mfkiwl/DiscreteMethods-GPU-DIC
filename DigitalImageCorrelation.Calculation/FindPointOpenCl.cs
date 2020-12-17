@@ -1,12 +1,11 @@
 ﻿using Cloo;
-using DigitalImageCorrelation.Core;
 using DigitalImageCorrelation.Desktop.Structures;
 using System;
 using System.Linq;
 
 namespace DigitalImageCorrelation.Calculation
 {
-    public class FindPointOpenCl : IFindPoints
+    public class FindPointOpenCl : FindPointCpu
     {
         readonly ComputeContextPropertyList cpl;
         readonly ComputeContext context;
@@ -21,7 +20,7 @@ namespace DigitalImageCorrelation.Calculation
             kernel = program.CreateKernel("FindPointCalculationGpu");
         }
 
-        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
+        public new Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             int[] X = previousVertexes.Select(x => x.X).ToArray();
             int[] Y = previousVertexes.Select(x => x.Y).ToArray();

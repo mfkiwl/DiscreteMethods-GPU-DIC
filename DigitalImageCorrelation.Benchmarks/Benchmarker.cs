@@ -67,7 +67,7 @@ namespace DiscreteMethods.BenchmarkTests
             var imageprocessor = new ImageProcessor(backgroundWorker, request);
             imageprocessor.Analyze(new DoWorkEventArgs(null));
         }
-        private IFindPoints ResolveFindPoints(CalculationType type)
+        private ICalculation ResolveFindPoints(CalculationType type)
         {
             return type switch
             {
