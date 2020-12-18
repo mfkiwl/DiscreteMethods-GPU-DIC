@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
@@ -10,6 +10,7 @@
     <AssemblyName>DigitalImageCorrelation.Desktop</AssemblyName>
     <RootNamespace>DigitalImageCorrelation</RootNamespace>
     <ApplicationIcon>Resources\agh_simple.ico</ApplicationIcon>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
