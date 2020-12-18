@@ -11,7 +11,11 @@ namespace DigitalImageCorrelation.Core
                 => self.Select((item, index) => (item, index));
         public static Color GetColor(double value, double min, double denominatorDx)
         {
+            if (value < min)
+                value = min;
             double percentage = (value - min) / denominatorDx;
+            if (percentage > 1.0)
+                percentage = 1.0;
             if (percentage < 0.25)
                 return InterpolateColors(Color.Blue, Color.Green, percentage * 4.0);
             else if (percentage < 0.5)

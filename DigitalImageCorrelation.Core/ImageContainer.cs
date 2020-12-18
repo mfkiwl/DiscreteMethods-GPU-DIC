@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DigitalImageCorrelation.Core.Structures;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -10,6 +11,7 @@ namespace DigitalImageCorrelation.Core
         private bool isMouseDown = false;
         public byte[] GrayScaleImage;
         public int Index;
+        public ImageResult Result;
         public Bitmap Bmp
         {
             get { return BmpRaw.Clone() as Bitmap; }

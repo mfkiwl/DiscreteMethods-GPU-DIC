@@ -41,34 +41,50 @@
             this.windowDeltaTextbox = new System.Windows.Forms.TextBox();
             this.windowDeltaLabel = new System.Windows.Forms.Label();
             this.analyzeButton = new System.Windows.Forms.Button();
-            this.showCropBoxCheckbox = new System.Windows.Forms.CheckBox();
             this.displayModeLabel = new System.Windows.Forms.Label();
-            this.MainImagePanel = new System.Windows.Forms.Panel();
+            this.FillPanel = new System.Windows.Forms.Panel();
+            this.ImagePanel = new System.Windows.Forms.Panel();
             this.MainPictureBox = new System.Windows.Forms.PictureBox();
-            this.imageSliderPanel = new System.Windows.Forms.Panel();
-            this.SetImageButtonsPanel = new System.Windows.Forms.Panel();
-            this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.optionsPanel = new System.Windows.Forms.Panel();
-            this.ZoomPanel = new System.Windows.Forms.Panel();
-            this.zoomLabel = new System.Windows.Forms.Label();
-            this.zoomUpButton = new System.Windows.Forms.Button();
-            this.ResetZoomButton = new System.Windows.Forms.Button();
-            this.zoomTextbox = new System.Windows.Forms.TextBox();
-            this.ZoomDownButton = new System.Windows.Forms.Button();
-            this.ResultPanel = new System.Windows.Forms.Panel();
-            this.ColorScaleLabel = new System.Windows.Forms.Label();
-            this.YPosLabel = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.ScalePicturebox = new System.Windows.Forms.PictureBox();
-            this.MinValLabel = new System.Windows.Forms.Label();
-            this.XPosLabel = new System.Windows.Forms.Label();
             this.MaxValLabel = new System.Windows.Forms.Label();
+            this.MinValLabel = new System.Windows.Forms.Label();
+            this.YPosLabel = new System.Windows.Forms.Label();
+            this.XPosLabel = new System.Windows.Forms.Label();
             this.ValueLabel = new System.Windows.Forms.Label();
+            this.LeftPanel = new System.Windows.Forms.Panel();
+            this.OpenImagesPanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.MinImageValLabel = new System.Windows.Forms.Label();
+            this.MaxImageValLabel = new System.Windows.Forms.Label();
+            this.ValueTypeLabel = new System.Windows.Forms.Label();
+            this.CurrentImageLabel = new System.Windows.Forms.Label();
+            this.ImageNameLabel = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.imageListView = new System.Windows.Forms.ListView();
+            this.indexColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.NameColumnHeader = new System.Windows.Forms.ColumnHeader();
+            this.GpuRadioBtn = new System.Windows.Forms.RadioButton();
+            this.CpuRadioBtn = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.DownPanel = new System.Windows.Forms.Panel();
+            this.MessageRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.TopPanel = new System.Windows.Forms.Panel();
+            this.zoomTextbox = new System.Windows.Forms.TextBox();
+            this.ResetZoomButton = new System.Windows.Forms.Button();
+            this.showCropBoxCheckbox = new System.Windows.Forms.CheckBox();
+            this.zoomUpButton = new System.Windows.Forms.Button();
+            this.zoomLabel = new System.Windows.Forms.Label();
+            this.ZoomDownButton = new System.Windows.Forms.Button();
+            this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.RightPanel = new System.Windows.Forms.Panel();
             this.AnalyzeDataPanel = new System.Windows.Forms.Panel();
             this.DisplayModePanel = new System.Windows.Forms.Panel();
-            this.progresLabel = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.RadioButtonsPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.tensionRadioButton = new System.Windows.Forms.RadioButton();
+            this.stressEqRadioButton = new System.Windows.Forms.RadioButton();
+            this.stressYRadioButton = new System.Windows.Forms.RadioButton();
+            this.stressXRadioButton = new System.Windows.Forms.RadioButton();
             this.strainYRadioButton = new System.Windows.Forms.RadioButton();
             this.displacementYRadiobutton = new System.Windows.Forms.RadioButton();
             this.imageRadioButton = new System.Windows.Forms.RadioButton();
@@ -77,33 +93,31 @@
             this.displacementXRadioButton = new System.Windows.Forms.RadioButton();
             this.strainXRadioButton = new System.Windows.Forms.RadioButton();
             this.strainShearRadioButton = new System.Windows.Forms.RadioButton();
-            this.OpenImagesPanel = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.GpuRadioBtn = new System.Windows.Forms.RadioButton();
-            this.CpuRadioBtn = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
-            this.ImageNameLabel = new System.Windows.Forms.Label();
             this.LoadImagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PictureboxToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.MainImagePanel.SuspendLayout();
+            this.ZoomPanel = new System.Windows.Forms.Panel();
+            this.FillPanel.SuspendLayout();
+            this.ImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
-            this.imageSliderPanel.SuspendLayout();
-            this.optionsPanel.SuspendLayout();
-            this.ZoomPanel.SuspendLayout();
-            this.ResultPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScalePicturebox)).BeginInit();
+            this.ScalePicturebox.SuspendLayout();
+            this.LeftPanel.SuspendLayout();
+            this.OpenImagesPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.DownPanel.SuspendLayout();
+            this.TopPanel.SuspendLayout();
+            this.RightPanel.SuspendLayout();
             this.AnalyzeDataPanel.SuspendLayout();
             this.DisplayModePanel.SuspendLayout();
             this.RadioButtonsPanel.SuspendLayout();
-            this.OpenImagesPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // openImagesButton
             // 
-            this.openImagesButton.Location = new System.Drawing.Point(10, 6);
+            this.openImagesButton.Location = new System.Drawing.Point(9, 271);
             this.openImagesButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.openImagesButton.Name = "openImagesButton";
-            this.openImagesButton.Size = new System.Drawing.Size(236, 47);
+            this.openImagesButton.Size = new System.Drawing.Size(157, 39);
             this.openImagesButton.TabIndex = 1;
             this.openImagesButton.Text = "Open images";
             this.openImagesButton.UseVisualStyleBackColor = true;
@@ -112,7 +126,7 @@
             // sizeNumberLabel
             // 
             this.sizeNumberLabel.AutoSize = true;
-            this.sizeNumberLabel.Location = new System.Drawing.Point(9, 81);
+            this.sizeNumberLabel.Location = new System.Drawing.Point(5, 46);
             this.sizeNumberLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.sizeNumberLabel.Name = "sizeNumberLabel";
             this.sizeNumberLabel.Size = new System.Drawing.Size(41, 15);
@@ -122,7 +136,7 @@
             // pointsXLabel
             // 
             this.pointsXLabel.AutoSize = true;
-            this.pointsXLabel.Location = new System.Drawing.Point(9, 0);
+            this.pointsXLabel.Location = new System.Drawing.Point(9, 10);
             this.pointsXLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.pointsXLabel.Name = "pointsXLabel";
             this.pointsXLabel.Size = new System.Drawing.Size(63, 15);
@@ -131,7 +145,7 @@
             // 
             // pointsXTextbox
             // 
-            this.pointsXTextbox.Location = new System.Drawing.Point(7, 18);
+            this.pointsXTextbox.Location = new System.Drawing.Point(91, 6);
             this.pointsXTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pointsXTextbox.Name = "pointsXTextbox";
             this.pointsXTextbox.Size = new System.Drawing.Size(79, 23);
@@ -141,7 +155,7 @@
             // 
             // pointsYTextbox
             // 
-            this.pointsYTextbox.Location = new System.Drawing.Point(164, 18);
+            this.pointsYTextbox.Location = new System.Drawing.Point(91, 35);
             this.pointsYTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pointsYTextbox.Name = "pointsYTextbox";
             this.pointsYTextbox.Size = new System.Drawing.Size(79, 23);
@@ -152,7 +166,7 @@
             // pointsYLabel
             // 
             this.pointsYLabel.AutoSize = true;
-            this.pointsYLabel.Location = new System.Drawing.Point(164, -1);
+            this.pointsYLabel.Location = new System.Drawing.Point(9, 38);
             this.pointsYLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.pointsYLabel.Name = "pointsYLabel";
             this.pointsYLabel.Size = new System.Drawing.Size(63, 15);
@@ -161,7 +175,7 @@
             // 
             // subsetDeltaTextbox
             // 
-            this.subsetDeltaTextbox.Location = new System.Drawing.Point(7, 75);
+            this.subsetDeltaTextbox.Location = new System.Drawing.Point(91, 64);
             this.subsetDeltaTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.subsetDeltaTextbox.Name = "subsetDeltaTextbox";
             this.subsetDeltaTextbox.Size = new System.Drawing.Size(79, 23);
@@ -172,7 +186,7 @@
             // subsetDeltaLabel
             // 
             this.subsetDeltaLabel.AutoSize = true;
-            this.subsetDeltaLabel.Location = new System.Drawing.Point(10, 57);
+            this.subsetDeltaLabel.Location = new System.Drawing.Point(10, 67);
             this.subsetDeltaLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.subsetDeltaLabel.Name = "subsetDeltaLabel";
             this.subsetDeltaLabel.Size = new System.Drawing.Size(71, 15);
@@ -181,7 +195,7 @@
             // 
             // windowDeltaTextbox
             // 
-            this.windowDeltaTextbox.Location = new System.Drawing.Point(162, 75);
+            this.windowDeltaTextbox.Location = new System.Drawing.Point(91, 93);
             this.windowDeltaTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.windowDeltaTextbox.Name = "windowDeltaTextbox";
             this.windowDeltaTextbox.Size = new System.Drawing.Size(79, 23);
@@ -192,7 +206,7 @@
             // windowDeltaLabel
             // 
             this.windowDeltaLabel.AutoSize = true;
-            this.windowDeltaLabel.Location = new System.Drawing.Point(164, 57);
+            this.windowDeltaLabel.Location = new System.Drawing.Point(10, 93);
             this.windowDeltaLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.windowDeltaLabel.Name = "windowDeltaLabel";
             this.windowDeltaLabel.Size = new System.Drawing.Size(80, 15);
@@ -202,28 +216,14 @@
             // analyzeButton
             // 
             this.analyzeButton.Enabled = false;
-            this.analyzeButton.Location = new System.Drawing.Point(6, 104);
+            this.analyzeButton.Location = new System.Drawing.Point(7, 122);
             this.analyzeButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.analyzeButton.Name = "analyzeButton";
-            this.analyzeButton.Size = new System.Drawing.Size(236, 47);
+            this.analyzeButton.Size = new System.Drawing.Size(163, 34);
             this.analyzeButton.TabIndex = 12;
             this.analyzeButton.Text = "Analyze";
             this.analyzeButton.UseVisualStyleBackColor = true;
             this.analyzeButton.Click += new System.EventHandler(this.AnalyzeButton_Click);
-            // 
-            // showCropBoxCheckbox
-            // 
-            this.showCropBoxCheckbox.AutoSize = true;
-            this.showCropBoxCheckbox.Checked = true;
-            this.showCropBoxCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showCropBoxCheckbox.Location = new System.Drawing.Point(7, 4);
-            this.showCropBoxCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.showCropBoxCheckbox.Name = "showCropBoxCheckbox";
-            this.showCropBoxCheckbox.Size = new System.Drawing.Size(105, 19);
-            this.showCropBoxCheckbox.TabIndex = 13;
-            this.showCropBoxCheckbox.Text = "Show crop box";
-            this.showCropBoxCheckbox.UseVisualStyleBackColor = true;
-            this.showCropBoxCheckbox.CheckedChanged += new System.EventHandler(this.ShowCropBoxCheckbox_CheckedChanged);
             // 
             // displayModeLabel
             // 
@@ -235,25 +235,37 @@
             this.displayModeLabel.TabIndex = 14;
             this.displayModeLabel.Text = "DisplayMode:";
             // 
-            // MainImagePanel
+            // FillPanel
             // 
-            this.MainImagePanel.AutoScroll = true;
-            this.MainImagePanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.MainImagePanel.Controls.Add(this.MainPictureBox);
-            this.MainImagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MainImagePanel.Location = new System.Drawing.Point(0, 61);
-            this.MainImagePanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MainImagePanel.Name = "MainImagePanel";
-            this.MainImagePanel.Size = new System.Drawing.Size(1259, 1000);
-            this.MainImagePanel.TabIndex = 34;
+            this.FillPanel.AutoScroll = true;
+            this.FillPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.FillPanel.Controls.Add(this.ImagePanel);
+            this.FillPanel.Controls.Add(this.progressBar);
+            this.FillPanel.Controls.Add(this.ScalePicturebox);
+            this.FillPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FillPanel.Location = new System.Drawing.Point(174, 35);
+            this.FillPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.FillPanel.Name = "FillPanel";
+            this.FillPanel.Size = new System.Drawing.Size(849, 814);
+            this.FillPanel.TabIndex = 34;
+            // 
+            // ImagePanel
+            // 
+            this.ImagePanel.AutoScroll = true;
+            this.ImagePanel.Controls.Add(this.MainPictureBox);
+            this.ImagePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ImagePanel.Location = new System.Drawing.Point(30, 0);
+            this.ImagePanel.Name = "ImagePanel";
+            this.ImagePanel.Size = new System.Drawing.Size(819, 804);
+            this.ImagePanel.TabIndex = 29;
             // 
             // MainPictureBox
             // 
             this.MainPictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.MainPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.MainPictureBox.Location = new System.Drawing.Point(0, 1);
             this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MainPictureBox.Name = "MainPictureBox";
-            this.MainPictureBox.Size = new System.Drawing.Size(890, 714);
+            this.MainPictureBox.Size = new System.Drawing.Size(100, 100);
             this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
@@ -261,74 +273,335 @@
             this.MainPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseMove);
             this.MainPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseUp);
             // 
-            // imageSliderPanel
+            // progressBar
             // 
-            this.imageSliderPanel.AutoScroll = true;
-            this.imageSliderPanel.Controls.Add(this.SetImageButtonsPanel);
-            this.imageSliderPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.imageSliderPanel.Location = new System.Drawing.Point(0, 0);
-            this.imageSliderPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.imageSliderPanel.Name = "imageSliderPanel";
-            this.imageSliderPanel.Size = new System.Drawing.Size(1513, 61);
-            this.imageSliderPanel.TabIndex = 35;
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(30, 804);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(819, 10);
+            this.progressBar.TabIndex = 28;
             // 
-            // SetImageButtonsPanel
+            // ScalePicturebox
             // 
-            this.SetImageButtonsPanel.AutoScroll = true;
-            this.SetImageButtonsPanel.AutoSize = true;
-            this.SetImageButtonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.SetImageButtonsPanel.Location = new System.Drawing.Point(0, 0);
-            this.SetImageButtonsPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SetImageButtonsPanel.Name = "SetImageButtonsPanel";
-            this.SetImageButtonsPanel.Size = new System.Drawing.Size(1513, 61);
-            this.SetImageButtonsPanel.TabIndex = 0;
+            this.ScalePicturebox.Controls.Add(this.MaxValLabel);
+            this.ScalePicturebox.Controls.Add(this.MinValLabel);
+            this.ScalePicturebox.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ScalePicturebox.Location = new System.Drawing.Point(0, 0);
+            this.ScalePicturebox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ScalePicturebox.Name = "ScalePicturebox";
+            this.ScalePicturebox.Size = new System.Drawing.Size(30, 814);
+            this.ScalePicturebox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.ScalePicturebox.TabIndex = 11;
+            this.ScalePicturebox.TabStop = false;
             // 
-            // loadImagesFileDialog
+            // MaxValLabel
             // 
-            this.loadImagesFileDialog.Filter = "*.BMP;*.JPG;*.GIF|";
-            this.loadImagesFileDialog.Multiselect = true;
-            this.loadImagesFileDialog.Title = "Load Images to analyze";
+            this.MaxValLabel.AutoSize = true;
+            this.MaxValLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MaxValLabel.Cursor = System.Windows.Forms.Cursors.Default;
+            this.MaxValLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.MaxValLabel.Location = new System.Drawing.Point(0, 0);
+            this.MaxValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MaxValLabel.Name = "MaxValLabel";
+            this.MaxValLabel.Size = new System.Drawing.Size(13, 15);
+            this.MaxValLabel.TabIndex = 100;
+            this.MaxValLabel.Text = "0";
             // 
-            // optionsPanel
+            // MinValLabel
             // 
-            this.optionsPanel.Controls.Add(this.ZoomPanel);
-            this.optionsPanel.Controls.Add(this.ResultPanel);
-            this.optionsPanel.Controls.Add(this.AnalyzeDataPanel);
-            this.optionsPanel.Controls.Add(this.DisplayModePanel);
-            this.optionsPanel.Controls.Add(this.OpenImagesPanel);
-            this.optionsPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.optionsPanel.Location = new System.Drawing.Point(1259, 61);
-            this.optionsPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.optionsPanel.Name = "optionsPanel";
-            this.optionsPanel.Size = new System.Drawing.Size(254, 1000);
-            this.optionsPanel.TabIndex = 36;
+            this.MinValLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MinValLabel.AutoSize = true;
+            this.MinValLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MinValLabel.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.MinValLabel.Location = new System.Drawing.Point(0, 799);
+            this.MinValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MinValLabel.Name = "MinValLabel";
+            this.MinValLabel.Size = new System.Drawing.Size(13, 15);
+            this.MinValLabel.TabIndex = 101;
+            this.MinValLabel.Text = "0";
             // 
-            // ZoomPanel
+            // YPosLabel
             // 
-            this.ZoomPanel.Controls.Add(this.zoomLabel);
-            this.ZoomPanel.Controls.Add(this.zoomUpButton);
-            this.ZoomPanel.Controls.Add(this.showCropBoxCheckbox);
-            this.ZoomPanel.Controls.Add(this.ResetZoomButton);
-            this.ZoomPanel.Controls.Add(this.zoomTextbox);
-            this.ZoomPanel.Controls.Add(this.ZoomDownButton);
-            this.ZoomPanel.Location = new System.Drawing.Point(0, 308);
-            this.ZoomPanel.Name = "ZoomPanel";
-            this.ZoomPanel.Size = new System.Drawing.Size(254, 66);
-            this.ZoomPanel.TabIndex = 41;
+            this.YPosLabel.AutoSize = true;
+            this.YPosLabel.Location = new System.Drawing.Point(83, 121);
+            this.YPosLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.YPosLabel.Name = "YPosLabel";
+            this.YPosLabel.Size = new System.Drawing.Size(26, 15);
+            this.YPosLabel.TabIndex = 14;
+            this.YPosLabel.Text = "Y: 0";
             // 
-            // zoomLabel
+            // XPosLabel
             // 
-            this.zoomLabel.AutoSize = true;
-            this.zoomLabel.Location = new System.Drawing.Point(5, 40);
-            this.zoomLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.zoomLabel.Name = "zoomLabel";
-            this.zoomLabel.Size = new System.Drawing.Size(42, 15);
-            this.zoomLabel.TabIndex = 25;
-            this.zoomLabel.Text = "Zoom:";
+            this.XPosLabel.AutoSize = true;
+            this.XPosLabel.Location = new System.Drawing.Point(5, 121);
+            this.XPosLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.XPosLabel.Name = "XPosLabel";
+            this.XPosLabel.Size = new System.Drawing.Size(26, 15);
+            this.XPosLabel.TabIndex = 13;
+            this.XPosLabel.Text = "X: 0";
+            // 
+            // ValueLabel
+            // 
+            this.ValueLabel.AutoSize = true;
+            this.ValueLabel.Location = new System.Drawing.Point(5, 96);
+            this.ValueLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ValueLabel.Name = "ValueLabel";
+            this.ValueLabel.Size = new System.Drawing.Size(47, 15);
+            this.ValueLabel.TabIndex = 12;
+            this.ValueLabel.Text = "Value: 0";
+            // 
+            // LeftPanel
+            // 
+            this.LeftPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.LeftPanel.Controls.Add(this.OpenImagesPanel);
+            this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.LeftPanel.Location = new System.Drawing.Point(0, 0);
+            this.LeftPanel.Name = "LeftPanel";
+            this.LeftPanel.Size = new System.Drawing.Size(174, 849);
+            this.LeftPanel.TabIndex = 2;
+            // 
+            // OpenImagesPanel
+            // 
+            this.OpenImagesPanel.Controls.Add(this.panel1);
+            this.OpenImagesPanel.Controls.Add(this.label2);
+            this.OpenImagesPanel.Controls.Add(this.imageListView);
+            this.OpenImagesPanel.Controls.Add(this.openImagesButton);
+            this.OpenImagesPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.OpenImagesPanel.Location = new System.Drawing.Point(0, 0);
+            this.OpenImagesPanel.Name = "OpenImagesPanel";
+            this.OpenImagesPanel.Size = new System.Drawing.Size(174, 831);
+            this.OpenImagesPanel.TabIndex = 39;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.checkBox1);
+            this.panel1.Controls.Add(this.MinImageValLabel);
+            this.panel1.Controls.Add(this.MaxImageValLabel);
+            this.panel1.Controls.Add(this.ValueTypeLabel);
+            this.panel1.Controls.Add(this.CurrentImageLabel);
+            this.panel1.Controls.Add(this.ValueLabel);
+            this.panel1.Controls.Add(this.ImageNameLabel);
+            this.panel1.Controls.Add(this.XPosLabel);
+            this.panel1.Controls.Add(this.sizeNumberLabel);
+            this.panel1.Controls.Add(this.YPosLabel);
+            this.panel1.Location = new System.Drawing.Point(8, 316);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(158, 216);
+            this.panel1.TabIndex = 30;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(3, 189);
+            this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(135, 19);
+            this.checkBox1.TabIndex = 33;
+            this.checkBox1.Text = "Show local min/max";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // MinImageValLabel
+            // 
+            this.MinImageValLabel.AutoSize = true;
+            this.MinImageValLabel.Location = new System.Drawing.Point(5, 171);
+            this.MinImageValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MinImageValLabel.Name = "MinImageValLabel";
+            this.MinImageValLabel.Size = new System.Drawing.Size(71, 15);
+            this.MinImageValLabel.TabIndex = 32;
+            this.MinImageValLabel.Text = "Local min: 0";
+            // 
+            // MaxImageValLabel
+            // 
+            this.MaxImageValLabel.AutoSize = true;
+            this.MaxImageValLabel.Location = new System.Drawing.Point(5, 146);
+            this.MaxImageValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MaxImageValLabel.Name = "MaxImageValLabel";
+            this.MaxImageValLabel.Size = new System.Drawing.Size(73, 15);
+            this.MaxImageValLabel.TabIndex = 31;
+            this.MaxImageValLabel.Text = "Local max: 0";
+            // 
+            // ValueTypeLabel
+            // 
+            this.ValueTypeLabel.AutoSize = true;
+            this.ValueTypeLabel.Location = new System.Drawing.Point(5, 71);
+            this.ValueTypeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ValueTypeLabel.Name = "ValueTypeLabel";
+            this.ValueTypeLabel.Size = new System.Drawing.Size(59, 15);
+            this.ValueTypeLabel.TabIndex = 30;
+            this.ValueTypeLabel.Text = "ValueType";
+            // 
+            // CurrentImageLabel
+            // 
+            this.CurrentImageLabel.AutoSize = true;
+            this.CurrentImageLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.CurrentImageLabel.Location = new System.Drawing.Point(29, 0);
+            this.CurrentImageLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.CurrentImageLabel.Name = "CurrentImageLabel";
+            this.CurrentImageLabel.Size = new System.Drawing.Size(90, 15);
+            this.CurrentImageLabel.TabIndex = 29;
+            this.CurrentImageLabel.Text = "Current image:";
+            // 
+            // ImageNameLabel
+            // 
+            this.ImageNameLabel.AutoSize = true;
+            this.ImageNameLabel.Location = new System.Drawing.Point(3, 25);
+            this.ImageNameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ImageNameLabel.Name = "ImageNameLabel";
+            this.ImageNameLabel.Size = new System.Drawing.Size(73, 15);
+            this.ImageNameLabel.TabIndex = 26;
+            this.ImageNameLabel.Text = "Image name";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(28, 9);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(104, 15);
+            this.label2.TabIndex = 28;
+            this.label2.Text = "All loaded images:";
+            // 
+            // imageListView
+            // 
+            this.imageListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.indexColumnHeader,
+            this.NameColumnHeader});
+            this.imageListView.FullRowSelect = true;
+            this.imageListView.GridLines = true;
+            this.imageListView.HideSelection = false;
+            this.imageListView.Location = new System.Drawing.Point(0, 27);
+            this.imageListView.MultiSelect = false;
+            this.imageListView.Name = "imageListView";
+            this.imageListView.Size = new System.Drawing.Size(174, 238);
+            this.imageListView.TabIndex = 27;
+            this.imageListView.UseCompatibleStateImageBehavior = false;
+            this.imageListView.View = System.Windows.Forms.View.Details;
+            this.imageListView.SelectedIndexChanged += new System.EventHandler(this.imageListView_SelectedIndexChanged);
+            // 
+            // indexColumnHeader
+            // 
+            this.indexColumnHeader.Name = "indexColumnHeader";
+            this.indexColumnHeader.Text = "Nr.";
+            this.indexColumnHeader.Width = 28;
+            // 
+            // NameColumnHeader
+            // 
+            this.NameColumnHeader.Name = "NameColumnHeader";
+            this.NameColumnHeader.Text = "Image name:";
+            this.NameColumnHeader.Width = 250;
+            // 
+            // GpuRadioBtn
+            // 
+            this.GpuRadioBtn.AutoSize = true;
+            this.GpuRadioBtn.Checked = true;
+            this.GpuRadioBtn.Location = new System.Drawing.Point(10, 219);
+            this.GpuRadioBtn.Name = "GpuRadioBtn";
+            this.GpuRadioBtn.Size = new System.Drawing.Size(82, 19);
+            this.GpuRadioBtn.TabIndex = 27;
+            this.GpuRadioBtn.TabStop = true;
+            this.GpuRadioBtn.Tag = "1";
+            this.GpuRadioBtn.Text = "Gpu CUDA";
+            this.GpuRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // CpuRadioBtn
+            // 
+            this.CpuRadioBtn.AutoSize = true;
+            this.CpuRadioBtn.Location = new System.Drawing.Point(10, 194);
+            this.CpuRadioBtn.Name = "CpuRadioBtn";
+            this.CpuRadioBtn.Size = new System.Drawing.Size(47, 19);
+            this.CpuRadioBtn.TabIndex = 27;
+            this.CpuRadioBtn.Tag = "0";
+            this.CpuRadioBtn.Text = "Cpu";
+            this.CpuRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 173);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(149, 15);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Choose calculation source:";
+            // 
+            // DownPanel
+            // 
+            this.DownPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.DownPanel.Controls.Add(this.MessageRichTextBox);
+            this.DownPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.DownPanel.Location = new System.Drawing.Point(0, 849);
+            this.DownPanel.Name = "DownPanel";
+            this.DownPanel.Size = new System.Drawing.Size(1206, 22);
+            this.DownPanel.TabIndex = 1;
+            // 
+            // MessageRichTextBox
+            // 
+            this.MessageRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MessageRichTextBox.Location = new System.Drawing.Point(0, 0);
+            this.MessageRichTextBox.Margin = new System.Windows.Forms.Padding(33, 3, 3, 3);
+            this.MessageRichTextBox.Name = "MessageRichTextBox";
+            this.MessageRichTextBox.ReadOnly = true;
+            this.MessageRichTextBox.Size = new System.Drawing.Size(1206, 22);
+            this.MessageRichTextBox.TabIndex = 0;
+            this.MessageRichTextBox.Text = "";
+            this.MessageRichTextBox.DoubleClick += new System.EventHandler(this.MessageRichTextBox_DoubleClick);
+            // 
+            // TopPanel
+            // 
+            this.TopPanel.AutoScroll = true;
+            this.TopPanel.Controls.Add(this.zoomTextbox);
+            this.TopPanel.Controls.Add(this.ResetZoomButton);
+            this.TopPanel.Controls.Add(this.showCropBoxCheckbox);
+            this.TopPanel.Controls.Add(this.zoomUpButton);
+            this.TopPanel.Controls.Add(this.zoomLabel);
+            this.TopPanel.Controls.Add(this.ZoomDownButton);
+            this.TopPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TopPanel.Location = new System.Drawing.Point(174, 0);
+            this.TopPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.TopPanel.Name = "TopPanel";
+            this.TopPanel.Size = new System.Drawing.Size(1032, 35);
+            this.TopPanel.TabIndex = 35;
+            // 
+            // zoomTextbox
+            // 
+            this.zoomTextbox.Enabled = false;
+            this.zoomTextbox.Location = new System.Drawing.Point(237, 6);
+            this.zoomTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.zoomTextbox.Name = "zoomTextbox";
+            this.zoomTextbox.Size = new System.Drawing.Size(41, 23);
+            this.zoomTextbox.TabIndex = 34;
+            // 
+            // ResetZoomButton
+            // 
+            this.ResetZoomButton.Location = new System.Drawing.Point(141, 3);
+            this.ResetZoomButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ResetZoomButton.Name = "ResetZoomButton";
+            this.ResetZoomButton.Size = new System.Drawing.Size(88, 27);
+            this.ResetZoomButton.TabIndex = 33;
+            this.ResetZoomButton.Text = "Reset zoom";
+            this.ResetZoomButton.UseVisualStyleBackColor = true;
+            this.ResetZoomButton.Click += new System.EventHandler(this.InitializeImageScale);
+            // 
+            // showCropBoxCheckbox
+            // 
+            this.showCropBoxCheckbox.AutoSize = true;
+            this.showCropBoxCheckbox.Checked = true;
+            this.showCropBoxCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showCropBoxCheckbox.Location = new System.Drawing.Point(286, 8);
+            this.showCropBoxCheckbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.showCropBoxCheckbox.Name = "showCropBoxCheckbox";
+            this.showCropBoxCheckbox.Size = new System.Drawing.Size(105, 19);
+            this.showCropBoxCheckbox.TabIndex = 32;
+            this.showCropBoxCheckbox.Text = "Show crop box";
+            this.showCropBoxCheckbox.UseVisualStyleBackColor = true;
+            this.showCropBoxCheckbox.CheckedChanged += new System.EventHandler(this.ShowCropBoxCheckbox_CheckedChanged);
             // 
             // zoomUpButton
             // 
-            this.zoomUpButton.Location = new System.Drawing.Point(111, 34);
+            this.zoomUpButton.Location = new System.Drawing.Point(99, 3);
             this.zoomUpButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.zoomUpButton.Name = "zoomUpButton";
             this.zoomUpButton.Size = new System.Drawing.Size(34, 27);
@@ -337,29 +610,19 @@
             this.zoomUpButton.UseVisualStyleBackColor = true;
             this.zoomUpButton.Click += new System.EventHandler(this.ZoomUpButton_Click);
             // 
-            // ResetZoomButton
+            // zoomLabel
             // 
-            this.ResetZoomButton.Location = new System.Drawing.Point(153, 4);
-            this.ResetZoomButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ResetZoomButton.Name = "ResetZoomButton";
-            this.ResetZoomButton.Size = new System.Drawing.Size(88, 27);
-            this.ResetZoomButton.TabIndex = 27;
-            this.ResetZoomButton.Text = "Reset zoom";
-            this.ResetZoomButton.UseVisualStyleBackColor = true;
-            this.ResetZoomButton.Click += new System.EventHandler(this.InitializeImageScale);
-            // 
-            // zoomTextbox
-            // 
-            this.zoomTextbox.Enabled = false;
-            this.zoomTextbox.Location = new System.Drawing.Point(153, 37);
-            this.zoomTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.zoomTextbox.Name = "zoomTextbox";
-            this.zoomTextbox.Size = new System.Drawing.Size(86, 23);
-            this.zoomTextbox.TabIndex = 32;
+            this.zoomLabel.AutoSize = true;
+            this.zoomLabel.Location = new System.Drawing.Point(7, 9);
+            this.zoomLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.zoomLabel.Name = "zoomLabel";
+            this.zoomLabel.Size = new System.Drawing.Size(42, 15);
+            this.zoomLabel.TabIndex = 25;
+            this.zoomLabel.Text = "Zoom:";
             // 
             // ZoomDownButton
             // 
-            this.ZoomDownButton.Location = new System.Drawing.Point(69, 34);
+            this.ZoomDownButton.Location = new System.Drawing.Point(57, 3);
             this.ZoomDownButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ZoomDownButton.Name = "ZoomDownButton";
             this.ZoomDownButton.Size = new System.Drawing.Size(34, 27);
@@ -368,135 +631,51 @@
             this.ZoomDownButton.UseVisualStyleBackColor = true;
             this.ZoomDownButton.Click += new System.EventHandler(this.ZoomDownButton_Click);
             // 
-            // ResultPanel
+            // loadImagesFileDialog
             // 
-            this.ResultPanel.Controls.Add(this.ColorScaleLabel);
-            this.ResultPanel.Controls.Add(this.YPosLabel);
-            this.ResultPanel.Controls.Add(this.ScalePicturebox);
-            this.ResultPanel.Controls.Add(this.MinValLabel);
-            this.ResultPanel.Controls.Add(this.XPosLabel);
-            this.ResultPanel.Controls.Add(this.MaxValLabel);
-            this.ResultPanel.Controls.Add(this.ValueLabel);
-            this.ResultPanel.Location = new System.Drawing.Point(0, 680);
-            this.ResultPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ResultPanel.Name = "ResultPanel";
-            this.ResultPanel.Size = new System.Drawing.Size(254, 107);
-            this.ResultPanel.TabIndex = 38;
+            this.loadImagesFileDialog.Filter = "*.BMP;*.JPG;*.GIF|";
+            this.loadImagesFileDialog.Multiselect = true;
+            this.loadImagesFileDialog.Title = "Load Images to analyze";
             // 
-            // ColorScaleLabel
+            // RightPanel
             // 
-            this.ColorScaleLabel.AutoSize = true;
-            this.ColorScaleLabel.Location = new System.Drawing.Point(6, 38);
-            this.ColorScaleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ColorScaleLabel.Name = "ColorScaleLabel";
-            this.ColorScaleLabel.Size = new System.Drawing.Size(72, 15);
-            this.ColorScaleLabel.TabIndex = 15;
-            this.ColorScaleLabel.Text = "Color Scale: ";
-            // 
-            // YPosLabel
-            // 
-            this.YPosLabel.AutoSize = true;
-            this.YPosLabel.Location = new System.Drawing.Point(190, 13);
-            this.YPosLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.YPosLabel.Name = "YPosLabel";
-            this.YPosLabel.Size = new System.Drawing.Size(26, 15);
-            this.YPosLabel.TabIndex = 14;
-            this.YPosLabel.Text = "Y: 0";
-            // 
-            // ScalePicturebox
-            // 
-            this.ScalePicturebox.Location = new System.Drawing.Point(0, 77);
-            this.ScalePicturebox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ScalePicturebox.Name = "ScalePicturebox";
-            this.ScalePicturebox.Size = new System.Drawing.Size(254, 23);
-            this.ScalePicturebox.TabIndex = 11;
-            this.ScalePicturebox.TabStop = false;
-            // 
-            // MinValLabel
-            // 
-            this.MinValLabel.AutoSize = true;
-            this.MinValLabel.Location = new System.Drawing.Point(5, 59);
-            this.MinValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MinValLabel.Name = "MinValLabel";
-            this.MinValLabel.Size = new System.Drawing.Size(37, 15);
-            this.MinValLabel.TabIndex = 9;
-            this.MinValLabel.Text = "Min:0";
-            // 
-            // XPosLabel
-            // 
-            this.XPosLabel.AutoSize = true;
-            this.XPosLabel.Location = new System.Drawing.Point(91, 13);
-            this.XPosLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.XPosLabel.Name = "XPosLabel";
-            this.XPosLabel.Size = new System.Drawing.Size(26, 15);
-            this.XPosLabel.TabIndex = 13;
-            this.XPosLabel.Text = "X: 0";
-            // 
-            // MaxValLabel
-            // 
-            this.MaxValLabel.AutoSize = true;
-            this.MaxValLabel.Location = new System.Drawing.Point(190, 59);
-            this.MaxValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MaxValLabel.Name = "MaxValLabel";
-            this.MaxValLabel.Size = new System.Drawing.Size(39, 15);
-            this.MaxValLabel.TabIndex = 10;
-            this.MaxValLabel.Text = "Max:0";
-            // 
-            // ValueLabel
-            // 
-            this.ValueLabel.AutoSize = true;
-            this.ValueLabel.Location = new System.Drawing.Point(6, 13);
-            this.ValueLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ValueLabel.Name = "ValueLabel";
-            this.ValueLabel.Size = new System.Drawing.Size(47, 15);
-            this.ValueLabel.TabIndex = 12;
-            this.ValueLabel.Text = "Value: 0";
+            this.RightPanel.Controls.Add(this.AnalyzeDataPanel);
+            this.RightPanel.Controls.Add(this.DisplayModePanel);
+            this.RightPanel.Dock = System.Windows.Forms.DockStyle.Right;
+            this.RightPanel.Location = new System.Drawing.Point(1023, 35);
+            this.RightPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.RightPanel.Name = "RightPanel";
+            this.RightPanel.Size = new System.Drawing.Size(183, 814);
+            this.RightPanel.TabIndex = 36;
             // 
             // AnalyzeDataPanel
             // 
             this.AnalyzeDataPanel.Controls.Add(this.pointsXLabel);
+            this.AnalyzeDataPanel.Controls.Add(this.GpuRadioBtn);
             this.AnalyzeDataPanel.Controls.Add(this.pointsXTextbox);
+            this.AnalyzeDataPanel.Controls.Add(this.CpuRadioBtn);
             this.AnalyzeDataPanel.Controls.Add(this.windowDeltaTextbox);
+            this.AnalyzeDataPanel.Controls.Add(this.label1);
             this.AnalyzeDataPanel.Controls.Add(this.subsetDeltaLabel);
             this.AnalyzeDataPanel.Controls.Add(this.analyzeButton);
             this.AnalyzeDataPanel.Controls.Add(this.subsetDeltaTextbox);
             this.AnalyzeDataPanel.Controls.Add(this.pointsYLabel);
             this.AnalyzeDataPanel.Controls.Add(this.pointsYTextbox);
             this.AnalyzeDataPanel.Controls.Add(this.windowDeltaLabel);
-            this.AnalyzeDataPanel.Location = new System.Drawing.Point(0, 150);
+            this.AnalyzeDataPanel.Location = new System.Drawing.Point(0, 0);
             this.AnalyzeDataPanel.Name = "AnalyzeDataPanel";
-            this.AnalyzeDataPanel.Size = new System.Drawing.Size(254, 156);
+            this.AnalyzeDataPanel.Size = new System.Drawing.Size(182, 249);
             this.AnalyzeDataPanel.TabIndex = 40;
             // 
             // DisplayModePanel
             // 
-            this.DisplayModePanel.Controls.Add(this.progresLabel);
-            this.DisplayModePanel.Controls.Add(this.progressBar);
             this.DisplayModePanel.Controls.Add(this.displayModeLabel);
             this.DisplayModePanel.Controls.Add(this.RadioButtonsPanel);
-            this.DisplayModePanel.Location = new System.Drawing.Point(0, 375);
+            this.DisplayModePanel.Location = new System.Drawing.Point(0, 255);
             this.DisplayModePanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DisplayModePanel.Name = "DisplayModePanel";
-            this.DisplayModePanel.Size = new System.Drawing.Size(254, 307);
+            this.DisplayModePanel.Size = new System.Drawing.Size(182, 307);
             this.DisplayModePanel.TabIndex = 15;
-            // 
-            // progresLabel
-            // 
-            this.progresLabel.AutoSize = true;
-            this.progresLabel.Location = new System.Drawing.Point(5, 254);
-            this.progresLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.progresLabel.Name = "progresLabel";
-            this.progresLabel.Size = new System.Drawing.Size(55, 15);
-            this.progresLabel.TabIndex = 29;
-            this.progresLabel.Text = "Progress:";
-            // 
-            // progressBar
-            // 
-            this.progressBar.Location = new System.Drawing.Point(5, 272);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(248, 27);
-            this.progressBar.TabIndex = 28;
             // 
             // RadioButtonsPanel
             // 
@@ -504,7 +683,9 @@
             this.RadioButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.RadioButtonsPanel.ColumnCount = 1;
             this.RadioButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.RadioButtonsPanel.Controls.Add(this.tensionRadioButton, 0, 8);
+            this.RadioButtonsPanel.Controls.Add(this.stressEqRadioButton, 0, 10);
+            this.RadioButtonsPanel.Controls.Add(this.stressYRadioButton, 0, 9);
+            this.RadioButtonsPanel.Controls.Add(this.stressXRadioButton, 0, 8);
             this.RadioButtonsPanel.Controls.Add(this.strainYRadioButton, 0, 6);
             this.RadioButtonsPanel.Controls.Add(this.displacementYRadiobutton, 0, 4);
             this.RadioButtonsPanel.Controls.Add(this.imageRadioButton, 0, 0);
@@ -516,7 +697,7 @@
             this.RadioButtonsPanel.Location = new System.Drawing.Point(5, 20);
             this.RadioButtonsPanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.RadioButtonsPanel.Name = "RadioButtonsPanel";
-            this.RadioButtonsPanel.RowCount = 9;
+            this.RadioButtonsPanel.RowCount = 11;
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -526,22 +707,49 @@
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 23F));
-            this.RadioButtonsPanel.Size = new System.Drawing.Size(146, 225);
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.RadioButtonsPanel.Size = new System.Drawing.Size(146, 275);
             this.RadioButtonsPanel.TabIndex = 37;
             // 
-            // tensionRadioButton
+            // stressEqRadioButton
             // 
-            this.tensionRadioButton.AutoSize = true;
-            this.tensionRadioButton.Location = new System.Drawing.Point(4, 203);
-            this.tensionRadioButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tensionRadioButton.Name = "tensionRadioButton";
-            this.tensionRadioButton.Size = new System.Drawing.Size(65, 19);
-            this.tensionRadioButton.TabIndex = 25;
-            this.tensionRadioButton.Tag = "8";
-            this.tensionRadioButton.Text = "Tension";
-            this.tensionRadioButton.UseVisualStyleBackColor = true;
-            this.tensionRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            this.stressEqRadioButton.AutoSize = true;
+            this.stressEqRadioButton.Location = new System.Drawing.Point(4, 253);
+            this.stressEqRadioButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.stressEqRadioButton.Name = "stressEqRadioButton";
+            this.stressEqRadioButton.Size = new System.Drawing.Size(79, 19);
+            this.stressEqRadioButton.TabIndex = 27;
+            this.stressEqRadioButton.Tag = "10";
+            this.stressEqRadioButton.Text = "Stress (eq)";
+            this.stressEqRadioButton.UseVisualStyleBackColor = true;
+            this.stressEqRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // stressYRadioButton
+            // 
+            this.stressYRadioButton.AutoSize = true;
+            this.stressYRadioButton.Location = new System.Drawing.Point(4, 228);
+            this.stressYRadioButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.stressYRadioButton.Name = "stressYRadioButton";
+            this.stressYRadioButton.Size = new System.Drawing.Size(70, 19);
+            this.stressYRadioButton.TabIndex = 26;
+            this.stressYRadioButton.Tag = "9";
+            this.stressYRadioButton.Text = "Stress(Y)";
+            this.stressYRadioButton.UseVisualStyleBackColor = true;
+            this.stressYRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
+            // 
+            // stressXRadioButton
+            // 
+            this.stressXRadioButton.AutoSize = true;
+            this.stressXRadioButton.Location = new System.Drawing.Point(4, 203);
+            this.stressXRadioButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.stressXRadioButton.Name = "stressXRadioButton";
+            this.stressXRadioButton.Size = new System.Drawing.Size(73, 19);
+            this.stressXRadioButton.TabIndex = 25;
+            this.stressXRadioButton.Tag = "8";
+            this.stressXRadioButton.Text = "Stress (X)";
+            this.stressXRadioButton.UseVisualStyleBackColor = true;
+            this.stressXRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
             // 
             // strainYRadioButton
             // 
@@ -649,71 +857,6 @@
             this.strainShearRadioButton.UseVisualStyleBackColor = true;
             this.strainShearRadioButton.Click += new System.EventHandler(this.DrawCurrentImage);
             // 
-            // OpenImagesPanel
-            // 
-            this.OpenImagesPanel.Controls.Add(this.panel3);
-            this.OpenImagesPanel.Controls.Add(this.GpuRadioBtn);
-            this.OpenImagesPanel.Controls.Add(this.CpuRadioBtn);
-            this.OpenImagesPanel.Controls.Add(this.label1);
-            this.OpenImagesPanel.Controls.Add(this.openImagesButton);
-            this.OpenImagesPanel.Controls.Add(this.ImageNameLabel);
-            this.OpenImagesPanel.Controls.Add(this.sizeNumberLabel);
-            this.OpenImagesPanel.Location = new System.Drawing.Point(0, 0);
-            this.OpenImagesPanel.Name = "OpenImagesPanel";
-            this.OpenImagesPanel.Size = new System.Drawing.Size(254, 146);
-            this.OpenImagesPanel.TabIndex = 39;
-            // 
-            // panel3
-            // 
-            this.panel3.Location = new System.Drawing.Point(0, 150);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(254, 156);
-            this.panel3.TabIndex = 40;
-            // 
-            // GpuRadioBtn
-            // 
-            this.GpuRadioBtn.AutoSize = true;
-            this.GpuRadioBtn.Checked = true;
-            this.GpuRadioBtn.Location = new System.Drawing.Point(163, 125);
-            this.GpuRadioBtn.Name = "GpuRadioBtn";
-            this.GpuRadioBtn.Size = new System.Drawing.Size(47, 19);
-            this.GpuRadioBtn.TabIndex = 27;
-            this.GpuRadioBtn.TabStop = true;
-            this.GpuRadioBtn.Tag = "1";
-            this.GpuRadioBtn.Text = "Gpu";
-            this.GpuRadioBtn.UseVisualStyleBackColor = true;
-            // 
-            // CpuRadioBtn
-            // 
-            this.CpuRadioBtn.AutoSize = true;
-            this.CpuRadioBtn.Location = new System.Drawing.Point(12, 125);
-            this.CpuRadioBtn.Name = "CpuRadioBtn";
-            this.CpuRadioBtn.Size = new System.Drawing.Size(47, 19);
-            this.CpuRadioBtn.TabIndex = 27;
-            this.CpuRadioBtn.Tag = "0";
-            this.CpuRadioBtn.Text = "Cpu";
-            this.CpuRadioBtn.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 107);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(149, 15);
-            this.label1.TabIndex = 26;
-            this.label1.Text = "Choose calculation source:";
-            // 
-            // ImageNameLabel
-            // 
-            this.ImageNameLabel.AutoSize = true;
-            this.ImageNameLabel.Location = new System.Drawing.Point(9, 56);
-            this.ImageNameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.ImageNameLabel.Name = "ImageNameLabel";
-            this.ImageNameLabel.Size = new System.Drawing.Size(73, 15);
-            this.ImageNameLabel.TabIndex = 26;
-            this.ImageNameLabel.Text = "Image name";
-            // 
             // LoadImagesBackgroundWorker
             // 
             this.LoadImagesBackgroundWorker.WorkerReportsProgress = true;
@@ -728,38 +871,50 @@
             this.PictureboxToolTip.UseAnimation = false;
             this.PictureboxToolTip.UseFading = false;
             // 
+            // ZoomPanel
+            // 
+            this.ZoomPanel.Location = new System.Drawing.Point(0, 308);
+            this.ZoomPanel.Name = "ZoomPanel";
+            this.ZoomPanel.Size = new System.Drawing.Size(254, 66);
+            this.ZoomPanel.TabIndex = 41;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1513, 1061);
-            this.Controls.Add(this.MainImagePanel);
-            this.Controls.Add(this.optionsPanel);
-            this.Controls.Add(this.imageSliderPanel);
+            this.ClientSize = new System.Drawing.Size(1206, 871);
+            this.Controls.Add(this.FillPanel);
+            this.Controls.Add(this.RightPanel);
+            this.Controls.Add(this.TopPanel);
+            this.Controls.Add(this.LeftPanel);
+            this.Controls.Add(this.DownPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "MainForm";
             this.Text = "Digital Image Correlation";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.MainImagePanel.ResumeLayout(false);
-            this.MainImagePanel.PerformLayout();
+            this.FillPanel.ResumeLayout(false);
+            this.ImagePanel.ResumeLayout(false);
+            this.ImagePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();
-            this.imageSliderPanel.ResumeLayout(false);
-            this.imageSliderPanel.PerformLayout();
-            this.optionsPanel.ResumeLayout(false);
-            this.ZoomPanel.ResumeLayout(false);
-            this.ZoomPanel.PerformLayout();
-            this.ResultPanel.ResumeLayout(false);
-            this.ResultPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScalePicturebox)).EndInit();
+            this.ScalePicturebox.ResumeLayout(false);
+            this.ScalePicturebox.PerformLayout();
+            this.LeftPanel.ResumeLayout(false);
+            this.OpenImagesPanel.ResumeLayout(false);
+            this.OpenImagesPanel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.DownPanel.ResumeLayout(false);
+            this.TopPanel.ResumeLayout(false);
+            this.TopPanel.PerformLayout();
+            this.RightPanel.ResumeLayout(false);
             this.AnalyzeDataPanel.ResumeLayout(false);
             this.AnalyzeDataPanel.PerformLayout();
             this.DisplayModePanel.ResumeLayout(false);
             this.DisplayModePanel.PerformLayout();
             this.RadioButtonsPanel.ResumeLayout(false);
             this.RadioButtonsPanel.PerformLayout();
-            this.OpenImagesPanel.ResumeLayout(false);
-            this.OpenImagesPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -776,25 +931,20 @@
         private System.Windows.Forms.TextBox windowDeltaTextbox;
         private System.Windows.Forms.Label windowDeltaLabel;
         private System.Windows.Forms.Button analyzeButton;
-        private System.Windows.Forms.CheckBox showCropBoxCheckbox;
         private System.Windows.Forms.Label displayModeLabel;
-        private System.Windows.Forms.Panel MainImagePanel;
+        private System.Windows.Forms.Panel FillPanel;
         private System.Windows.Forms.PictureBox MainPictureBox;
-        private System.Windows.Forms.Panel imageSliderPanel;
+        private System.Windows.Forms.Panel TopPanel;
         private System.Windows.Forms.OpenFileDialog loadImagesFileDialog;
-        private System.Windows.Forms.Panel optionsPanel;
-        private System.Windows.Forms.Panel SetImageButtonsPanel;
+        private System.Windows.Forms.Panel RightPanel;
         private System.Windows.Forms.Label zoomLabel;
         private System.Windows.Forms.Label ImageNameLabel;
-        private System.Windows.Forms.Button ResetZoomButton;
-        private System.Windows.Forms.Label progresLabel;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.ComponentModel.BackgroundWorker LoadImagesBackgroundWorker;
-        private System.Windows.Forms.TextBox zoomTextbox;
         private System.Windows.Forms.Button zoomUpButton;
         private System.Windows.Forms.Button ZoomDownButton;
         private System.Windows.Forms.TableLayoutPanel RadioButtonsPanel;
-        private System.Windows.Forms.RadioButton tensionRadioButton;
+        private System.Windows.Forms.RadioButton stressXRadioButton;
         private System.Windows.Forms.RadioButton strainYRadioButton;
         private System.Windows.Forms.RadioButton displacementYRadiobutton;
         private System.Windows.Forms.RadioButton imageRadioButton;
@@ -803,23 +953,39 @@
         private System.Windows.Forms.RadioButton displacementXRadioButton;
         private System.Windows.Forms.RadioButton strainXRadioButton;
         private System.Windows.Forms.RadioButton strainShearRadioButton;
-        private System.Windows.Forms.Panel ResultPanel;
         private System.Windows.Forms.Label YPosLabel;
         private System.Windows.Forms.Label XPosLabel;
         private System.Windows.Forms.Label ValueLabel;
         private System.Windows.Forms.PictureBox ScalePicturebox;
         private System.Windows.Forms.Label MaxValLabel;
-        private System.Windows.Forms.Label MinValLabel;
         private System.Windows.Forms.Panel DisplayModePanel;
-        private System.Windows.Forms.Label ColorScaleLabel;
         private System.Windows.Forms.ToolTip PictureboxToolTip;
-        private System.Windows.Forms.Panel ZoomPanel;
         private System.Windows.Forms.Panel AnalyzeDataPanel;
         private System.Windows.Forms.Panel OpenImagesPanel;
-        private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.RadioButton GpuRadioBtn;
         private System.Windows.Forms.RadioButton CpuRadioBtn;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel LeftPanel;
+        private System.Windows.Forms.Panel DownPanel;
+        private System.Windows.Forms.Panel ZoomPanel;
+        private System.Windows.Forms.TextBox zoomTextbox;
+        private System.Windows.Forms.Button ResetZoomButton;
+        private System.Windows.Forms.CheckBox showCropBoxCheckbox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ListView imageListView;
+        private System.Windows.Forms.ColumnHeader indexColumnHeader;
+        private System.Windows.Forms.ColumnHeader NameColumnHeader;
+        private System.Windows.Forms.Panel ImagePanel;
+        private System.Windows.Forms.RichTextBox MessageRichTextBox;
+        private System.Windows.Forms.RadioButton stressEqRadioButton;
+        private System.Windows.Forms.RadioButton stressYRadioButton;
+        private System.Windows.Forms.Label MinValLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label MinImageValLabel;
+        private System.Windows.Forms.Label MaxImageValLabel;
+        private System.Windows.Forms.Label ValueTypeLabel;
+        private System.Windows.Forms.Label CurrentImageLabel;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

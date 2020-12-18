@@ -8,7 +8,17 @@ namespace DigitalImageCorrelation.Core.Structures
     public class ImageResult
     {
         public Vertex[] Vertexes;
-        public int Index;       
+        public int Index;
+        public double MaxDx => Vertexes.Max(x => x.dX);
+        public double MinDx => Vertexes.Min(x => x.dX);
+        public double MaxDy => Vertexes.Max(x => x.dY);
+        public double MinDy => Vertexes.Min(x => x.dY);
+        public double MaxStrainXX => Vertexes.Max(x => x.strain.XX);
+        public double MinStrainXX => Vertexes.Min(x => x.strain.XX);
+        public double MaxStrainYY => Vertexes.Max(x => x.strain.YY);
+        public double MinStrainYY => Vertexes.Min(x => x.strain.YY);
+        public double MaxStrainXY => Vertexes.Max(x => x.strain.XY);
+        public double MinStrainXY => Vertexes.Min(x => x.strain.XY);
 
         public Vertex GetClosestVertex(int x, int y)
         {

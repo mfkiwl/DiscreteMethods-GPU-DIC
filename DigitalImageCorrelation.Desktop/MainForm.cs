@@ -57,19 +57,18 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    SetImageButtonsPanel.Controls.Clear();
+                    imageListView.Items.Clear();
                     progressBar.Minimum = 0;
                     progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
                     for (int i = 0; i < loadImagesFileDialog.FileNames.Count(); i++)
                     {
-                        Button imageBtn = new Button();
-                        imageBtn.Click += ChangeImage_Click;
-                        imageBtn.Location = new Point(i * 70, 0);
-                        imageBtn.AutoSize = true;
-                        imageBtn.Size = new Size(67, 13);
-                        imageBtn.TabIndex = 0;
-                        imageBtn.Text = (i + 1).ToString();
-                        SetImageButtonsPanel.Controls.Add(imageBtn);
+                        var path = loadImagesFileDialog.FileNames[i];
+                        var args = new string[] { (i + 1).ToString(), Path.GetFileName(path) };
+                        imageListView.Items.Add(new ListViewItem(args)
+                        {
+                            Tag = i,
+                            ToolTipText = path,
+                        });
                     }
                     LoadImagesBackgroundWorker.RunWorkerAsync();
                 }
@@ -80,22 +79,10 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private async void ChangeImage_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                Button button = sender as Button;
-                await SetImage(imageContainers[int.Parse(button.Text) - 1]);
-            }
-            catch (Exception ex)
-            {
-                Error(ex);
-            }
-        }
-
         private async void DrawCurrentImage(object sender, EventArgs e)
         {
-            await SetImage(CurrentImageContainer);
+            var request = CreateDrawRequest();
+            MainPictureBox.Image = await _painter.DrawImage(request);
         }
 
         private async Task<bool> SetImage(ImageContainer container)
@@ -112,10 +99,17 @@ namespace DigitalImageCorrelation.Desktop
                 MainPictureBox.Image = await _painter.DrawImage(drawRequest);
                 ImageNameLabel.Text = CurrentImageContainer.Filename;
                 sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
+                if (container.Result != null)
+                {
+
+                    MaxImageValLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(drawRequest.Type), 2)}";
+                    MinImageValLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(drawRequest.Type), 2)}";
+                    ValueTypeLabel.Text = drawRequest.Type.ToString();
+                }
                 if (analyzeResult.ImageResults.Any())
                 {
-                    MaxValLabel.Text = $"Max: {Math.Round(GetMaxValue(drawRequest.Type), 2)}";
-                    MinValLabel.Text = $"Min: {Math.Round(GetMinValue(drawRequest.Type), 2)}";
+                    MaxValLabel.Text = $"{Math.Round(GetMaxValue(drawRequest.Type), 2)}";
+                    MinValLabel.Text = $"{Math.Round(GetMinValue(drawRequest.Type), 2)}";
                 }
                 return true;
             }
@@ -219,11 +213,11 @@ namespace DigitalImageCorrelation.Desktop
 
         private ICalculation ResolveFindPoints()
         {
-            var type = CalculationType.Cpu;
-            var checkedButton = OpenImagesPanel.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
-            type = (CalculationType)int.Parse(checkedButton.Tag.ToString());
-
-
+            CalculationType type;
+            if (GpuRadioBtn.Checked)
+                type = CalculationType.Gpu;
+            else
+                type = CalculationType.Cpu;
             return type switch
             {
                 (CalculationType.Cpu) => new FindPointCpu(),
@@ -249,6 +243,8 @@ namespace DigitalImageCorrelation.Desktop
         public void Error(Exception ex)
         {
             MessageBox.Show(ex.Message + " More information in logs.", "Exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendLineToTextbox(ex.Message);
+            AppendLineToTextbox(ex.StackTrace);
             _logger.Error(ex);
         }
 
@@ -272,7 +268,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 progressBar.Value += 1;
             }
-            progresLabel.Text = progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString();
+            AppendLineToTextbox("Images loaded: " + progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString());
             if (e.ProgressPercentage == 0)
             {
                 CurrentImageContainer = imageContainers[0];
@@ -284,18 +280,18 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (e.Cancelled == true)
             {
-                progresLabel.Text = "Canceled!";
+                AppendLineToTextbox("Canceled loading images");
             }
             else if (e.Error != null)
             {
-                progresLabel.Text = "Error: " + e.Error.Message;
+                AppendLineToTextbox("Error: " + e.Error.Message);
                 Error(e.Error);
                 analyzeButton.Enabled = false;
             }
             else
             {
                 _logger.Info("Loaded images");
-                progresLabel.Text = "Done!";
+                AppendLineToTextbox("Images Loaded");
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
             }
@@ -306,7 +302,7 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 analyzeButton.Enabled = false;
-                progresLabel.Text = "0/" + imageContainers.Count;
+                AppendLineToTextbox("0/" + imageContainers.Count);
                 progressBar.Maximum = imageContainers.Count;
                 progressBar.Value = 0;
                 var request = CreateAnalyseRequest();
@@ -324,12 +320,13 @@ namespace DigitalImageCorrelation.Desktop
             {
                 var result = e.UserState as ImageResult;
                 analyzeResult.ImageResults[result.Index] = result;
+                imageContainers[result.Index].Result = result;
                 if (result.Index == CurrentImageContainer.Index)
                 {
                     await SetImage(CurrentImageContainer);
                 }
             }
-            progresLabel.Text = e.ProgressPercentage.ToString() + "/" + imageContainers.Count;
+            AppendLineToTextbox(e.ProgressPercentage.ToString() + "/" + imageContainers.Count);
             progressBar.Value = e.ProgressPercentage;
         }
 
@@ -337,12 +334,12 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (e.Cancelled == true)
             {
-                progresLabel.Text = "Canceled!";
+                AppendLineToTextbox("Canceled analyzing");
                 analyzeButton.Enabled = true;
             }
             else if (e.Error != null)
             {
-                progresLabel.Text = "Error: " + e.Error.Message;
+                AppendLineToTextbox("Error: " + e.Error.Message);
                 Error(e.Error);
                 analyzeButton.Enabled = true;
             }
@@ -350,7 +347,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 analyzeResult = e.Result as AnalyzeResult;
                 await SetImage(CurrentImageContainer);
-                progresLabel.Text = "Done!";
+                AppendLineToTextbox("Analyze Done");
                 progressBar.Value = progressBar.Maximum;
                 analyzeButton.Enabled = true;
             }
@@ -442,6 +439,18 @@ namespace DigitalImageCorrelation.Desktop
                 _ => 0,
             };
         }
+        private double GetLocalMaxValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => CurrentImageContainer.Result.MaxDx,
+                (DrawingType.DisplacementY) => CurrentImageContainer.Result.MaxDy,
+                (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainXX,
+                (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainYY,
+                (DrawingType.StrainShear) => CurrentImageContainer.Result.MaxStrainXY,
+                _ => 0,
+            };
+        }
 
         private double GetMinValue(DrawingType type)
         {
@@ -454,6 +463,64 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
                 _ => 0,
             };
+        }
+        private double GetLocalMinValue(DrawingType type)
+        {
+            return type switch
+            {
+                (DrawingType.DisplacementX) => CurrentImageContainer.Result.MinDx,
+                (DrawingType.DisplacementY) => CurrentImageContainer.Result.MinDy,
+                (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainXX,
+                (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainYY,
+                (DrawingType.StrainShear) => CurrentImageContainer.Result.MinStrainXY,
+                _ => 0,
+            };
+        }
+
+        private async void imageListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (imageListView.SelectedItems.Count == 0)
+                    return;
+                var firstSelectedItem = imageListView.SelectedItems[0];
+                await SetImage(imageContainers[(int)firstSelectedItem.Tag]);
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+        private void AppendLineToTextbox(string line)
+        {
+            try
+            {
+                MessageRichTextBox.AppendText("\r\n" + line);
+                MessageRichTextBox.ScrollToCaret();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+        }
+
+        private void MessageRichTextBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (DownPanel.Height < 100)
+            {
+                DownPanel.Height = 300;
+            }
+            else
+            {
+                DownPanel.Height = 22;
+            }
+
+            MessageRichTextBox.ScrollToCaret();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
