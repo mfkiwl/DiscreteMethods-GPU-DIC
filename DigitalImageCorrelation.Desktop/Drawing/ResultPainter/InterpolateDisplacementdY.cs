@@ -1,7 +1,8 @@
 ﻿using DigitalImageCorrelation.Desktop.Requests;
-using DigitalImageCorrelation.Desktop.Structures;
+using DigitalImageCorrelation.Drawing;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
@@ -14,15 +15,15 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
                 double maxdY = request.AnalyzeResults.MaxDy;
                 double mindY = request.AnalyzeResults.MinDy;
-                result.CalculateDisplacementColorsDY(maxdY, mindY);
+                var vertexes = ColorHelper.CalculateDisplacementColorsDY(maxdY, mindY, result.Vertexes);
                 var g = Graphics.FromImage(bitmap);
-                var trianguled = MIConvexHull.DelaunayTriangulation<Vertex, Cell>.Create(result.Vertexes, 0.001);
+                var trianguled = MIConvexHull.DelaunayTriangulation<ColorVertex, Cell>.Create(vertexes.ToArray(), 0.001);
                 foreach (var triangle in trianguled.Cells)
                 {
                     PathGradientBrush pthGrBrush = new PathGradientBrush(triangle.Points)
                     {
-                        SurroundColors = triangle.ColorsDy,
-                        CenterColor = triangle.InterpolateColor(triangle.ColorsDy)
+                        SurroundColors = triangle.Colors,
+                        CenterColor = triangle.InterpolateColor(triangle.Colors)
                     };
                     g.FillPolygon(pthGrBrush, triangle.Points);
                 }

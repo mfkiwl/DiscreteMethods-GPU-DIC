@@ -14,6 +14,7 @@ namespace DigitalImageCorrelation.Calculation
             if (deviceCount == 0)
                 throw new CudaException("There is no device available for cuda");
         }
+
         public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
             var points = previousVertexes.Select(vertex => new ResultPoint() { X = vertex.X, Y = vertex.Y }).ToArray();
