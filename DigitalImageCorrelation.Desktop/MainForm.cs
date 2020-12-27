@@ -154,7 +154,7 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 CurrentImageContainer?.MouseUp(e.Location);
-                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
+                await DrawImage();
             }
             catch (Exception ex)
             {
@@ -640,6 +640,37 @@ namespace DigitalImageCorrelation.Desktop
             try
             {
                 await DrawImage();
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+        private void ExportMetadataButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ImportMetadataButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void SaveImageButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveImageDialog.FileName = Path.GetFileNameWithoutExtension(CurrentImageContainer.Filename) + "-DIC.jpg";
+                if (SaveImageDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var request = CreateDrawRequest();
+                    request.PictureHeight = CurrentImageContainer.BitmapHeight;
+                    request.PictureWidth = CurrentImageContainer.BitmapWidth;
+                    Bitmap bmp = await _painter.DrawImage(request, CurrentImageContainer.Bmp);
+                    bmp.Save(SaveImageDialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+                AppendLineToTextbox($"Image successfully saved as {SaveImageDialog.FileName}");
             }
             catch (Exception ex)
             {

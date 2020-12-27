@@ -49,10 +49,10 @@ namespace DigitalImageCorrelation.Desktop.Drawing
             {
                 return await Task.Run(() =>
                 {
+                    var bmp = new Bitmap(request.Image.BitmapWidth, request.Image.BitmapHeight);
                     lock (_painterLock)
                     {
                         _resultPainter = ChooseResultPainter(request.Type);
-                        var bmp = new Bitmap(request.Image.BitmapWidth, request.Image.BitmapHeight);
                         _resultPainter.Paint(bmp, request);
                         DrawPoints(bmp, request.Image.square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
                         bmp = ScaleBitmap(bmp, SquareLocation.Scale);
@@ -62,7 +62,25 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                 });
             }
             return await Task.FromResult<Bitmap>(null);
+        }
 
+        public async Task<Bitmap> DrawImage(DrawRequest request, Bitmap bmp)
+        {
+            if (request.Image != null)
+            {
+                return await Task.Run(() =>
+                {
+                    lock (_painterLock)
+                    {
+                        _resultPainter = ChooseResultPainter(request.Type);
+                        _resultPainter.Paint(bmp, request);
+                        DrawPoints(bmp, request.Image.square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                        DrawRectagleNoScale(bmp, request.ShowCropBox);
+                        return bmp;
+                    }
+                });
+            }
+            return await Task.FromResult<Bitmap>(null);
         }
 
         private IResultPainter ChooseResultPainter(DrawingType type)
@@ -103,6 +121,21 @@ namespace DigitalImageCorrelation.Desktop.Drawing
             }
             return bmp;
         }
+
+        private Bitmap DrawRectagleNoScale(Bitmap bmp, bool ShowCropBox)
+        {
+            if (ShowCropBox)
+            {
+                Graphics g = Graphics.FromImage(bmp);
+                g.DrawRectangle(_rectanglePen, new Rectangle(SquareLocation.Left, SquareLocation.Top, SquareLocation.Width, SquareLocation.Height));
+                g.DrawEllipse(_cornerPen, SquareLocation.Left - Utils.DELTA, SquareLocation.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, SquareLocation.Left + SquareLocation.Width - Utils.DELTA, SquareLocation.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, SquareLocation.Left - Utils.DELTA, SquareLocation.Top + SquareLocation.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, SquareLocation.Left + SquareLocation.Width - Utils.DELTA, SquareLocation.Top + SquareLocation.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+            }
+            return bmp;
+        }
+
 
         private Bitmap DrawPoints(Bitmap img, IEnumerable<Point> points, bool ShouldDraw)
         {

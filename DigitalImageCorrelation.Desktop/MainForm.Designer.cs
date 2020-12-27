@@ -108,6 +108,7 @@
             this.LoadImagesBackgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.PictureboxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ZoomPanel = new System.Windows.Forms.Panel();
+            this.SaveImageDialog = new System.Windows.Forms.SaveFileDialog();
             this.FillPanel.SuspendLayout();
             this.ImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
@@ -785,7 +786,6 @@
             // 
             // SaveImageButton
             // 
-            this.SaveImageButton.Enabled = false;
             this.SaveImageButton.Location = new System.Drawing.Point(13, 325);
             this.SaveImageButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.SaveImageButton.Name = "SaveImageButton";
@@ -793,6 +793,7 @@
             this.SaveImageButton.TabIndex = 30;
             this.SaveImageButton.Text = "Save current image";
             this.SaveImageButton.UseVisualStyleBackColor = true;
+            this.SaveImageButton.Click += new System.EventHandler(this.SaveImageButton_Click);
             // 
             // ImportMetadataButton
             // 
@@ -804,6 +805,7 @@
             this.ImportMetadataButton.TabIndex = 29;
             this.ImportMetadataButton.Text = "Import metada";
             this.ImportMetadataButton.UseVisualStyleBackColor = true;
+            this.ImportMetadataButton.Click += new System.EventHandler(this.ImportMetadataButton_Click);
             // 
             // ExportMetadataButton
             // 
@@ -815,6 +817,7 @@
             this.ExportMetadataButton.TabIndex = 28;
             this.ExportMetadataButton.Text = "Export metada";
             this.ExportMetadataButton.UseVisualStyleBackColor = true;
+            this.ExportMetadataButton.Click += new System.EventHandler(this.ExportMetadataButton_Click);
             // 
             // DisplayModePanel
             // 
@@ -1027,6 +1030,10 @@
             this.ZoomPanel.Size = new System.Drawing.Size(254, 66);
             this.ZoomPanel.TabIndex = 41;
             // 
+            // SaveImageDialog
+            // 
+            this.SaveImageDialog.DefaultExt = "png";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1148,6 +1155,7 @@
         private System.Windows.Forms.Button ImportMetadataButton;
         private System.Windows.Forms.Button ExportMetadataButton;
         private System.Windows.Forms.Label abel;
+        private System.Windows.Forms.SaveFileDialog SaveImageDialog;
     }
 }
 
