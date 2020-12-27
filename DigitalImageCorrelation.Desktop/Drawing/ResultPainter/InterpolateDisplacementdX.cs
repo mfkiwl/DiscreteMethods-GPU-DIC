@@ -11,9 +11,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
-                double min = request.AnalyzeResults.MaxDx;
-                double max = request.AnalyzeResults.MinDx;
-                var vertexes = ColorHelper.CalculateDisplacementColorsDX(min, max, result.Vertexes);
+                var vertexes = ColorHelper.CalculateDisplacementColorsDX(request.Max, request.Min, result.Vertexes);
                 return Paint(bitmap, vertexes);
             }
             return bitmap;

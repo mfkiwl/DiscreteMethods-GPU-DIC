@@ -87,7 +87,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             catch (Exception ex)
             {
-                Error(ex);
+                _logger.Error(ex);
             }
         }
 
@@ -100,12 +100,15 @@ namespace DigitalImageCorrelation.Desktop
 
                 LocalMaxLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(request.Type), 2)}";
                 LocalMinLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(request.Type), 2)}";
+                GlobalMaxLabel.Text = $"Max: {Math.Round(GetGlobalMaxValue(request.Type), 2)}";
+                GlobalMinLabel.Text = $"Min: {Math.Round(GetGlobalMinValue(request.Type), 2)}";
+
                 ValueTypeLabel.Text = request.Type.ToString();
             }
             if (analyzeResult.ImageResults.Any())
             {
-                MaxValLabel.Text = $"{Math.Round(GetMaxValue(request.Type), 2)}";
-                MinValLabel.Text = $"{Math.Round(GetMinValue(request.Type), 2)}";
+                MaxValLabel.Text = $"{Math.Round(GetMax(request.Type), 2)}";
+                MinValLabel.Text = $"{Math.Round(GetMin(request.Type), 2)}";
             }
         }
 
@@ -183,6 +186,14 @@ namespace DigitalImageCorrelation.Desktop
 
         private DrawRequest CreateDrawRequest()
         {
+            var type = GetDrawingType();
+            var max = GetMax(type);
+            var min = GetMin(type);
+            if (max < min)
+            {
+                max = GetGlobalMaxValue(type);
+                min = GetGlobalMinValue(type);
+            }
             return new DrawRequest()
             {
                 AnalyzeResults = analyzeResult,
@@ -194,8 +205,35 @@ namespace DigitalImageCorrelation.Desktop
                 PictureWidth = MainPictureBox.Parent.ClientSize.Width,
                 SubsetDelta = int.Parse(subsetDeltaTextbox.Text),
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
-                Type = GetDrawingType()
+                Type = type,
+                Max = max,
+                Min = min
             };
+        }
+
+        private double GetMax(DrawingType type)
+        {
+            if (UseCustomRangeRadioBtn.Checked)
+            {
+                return double.Parse(customMaxTextbox.Text);
+            }
+            else if (UseLocalRangeRadioBtn.Checked)
+            {
+                return GetLocalMaxValue(type);
+            }
+            return GetGlobalMaxValue(type);
+        }
+        private double GetMin(DrawingType type)
+        {
+            if (UseCustomRangeRadioBtn.Checked)
+            {
+                return double.Parse(customMinTextbox.Text);
+            }
+            else if (UseLocalRangeRadioBtn.Checked)
+            {
+                return GetLocalMinValue(type);
+            }
+            return GetGlobalMinValue(type);
         }
 
         private DrawingType GetDrawingType()
@@ -253,7 +291,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             if (CurrentImageContainer != null)
             {
-                DrawImage();
+                await DrawImage();
             }
         }
 
@@ -445,66 +483,100 @@ namespace DigitalImageCorrelation.Desktop
             };
         }
 
-        private double GetMaxValue(DrawingType type)
+        private double GetGlobalMaxValue(DrawingType type)
         {
-            return type switch
+            try
             {
-                (DrawingType.DisplacementX) => analyzeResult.MaxDx,
-                (DrawingType.DisplacementY) => analyzeResult.MaxDy,
-                (DrawingType.StrainX) => analyzeResult.MaxStrainXX,
-                (DrawingType.StrainY) => analyzeResult.MaxStrainYY,
-                (DrawingType.StrainShear) => analyzeResult.MaxStrainXY,
-                (DrawingType.StressX) => analyzeResult.MaxStressXX,
-                (DrawingType.StressY) => analyzeResult.MaxStressYY,
-                (DrawingType.StressEq) => analyzeResult.MaxStressEq,
-                _ => 0,
-            };
-        }
-        private double GetLocalMaxValue(DrawingType type)
-        {
-            return type switch
+                return type switch
+                {
+                    (DrawingType.DisplacementX) => analyzeResult.MaxDx,
+                    (DrawingType.DisplacementY) => analyzeResult.MaxDy,
+                    (DrawingType.StrainX) => analyzeResult.MaxStrainXX,
+                    (DrawingType.StrainY) => analyzeResult.MaxStrainYY,
+                    (DrawingType.StrainShear) => analyzeResult.MaxStrainXY,
+                    (DrawingType.StressX) => analyzeResult.MaxStressXX,
+                    (DrawingType.StressY) => analyzeResult.MaxStressYY,
+                    (DrawingType.StressEq) => analyzeResult.MaxStressEq,
+                    _ => 0,
+                };
+            }
+            catch (Exception ex)
             {
-                (DrawingType.DisplacementX) => CurrentImageContainer.Result.MaxDx,
-                (DrawingType.DisplacementY) => CurrentImageContainer.Result.MaxDy,
-                (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainXX,
-                (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainYY,
-                (DrawingType.StrainShear) => CurrentImageContainer.Result.MaxStrainXY,
-                (DrawingType.StressX) => CurrentImageContainer.Result.MaxStressXX,
-                (DrawingType.StressY) => CurrentImageContainer.Result.MaxStressYY,
-                (DrawingType.StressEq) => CurrentImageContainer.Result.MaxStressEq,
-                _ => 0,
-            };
+                _logger.Warn(ex);
+            }
+            return 0;
         }
 
-        private double GetMinValue(DrawingType type)
+        private double GetLocalMaxValue(DrawingType type)
         {
-            return type switch
+            try
             {
-                (DrawingType.DisplacementX) => analyzeResult.MinDx,
-                (DrawingType.DisplacementY) => analyzeResult.MinDy,
-                (DrawingType.StrainX) => analyzeResult.MinStrainXX,
-                (DrawingType.StrainY) => analyzeResult.MinStrainYY,
-                (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
-                (DrawingType.StressX) => analyzeResult.MinStressXX,
-                (DrawingType.StressY) => analyzeResult.MinStressYY,
-                (DrawingType.StressEq) => analyzeResult.MinStressEq,
-                _ => 0,
-            };
+                return type switch
+                {
+                    (DrawingType.DisplacementX) => CurrentImageContainer.Result.MaxDx,
+                    (DrawingType.DisplacementY) => CurrentImageContainer.Result.MaxDy,
+                    (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainXX,
+                    (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainYY,
+                    (DrawingType.StrainShear) => CurrentImageContainer.Result.MaxStrainXY,
+                    (DrawingType.StressX) => CurrentImageContainer.Result.MaxStressXX,
+                    (DrawingType.StressY) => CurrentImageContainer.Result.MaxStressYY,
+                    (DrawingType.StressEq) => CurrentImageContainer.Result.MaxStressEq,
+                    _ => 0,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+            return 0;
         }
+
+        private double GetGlobalMinValue(DrawingType type)
+        {
+            try
+            {
+                return type switch
+                {
+                    (DrawingType.DisplacementX) => analyzeResult.MinDx,
+                    (DrawingType.DisplacementY) => analyzeResult.MinDy,
+                    (DrawingType.StrainX) => analyzeResult.MinStrainXX,
+                    (DrawingType.StrainY) => analyzeResult.MinStrainYY,
+                    (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
+                    (DrawingType.StressX) => analyzeResult.MinStressXX,
+                    (DrawingType.StressY) => analyzeResult.MinStressYY,
+                    (DrawingType.StressEq) => analyzeResult.MinStressEq,
+                    _ => 0,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+            return 0;
+        }
+
         private double GetLocalMinValue(DrawingType type)
         {
-            return type switch
+            try
             {
-                (DrawingType.DisplacementX) => CurrentImageContainer.Result.MinDx,
-                (DrawingType.DisplacementY) => CurrentImageContainer.Result.MinDy,
-                (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainXX,
-                (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainYY,
-                (DrawingType.StrainShear) => CurrentImageContainer.Result.MinStrainXY,
-                (DrawingType.StressX) => CurrentImageContainer.Result.MinStressXX,
-                (DrawingType.StressY) => CurrentImageContainer.Result.MinStressYY,
-                (DrawingType.StressEq) => CurrentImageContainer.Result.MinStressEq,
-                _ => 0,
-            };
+                return type switch
+                {
+                    (DrawingType.DisplacementX) => CurrentImageContainer.Result.MinDx,
+                    (DrawingType.DisplacementY) => CurrentImageContainer.Result.MinDy,
+                    (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainXX,
+                    (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainYY,
+                    (DrawingType.StrainShear) => CurrentImageContainer.Result.MinStrainXY,
+                    (DrawingType.StressX) => CurrentImageContainer.Result.MinStressXX,
+                    (DrawingType.StressY) => CurrentImageContainer.Result.MinStressYY,
+                    (DrawingType.StressEq) => CurrentImageContainer.Result.MinStressEq,
+                    _ => 0,
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Warn(ex);
+            }
+            return 0;
         }
 
         private async void imageListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -521,6 +593,7 @@ namespace DigitalImageCorrelation.Desktop
                 Error(ex);
             }
         }
+
         private void AppendLineToTextbox(string line)
         {
             try
@@ -548,9 +621,30 @@ namespace DigitalImageCorrelation.Desktop
             MessageRichTextBox.ScrollToCaret();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private async void UseCustomRangeRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var radioBtn = sender as RadioButton;
+            if (!radioBtn.Checked)
+            {
+                customMaxTextbox.Enabled = false;
+                customMinTextbox.Enabled = false;
+            }
+            else
+            {
+                var type = GetDrawingType();
+                customMaxTextbox.Enabled = true;
+                customMinTextbox.Enabled = true;
+                customMaxTextbox.Text = $"{Math.Round(GetGlobalMaxValue(type), 2)}";
+                customMinTextbox.Text = $"{Math.Round(GetGlobalMinValue(type), 2)}";
+            }
+            try
+            {
+                await DrawImage();
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
     }
 }

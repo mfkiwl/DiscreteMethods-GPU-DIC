@@ -421,6 +421,7 @@
             this.RedrawImageButton.TabIndex = 42;
             this.RedrawImageButton.Text = "Redraw Image";
             this.RedrawImageButton.UseVisualStyleBackColor = true;
+            this.RedrawImageButton.Click += new System.EventHandler(this.DrawCurrentImage);
             // 
             // CustomMinLabel
             // 
@@ -469,6 +470,7 @@
             this.UseCustomRangeRadioBtn.TabIndex = 37;
             this.UseCustomRangeRadioBtn.Text = "Use custom range";
             this.UseCustomRangeRadioBtn.UseVisualStyleBackColor = true;
+            this.UseCustomRangeRadioBtn.CheckedChanged += new System.EventHandler(this.UseCustomRangeRadioBtn_CheckedChanged);
             // 
             // UseLocalRangeRadioBtn
             // 
@@ -479,6 +481,7 @@
             this.UseLocalRangeRadioBtn.TabIndex = 36;
             this.UseLocalRangeRadioBtn.Text = "Use local range";
             this.UseLocalRangeRadioBtn.UseVisualStyleBackColor = true;
+            this.UseLocalRangeRadioBtn.CheckedChanged += new System.EventHandler(this.DrawCurrentImage);
             // 
             // UseGlobalRangeRadioBtn
             // 
@@ -491,6 +494,7 @@
             this.UseGlobalRangeRadioBtn.TabStop = true;
             this.UseGlobalRangeRadioBtn.Text = "Use global range ";
             this.UseGlobalRangeRadioBtn.UseVisualStyleBackColor = true;
+            this.UseGlobalRangeRadioBtn.CheckedChanged += new System.EventHandler(this.DrawCurrentImage);
             // 
             // GlobalMinLabel
             // 

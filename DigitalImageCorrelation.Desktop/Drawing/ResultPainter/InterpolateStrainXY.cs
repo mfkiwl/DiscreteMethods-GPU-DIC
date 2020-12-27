@@ -11,9 +11,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
-                double maxStrainXY = request.AnalyzeResults.MaxStrainXY;
-                double minStrainXY = request.AnalyzeResults.MinStrainXY;
-                var vertexes = ColorHelper.CalculateStrainColorsXY(maxStrainXY, minStrainXY, result.Vertexes);
+                var vertexes = ColorHelper.CalculateStrainColorsXY(request.Max, request.Min, result.Vertexes);
                 return Paint(bitmap, vertexes);
             }
             return bitmap;
