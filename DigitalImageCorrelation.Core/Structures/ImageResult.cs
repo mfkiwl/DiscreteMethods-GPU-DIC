@@ -20,6 +20,13 @@ namespace DigitalImageCorrelation.Core.Structures
         public double MaxStrainXY => Vertexes.Max(x => x.strain.XY);
         public double MinStrainXY => Vertexes.Min(x => x.strain.XY);
 
+        public double MaxStressXX => Vertexes.Max(x => x.stress.XX);
+        public double MinStressXX => Vertexes.Min(x => x.stress.XX);
+        public double MaxStressYY => Vertexes.Max(x => x.stress.YY);
+        public double MinStressYY => Vertexes.Min(x => x.stress.YY);
+        public double MaxStressEq => Vertexes.Max(x => x.stress.Eq);
+        public double MinStressEq => Vertexes.Min(x => x.stress.Eq);
+
         public Vertex GetClosestVertex(int x, int y)
         {
             Vertex closest = Vertexes.First();

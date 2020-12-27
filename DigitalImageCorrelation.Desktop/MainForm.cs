@@ -81,8 +81,32 @@ namespace DigitalImageCorrelation.Desktop
 
         private async void DrawCurrentImage(object sender, EventArgs e)
         {
+            try
+            {
+                await DrawImage();
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
+        }
+
+        private async Task DrawImage()
+        {
             var request = CreateDrawRequest();
             MainPictureBox.Image = await _painter.DrawImage(request);
+            if (CurrentImageContainer.Result != null)
+            {
+
+                MaxImageValLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(request.Type), 2)}";
+                MinImageValLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(request.Type), 2)}";
+                ValueTypeLabel.Text = request.Type.ToString();
+            }
+            if (analyzeResult.ImageResults.Any())
+            {
+                MaxValLabel.Text = $"{Math.Round(GetMaxValue(request.Type), 2)}";
+                MinValLabel.Text = $"{Math.Round(GetMinValue(request.Type), 2)}";
+            }
         }
 
         private async Task<bool> SetImage(ImageContainer container)
@@ -95,22 +119,9 @@ namespace DigitalImageCorrelation.Desktop
                 }
                 CurrentImageContainer = container;
                 MainPictureBox.BackgroundImage = container.BmpRaw;
-                var drawRequest = CreateDrawRequest();
-                MainPictureBox.Image = await _painter.DrawImage(drawRequest);
                 ImageNameLabel.Text = CurrentImageContainer.Filename;
                 sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
-                if (container.Result != null)
-                {
-
-                    MaxImageValLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(drawRequest.Type), 2)}";
-                    MinImageValLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(drawRequest.Type), 2)}";
-                    ValueTypeLabel.Text = drawRequest.Type.ToString();
-                }
-                if (analyzeResult.ImageResults.Any())
-                {
-                    MaxValLabel.Text = $"{Math.Round(GetMaxValue(drawRequest.Type), 2)}";
-                    MinValLabel.Text = $"{Math.Round(GetMinValue(drawRequest.Type), 2)}";
-                }
+                await DrawImage();
                 return true;
             }
             catch (Exception ex)
@@ -150,7 +161,14 @@ namespace DigitalImageCorrelation.Desktop
 
         private async void ShowCropBoxCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
+            try
+            {
+                await DrawImage();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
         }
 
         private async void InitializeImageScale(object sender, EventArgs e)
@@ -158,7 +176,7 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer != null)
             {
                 SetZoom(_painter.CalculateDefaultScale(CreateDrawRequest()));
-                MainPictureBox.Image = await _painter.DrawImage(CreateDrawRequest());
+                await DrawImage();
                 MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
             }
         }
@@ -235,8 +253,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             if (CurrentImageContainer != null)
             {
-                var request = CreateDrawRequest();
-                MainPictureBox.Image = await _painter.DrawImage(request);
+                DrawImage();
             }
         }
 
@@ -359,9 +376,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (CurrentImageContainer != null)
                 {
-                    var request = CreateDrawRequest();
                     SetZoom(GetZoom() / ZoomStep);
-                    MainPictureBox.Image = await _painter.DrawImage(request);
+                    await DrawImage();
                 }
             }
             catch (Exception ex)
@@ -376,9 +392,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (CurrentImageContainer != null)
                 {
-                    var request = CreateDrawRequest();
                     SetZoom(GetZoom() * ZoomStep);
-                    MainPictureBox.Image = await _painter.DrawImage(request);
+                    await DrawImage();
                 }
             }
             catch (Exception ex)
@@ -423,6 +438,9 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainX) => vertex.strain.XX,
                 (DrawingType.StrainY) => vertex.strain.YY,
                 (DrawingType.StrainShear) => vertex.strain.XY,
+                (DrawingType.StressX) => vertex.stress.XX,
+                (DrawingType.StressY) => vertex.stress.YY,
+                (DrawingType.StressEq) => vertex.stress.Eq,
                 _ => 0,
             };
         }
@@ -436,6 +454,9 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainX) => analyzeResult.MaxStrainXX,
                 (DrawingType.StrainY) => analyzeResult.MaxStrainYY,
                 (DrawingType.StrainShear) => analyzeResult.MaxStrainXY,
+                (DrawingType.StressX) => analyzeResult.MaxStressXX,
+                (DrawingType.StressY) => analyzeResult.MaxStressYY,
+                (DrawingType.StressEq) => analyzeResult.MaxStressEq,
                 _ => 0,
             };
         }
@@ -448,6 +469,9 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainXX,
                 (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainYY,
                 (DrawingType.StrainShear) => CurrentImageContainer.Result.MaxStrainXY,
+                (DrawingType.StressX) => CurrentImageContainer.Result.MaxStressXX,
+                (DrawingType.StressY) => CurrentImageContainer.Result.MaxStressYY,
+                (DrawingType.StressEq) => CurrentImageContainer.Result.MaxStressEq,
                 _ => 0,
             };
         }
@@ -461,6 +485,9 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainX) => analyzeResult.MinStrainXX,
                 (DrawingType.StrainY) => analyzeResult.MinStrainYY,
                 (DrawingType.StrainShear) => analyzeResult.MinStrainXY,
+                (DrawingType.StressX) => analyzeResult.MinStressXX,
+                (DrawingType.StressY) => analyzeResult.MinStressYY,
+                (DrawingType.StressEq) => analyzeResult.MinStressEq,
                 _ => 0,
             };
         }
@@ -473,6 +500,9 @@ namespace DigitalImageCorrelation.Desktop
                 (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainXX,
                 (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainYY,
                 (DrawingType.StrainShear) => CurrentImageContainer.Result.MinStrainXY,
+                (DrawingType.StressX) => CurrentImageContainer.Result.MinStressXX,
+                (DrawingType.StressY) => CurrentImageContainer.Result.MinStressYY,
+                (DrawingType.StressEq) => CurrentImageContainer.Result.MinStressEq,
                 _ => 0,
             };
         }

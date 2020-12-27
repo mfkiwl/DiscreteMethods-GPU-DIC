@@ -76,6 +76,9 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                 DrawingType.StrainX => new InterpolateStrainXX(),
                 DrawingType.StrainY => new InterpolateStrainYY(),
                 DrawingType.StrainShear => new InterpolateStrainXY(),
+                DrawingType.StressX => new InterpolateStressXX(),
+                DrawingType.StressY => new InterpolateStressYY(),
+                DrawingType.StressEq => new InterpolateStressEq(),
                 _ => new EmptyResultPainter(),
             };
         }

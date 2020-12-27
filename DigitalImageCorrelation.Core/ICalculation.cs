@@ -62,19 +62,32 @@ namespace DigitalImageCorrelation.Core
         {
             Parallel.ForEach(image.Vertexes, vertex =>
             {
-                if (vertex.strain.YY == 0 || vertex.strain.XX == 0)
+                double denominator = -(vertex.strain.YY + vertex.strain.XX);
+                if (vertex.strain.YY == 0 || vertex.strain.XX == 0 || denominator == 0)
                 {
                     return;
                 }
-                double r = vertex.strain.XX / (-(vertex.strain.YY + vertex.strain.XX));
+                double r = vertex.strain.XX / denominator;
                 double beta = vertex.strain.XX / vertex.strain.YY;
-                double alpha = ((1.0 + r) * beta + r) / (1.0 + r + r * beta);
+                double betaDenominator = (1.0 + r + r * beta);
+                double alpha = ((1.0 + r) * beta + r) / betaDenominator;
+                if (beta == 0 || alpha == 0 || betaDenominator == 0)
+                    return;
                 vertex.stress = new Stress()
                 {
-                    YY = vertex.strain.YY * Math.Exp(vertex.strain.YY)
+                    YY = vertex.dY * Math.Exp(vertex.strain.YY)
                 };
-                vertex.stress.eq = vertex.stress.YY * Math.Sqrt(1 + alpha * alpha - ((2.0 * r) / (1.0 + r)) * beta);
+                if ((1.0 + r) != 0)
+                {
+                    var underSqrt = 1.0 + Math.Pow(alpha, 2) - ((2.0 * r) / (1.0 + r)) * alpha;
+                    if (underSqrt >= 0)
+                        vertex.stress.Eq = vertex.stress.YY * Math.Sqrt(underSqrt);
+                }
                 vertex.stress.XX = alpha * vertex.stress.YY;
+                if (double.IsNaN(vertex.stress.XX))
+                {
+                    throw new ArithmeticException();
+                }
             });
         }
     }

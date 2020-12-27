@@ -9,6 +9,9 @@
         DisplacementY,
         StrainX,
         StrainY,
-        StrainShear
+        StrainShear,
+        StressX,
+        StressY,
+        StressEq
     }
 }

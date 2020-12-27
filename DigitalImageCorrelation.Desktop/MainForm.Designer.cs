@@ -324,7 +324,7 @@
             // YPosLabel
             // 
             this.YPosLabel.AutoSize = true;
-            this.YPosLabel.Location = new System.Drawing.Point(83, 121);
+            this.YPosLabel.Location = new System.Drawing.Point(82, 121);
             this.YPosLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.YPosLabel.Name = "YPosLabel";
             this.YPosLabel.Size = new System.Drawing.Size(26, 15);

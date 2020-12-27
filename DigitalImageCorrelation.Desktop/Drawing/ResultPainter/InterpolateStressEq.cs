@@ -4,16 +4,16 @@ using System.Drawing;
 
 namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
-    public class InterpolateDisplacementdX : InterpolateColorsTemplate, IResultPainter
+    public class InterpolateStressEq : InterpolateColorsTemplate, IResultPainter
     {
         public override Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
-                double min = request.AnalyzeResults.MaxDx;
-                double max = request.AnalyzeResults.MinDx;
-                var vertexes = ColorHelper.CalculateDisplacementColorsDX(min, max, result.Vertexes);
+                double max = request.AnalyzeResults.MaxStressEq;
+                double min = request.AnalyzeResults.MinStressEq;
+                var vertexes = ColorHelper.CalculateStressColorsEq(max, min, result.Vertexes);
                 return Paint(bitmap, vertexes);
             }
             return bitmap;

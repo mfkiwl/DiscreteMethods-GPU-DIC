@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
-    public class InterpolateDisplacementdY : IResultPainter
+    public class InterpolateDisplacementdY : InterpolateColorsTemplate, IResultPainter
     {
-        public Bitmap Paint(Bitmap bitmap, DrawRequest request)
+        public override Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
@@ -16,17 +16,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
                 double maxdY = request.AnalyzeResults.MaxDy;
                 double mindY = request.AnalyzeResults.MinDy;
                 var vertexes = ColorHelper.CalculateDisplacementColorsDY(maxdY, mindY, result.Vertexes);
-                var g = Graphics.FromImage(bitmap);
-                var trianguled = MIConvexHull.DelaunayTriangulation<ColorVertex, Cell>.Create(vertexes.ToArray(), 0.001);
-                foreach (var triangle in trianguled.Cells)
-                {
-                    PathGradientBrush pthGrBrush = new PathGradientBrush(triangle.Points)
-                    {
-                        SurroundColors = triangle.Colors,
-                        CenterColor = triangle.InterpolateColor(triangle.Colors)
-                    };
-                    g.FillPolygon(pthGrBrush, triangle.Points);
-                }
+                return Paint(bitmap, vertexes);
             }
             return bitmap;
         }
