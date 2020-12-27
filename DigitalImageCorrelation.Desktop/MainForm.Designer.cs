@@ -55,9 +55,18 @@
             this.LeftPanel = new System.Windows.Forms.Panel();
             this.OpenImagesPanel = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.MinImageValLabel = new System.Windows.Forms.Label();
-            this.MaxImageValLabel = new System.Windows.Forms.Label();
+            this.RedrawImageButton = new System.Windows.Forms.Button();
+            this.CustomMinLabel = new System.Windows.Forms.Label();
+            this.customMinTextbox = new System.Windows.Forms.TextBox();
+            this.CustomMaxLabel = new System.Windows.Forms.Label();
+            this.customMaxTextbox = new System.Windows.Forms.TextBox();
+            this.UseCustomRangeRadioBtn = new System.Windows.Forms.RadioButton();
+            this.UseLocalRangeRadioBtn = new System.Windows.Forms.RadioButton();
+            this.UseGlobalRangeRadioBtn = new System.Windows.Forms.RadioButton();
+            this.GlobalMinLabel = new System.Windows.Forms.Label();
+            this.GlobalMaxLabel = new System.Windows.Forms.Label();
+            this.LocalMinLabel = new System.Windows.Forms.Label();
+            this.LocalMaxLabel = new System.Windows.Forms.Label();
             this.ValueTypeLabel = new System.Windows.Forms.Label();
             this.CurrentImageLabel = new System.Windows.Forms.Label();
             this.ImageNameLabel = new System.Windows.Forms.Label();
@@ -80,6 +89,9 @@
             this.loadImagesFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.RightPanel = new System.Windows.Forms.Panel();
             this.AnalyzeDataPanel = new System.Windows.Forms.Panel();
+            this.SaveImageButton = new System.Windows.Forms.Button();
+            this.ImportMetadataButton = new System.Windows.Forms.Button();
+            this.ExportMetadataButton = new System.Windows.Forms.Button();
             this.DisplayModePanel = new System.Windows.Forms.Panel();
             this.RadioButtonsPanel = new System.Windows.Forms.TableLayoutPanel();
             this.stressEqRadioButton = new System.Windows.Forms.RadioButton();
@@ -376,9 +388,18 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.checkBox1);
-            this.panel1.Controls.Add(this.MinImageValLabel);
-            this.panel1.Controls.Add(this.MaxImageValLabel);
+            this.panel1.Controls.Add(this.RedrawImageButton);
+            this.panel1.Controls.Add(this.CustomMinLabel);
+            this.panel1.Controls.Add(this.customMinTextbox);
+            this.panel1.Controls.Add(this.CustomMaxLabel);
+            this.panel1.Controls.Add(this.customMaxTextbox);
+            this.panel1.Controls.Add(this.UseCustomRangeRadioBtn);
+            this.panel1.Controls.Add(this.UseLocalRangeRadioBtn);
+            this.panel1.Controls.Add(this.UseGlobalRangeRadioBtn);
+            this.panel1.Controls.Add(this.GlobalMinLabel);
+            this.panel1.Controls.Add(this.GlobalMaxLabel);
+            this.panel1.Controls.Add(this.LocalMinLabel);
+            this.panel1.Controls.Add(this.LocalMaxLabel);
             this.panel1.Controls.Add(this.ValueTypeLabel);
             this.panel1.Controls.Add(this.CurrentImageLabel);
             this.panel1.Controls.Add(this.ValueLabel);
@@ -388,40 +409,128 @@
             this.panel1.Controls.Add(this.YPosLabel);
             this.panel1.Location = new System.Drawing.Point(8, 316);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(158, 216);
+            this.panel1.Size = new System.Drawing.Size(158, 405);
             this.panel1.TabIndex = 30;
             // 
-            // checkBox1
+            // RedrawImageButton
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(3, 189);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(135, 19);
-            this.checkBox1.TabIndex = 33;
-            this.checkBox1.Text = "Show local min/max";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.RedrawImageButton.Location = new System.Drawing.Point(5, 373);
+            this.RedrawImageButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.RedrawImageButton.Name = "RedrawImageButton";
+            this.RedrawImageButton.Size = new System.Drawing.Size(139, 25);
+            this.RedrawImageButton.TabIndex = 42;
+            this.RedrawImageButton.Text = "Redraw Image";
+            this.RedrawImageButton.UseVisualStyleBackColor = true;
             // 
-            // MinImageValLabel
+            // CustomMinLabel
             // 
-            this.MinImageValLabel.AutoSize = true;
-            this.MinImageValLabel.Location = new System.Drawing.Point(5, 171);
-            this.MinImageValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MinImageValLabel.Name = "MinImageValLabel";
-            this.MinImageValLabel.Size = new System.Drawing.Size(71, 15);
-            this.MinImageValLabel.TabIndex = 32;
-            this.MinImageValLabel.Text = "Local min: 0";
+            this.CustomMinLabel.AutoSize = true;
+            this.CustomMinLabel.Location = new System.Drawing.Point(4, 348);
+            this.CustomMinLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.CustomMinLabel.Name = "CustomMinLabel";
+            this.CustomMinLabel.Size = new System.Drawing.Size(73, 15);
+            this.CustomMinLabel.TabIndex = 40;
+            this.CustomMinLabel.Text = "Custom min";
             // 
-            // MaxImageValLabel
+            // customMinTextbox
             // 
-            this.MaxImageValLabel.AutoSize = true;
-            this.MaxImageValLabel.Location = new System.Drawing.Point(5, 146);
-            this.MaxImageValLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.MaxImageValLabel.Name = "MaxImageValLabel";
-            this.MaxImageValLabel.Size = new System.Drawing.Size(73, 15);
-            this.MaxImageValLabel.TabIndex = 31;
-            this.MaxImageValLabel.Text = "Local max: 0";
+            this.customMinTextbox.Enabled = false;
+            this.customMinTextbox.Location = new System.Drawing.Point(86, 344);
+            this.customMinTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.customMinTextbox.Name = "customMinTextbox";
+            this.customMinTextbox.Size = new System.Drawing.Size(58, 23);
+            this.customMinTextbox.TabIndex = 41;
+            // 
+            // CustomMaxLabel
+            // 
+            this.CustomMaxLabel.AutoSize = true;
+            this.CustomMaxLabel.Location = new System.Drawing.Point(4, 319);
+            this.CustomMaxLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.CustomMaxLabel.Name = "CustomMaxLabel";
+            this.CustomMaxLabel.Size = new System.Drawing.Size(78, 15);
+            this.CustomMaxLabel.TabIndex = 38;
+            this.CustomMaxLabel.Text = "Custom max:";
+            // 
+            // customMaxTextbox
+            // 
+            this.customMaxTextbox.Enabled = false;
+            this.customMaxTextbox.Location = new System.Drawing.Point(86, 315);
+            this.customMaxTextbox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.customMaxTextbox.Name = "customMaxTextbox";
+            this.customMaxTextbox.Size = new System.Drawing.Size(58, 23);
+            this.customMaxTextbox.TabIndex = 39;
+            // 
+            // UseCustomRangeRadioBtn
+            // 
+            this.UseCustomRangeRadioBtn.AutoSize = true;
+            this.UseCustomRangeRadioBtn.Location = new System.Drawing.Point(5, 290);
+            this.UseCustomRangeRadioBtn.Name = "UseCustomRangeRadioBtn";
+            this.UseCustomRangeRadioBtn.Size = new System.Drawing.Size(120, 19);
+            this.UseCustomRangeRadioBtn.TabIndex = 37;
+            this.UseCustomRangeRadioBtn.Text = "Use custom range";
+            this.UseCustomRangeRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // UseLocalRangeRadioBtn
+            // 
+            this.UseLocalRangeRadioBtn.AutoSize = true;
+            this.UseLocalRangeRadioBtn.Location = new System.Drawing.Point(5, 265);
+            this.UseLocalRangeRadioBtn.Name = "UseLocalRangeRadioBtn";
+            this.UseLocalRangeRadioBtn.Size = new System.Drawing.Size(105, 19);
+            this.UseLocalRangeRadioBtn.TabIndex = 36;
+            this.UseLocalRangeRadioBtn.Text = "Use local range";
+            this.UseLocalRangeRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // UseGlobalRangeRadioBtn
+            // 
+            this.UseGlobalRangeRadioBtn.AutoSize = true;
+            this.UseGlobalRangeRadioBtn.Checked = true;
+            this.UseGlobalRangeRadioBtn.Location = new System.Drawing.Point(5, 240);
+            this.UseGlobalRangeRadioBtn.Name = "UseGlobalRangeRadioBtn";
+            this.UseGlobalRangeRadioBtn.Size = new System.Drawing.Size(116, 19);
+            this.UseGlobalRangeRadioBtn.TabIndex = 35;
+            this.UseGlobalRangeRadioBtn.TabStop = true;
+            this.UseGlobalRangeRadioBtn.Text = "Use global range ";
+            this.UseGlobalRangeRadioBtn.UseVisualStyleBackColor = true;
+            // 
+            // GlobalMinLabel
+            // 
+            this.GlobalMinLabel.AutoSize = true;
+            this.GlobalMinLabel.Location = new System.Drawing.Point(5, 171);
+            this.GlobalMinLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.GlobalMinLabel.Name = "GlobalMinLabel";
+            this.GlobalMinLabel.Size = new System.Drawing.Size(40, 15);
+            this.GlobalMinLabel.TabIndex = 34;
+            this.GlobalMinLabel.Text = "Min: 0";
+            // 
+            // GlobalMaxLabel
+            // 
+            this.GlobalMaxLabel.AutoSize = true;
+            this.GlobalMaxLabel.Location = new System.Drawing.Point(5, 146);
+            this.GlobalMaxLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.GlobalMaxLabel.Name = "GlobalMaxLabel";
+            this.GlobalMaxLabel.Size = new System.Drawing.Size(42, 15);
+            this.GlobalMaxLabel.TabIndex = 33;
+            this.GlobalMaxLabel.Text = "Max: 0";
+            // 
+            // LocalMinLabel
+            // 
+            this.LocalMinLabel.AutoSize = true;
+            this.LocalMinLabel.Location = new System.Drawing.Point(4, 221);
+            this.LocalMinLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LocalMinLabel.Name = "LocalMinLabel";
+            this.LocalMinLabel.Size = new System.Drawing.Size(71, 15);
+            this.LocalMinLabel.TabIndex = 32;
+            this.LocalMinLabel.Text = "Local min: 0";
+            // 
+            // LocalMaxLabel
+            // 
+            this.LocalMaxLabel.AutoSize = true;
+            this.LocalMaxLabel.Location = new System.Drawing.Point(4, 196);
+            this.LocalMaxLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LocalMaxLabel.Name = "LocalMaxLabel";
+            this.LocalMaxLabel.Size = new System.Drawing.Size(73, 15);
+            this.LocalMaxLabel.TabIndex = 31;
+            this.LocalMaxLabel.Text = "Local max: 0";
             // 
             // ValueTypeLabel
             // 
@@ -650,6 +759,9 @@
             // 
             // AnalyzeDataPanel
             // 
+            this.AnalyzeDataPanel.Controls.Add(this.SaveImageButton);
+            this.AnalyzeDataPanel.Controls.Add(this.ImportMetadataButton);
+            this.AnalyzeDataPanel.Controls.Add(this.ExportMetadataButton);
             this.AnalyzeDataPanel.Controls.Add(this.pointsXLabel);
             this.AnalyzeDataPanel.Controls.Add(this.GpuRadioBtn);
             this.AnalyzeDataPanel.Controls.Add(this.pointsXTextbox);
@@ -664,14 +776,47 @@
             this.AnalyzeDataPanel.Controls.Add(this.windowDeltaLabel);
             this.AnalyzeDataPanel.Location = new System.Drawing.Point(0, 0);
             this.AnalyzeDataPanel.Name = "AnalyzeDataPanel";
-            this.AnalyzeDataPanel.Size = new System.Drawing.Size(182, 249);
+            this.AnalyzeDataPanel.Size = new System.Drawing.Size(182, 368);
             this.AnalyzeDataPanel.TabIndex = 40;
+            // 
+            // SaveImageButton
+            // 
+            this.SaveImageButton.Enabled = false;
+            this.SaveImageButton.Location = new System.Drawing.Point(13, 325);
+            this.SaveImageButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SaveImageButton.Name = "SaveImageButton";
+            this.SaveImageButton.Size = new System.Drawing.Size(146, 33);
+            this.SaveImageButton.TabIndex = 30;
+            this.SaveImageButton.Text = "Save current image";
+            this.SaveImageButton.UseVisualStyleBackColor = true;
+            // 
+            // ImportMetadataButton
+            // 
+            this.ImportMetadataButton.Enabled = false;
+            this.ImportMetadataButton.Location = new System.Drawing.Point(13, 288);
+            this.ImportMetadataButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ImportMetadataButton.Name = "ImportMetadataButton";
+            this.ImportMetadataButton.Size = new System.Drawing.Size(146, 31);
+            this.ImportMetadataButton.TabIndex = 29;
+            this.ImportMetadataButton.Text = "Import metada";
+            this.ImportMetadataButton.UseVisualStyleBackColor = true;
+            // 
+            // ExportMetadataButton
+            // 
+            this.ExportMetadataButton.Enabled = false;
+            this.ExportMetadataButton.Location = new System.Drawing.Point(13, 253);
+            this.ExportMetadataButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ExportMetadataButton.Name = "ExportMetadataButton";
+            this.ExportMetadataButton.Size = new System.Drawing.Size(146, 29);
+            this.ExportMetadataButton.TabIndex = 28;
+            this.ExportMetadataButton.Text = "Export metada";
+            this.ExportMetadataButton.UseVisualStyleBackColor = true;
             // 
             // DisplayModePanel
             // 
             this.DisplayModePanel.Controls.Add(this.displayModeLabel);
             this.DisplayModePanel.Controls.Add(this.RadioButtonsPanel);
-            this.DisplayModePanel.Location = new System.Drawing.Point(0, 255);
+            this.DisplayModePanel.Location = new System.Drawing.Point(0, 373);
             this.DisplayModePanel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.DisplayModePanel.Name = "DisplayModePanel";
             this.DisplayModePanel.Size = new System.Drawing.Size(182, 307);
@@ -981,11 +1126,24 @@
         private System.Windows.Forms.RadioButton stressYRadioButton;
         private System.Windows.Forms.Label MinValLabel;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label MinImageValLabel;
-        private System.Windows.Forms.Label MaxImageValLabel;
+        private System.Windows.Forms.Label LocalMinLabel;
+        private System.Windows.Forms.Label LocalMaxLabel;
         private System.Windows.Forms.Label ValueTypeLabel;
         private System.Windows.Forms.Label CurrentImageLabel;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button RedrawImageButton;
+        private System.Windows.Forms.Label CustomMinLabel;
+        private System.Windows.Forms.TextBox customMinTextbox;
+        private System.Windows.Forms.Label CustomMaxLabel;
+        private System.Windows.Forms.TextBox customMaxTextbox;
+        private System.Windows.Forms.RadioButton UseCustomRangeRadioBtn;
+        private System.Windows.Forms.RadioButton UseLocalRangeRadioBtn;
+        private System.Windows.Forms.RadioButton UseGlobalRangeRadioBtn;
+        private System.Windows.Forms.Label GlobalMinLabel;
+        private System.Windows.Forms.Label GlobalMaxLabel;
+        private System.Windows.Forms.Button SaveImageButton;
+        private System.Windows.Forms.Button ImportMetadataButton;
+        private System.Windows.Forms.Button ExportMetadataButton;
+        private System.Windows.Forms.Label abel;
     }
 }
 

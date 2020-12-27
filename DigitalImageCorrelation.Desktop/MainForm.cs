@@ -98,8 +98,8 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer.Result != null)
             {
 
-                MaxImageValLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(request.Type), 2)}";
-                MinImageValLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(request.Type), 2)}";
+                LocalMaxLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(request.Type), 2)}";
+                LocalMinLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(request.Type), 2)}";
                 ValueTypeLabel.Text = request.Type.ToString();
             }
             if (analyzeResult.ImageResults.Any())
