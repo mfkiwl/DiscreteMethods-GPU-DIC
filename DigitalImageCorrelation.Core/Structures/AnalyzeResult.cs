@@ -12,17 +12,17 @@ namespace DigitalImageCorrelation.Core.Structures
         public double MinDx => ImageResults.Min(x => x.Value.MinDx);
         public double MaxDy => ImageResults.Max(x => x.Value.MaxDy);
         public double MinDy => ImageResults.Min(x => x.Value.MinDy);
-        public double MaxStrainXX => ImageResults.Max(x => x.Value.MaxStrainXX);
-        public double MinStrainXX => ImageResults.Min(x => x.Value.MinStrainXX);
-        public double MaxStrainYY => ImageResults.Max(x => x.Value.MaxStrainYY);
-        public double MinStrainYY => ImageResults.Min(x => x.Value.MinStrainYY);
+        public double MaxStrainXX => ImageResults.Max(x => x.Value.MaxStrainX);
+        public double MinStrainXX => ImageResults.Min(x => x.Value.MinStrainX);
+        public double MaxStrainYY => ImageResults.Max(x => x.Value.MaxStrainY);
+        public double MinStrainYY => ImageResults.Min(x => x.Value.MinStrainY);
         public double MaxStrainXY => ImageResults.Max(x => x.Value.MaxStrainXY);
         public double MinStrainXY => ImageResults.Min(x => x.Value.MinStrainXY);
 
-        public double MaxStressXX => ImageResults.Max(x => x.Value.MaxStressXX);
-        public double MinStressXX => ImageResults.Min(x => x.Value.MinStressXX);
-        public double MaxStressYY => ImageResults.Max(x => x.Value.MaxStressYY);
-        public double MinStressYY => ImageResults.Min(x => x.Value.MinStressYY);
+        public double MaxStressXX => ImageResults.Max(x => x.Value.MaxStressX);
+        public double MinStressXX => ImageResults.Min(x => x.Value.MinStressX);
+        public double MaxStressYY => ImageResults.Max(x => x.Value.MaxStressY);
+        public double MinStressYY => ImageResults.Min(x => x.Value.MinStressY);
         public double MaxStressEq => ImageResults.Max(x => x.Value.MaxStressEq);
         public double MinStressEq => ImageResults.Min(x => x.Value.MinStressEq);
     }

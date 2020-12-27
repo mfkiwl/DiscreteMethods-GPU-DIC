@@ -109,6 +109,8 @@
             this.PictureboxToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.ZoomPanel = new System.Windows.Forms.Panel();
             this.SaveImageDialog = new System.Windows.Forms.SaveFileDialog();
+            this.ExportMetadataDialog = new System.Windows.Forms.SaveFileDialog();
+            this.ImportMetadataDialog = new System.Windows.Forms.OpenFileDialog();
             this.FillPanel.SuspendLayout();
             this.ImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
@@ -797,7 +799,6 @@
             // 
             // ImportMetadataButton
             // 
-            this.ImportMetadataButton.Enabled = false;
             this.ImportMetadataButton.Location = new System.Drawing.Point(13, 288);
             this.ImportMetadataButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ImportMetadataButton.Name = "ImportMetadataButton";
@@ -809,7 +810,6 @@
             // 
             // ExportMetadataButton
             // 
-            this.ExportMetadataButton.Enabled = false;
             this.ExportMetadataButton.Location = new System.Drawing.Point(13, 253);
             this.ExportMetadataButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ExportMetadataButton.Name = "ExportMetadataButton";
@@ -1034,6 +1034,14 @@
             // 
             this.SaveImageDialog.DefaultExt = "png";
             // 
+            // ExportMetadataDialog
+            // 
+            this.ExportMetadataDialog.DefaultExt = "xml";
+            // 
+            // ImportMetadataDialog
+            // 
+            this.ImportMetadataDialog.DefaultExt = "xml";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1154,8 +1162,9 @@
         private System.Windows.Forms.Button SaveImageButton;
         private System.Windows.Forms.Button ImportMetadataButton;
         private System.Windows.Forms.Button ExportMetadataButton;
-        private System.Windows.Forms.Label abel;
         private System.Windows.Forms.SaveFileDialog SaveImageDialog;
+        private System.Windows.Forms.SaveFileDialog ExportMetadataDialog;
+        private System.Windows.Forms.OpenFileDialog ImportMetadataDialog;
     }
 }
 

@@ -49,8 +49,8 @@ namespace DigitalImageCorrelation.Core
                     }
                     Strain strain = new Strain()
                     {
-                        XX = du_dx + 0.5 * (Math.Pow(du_dx, 2) + Math.Pow(dv_dy, 2)),
-                        YY = dv_dy + 0.5 * (Math.Pow(du_dx, 2) + Math.Pow(dv_dy, 2)),
+                        X = du_dx + 0.5 * (Math.Pow(du_dx, 2) + Math.Pow(dv_dy, 2)),
+                        Y = dv_dy + 0.5 * (Math.Pow(du_dx, 2) + Math.Pow(dv_dy, 2)),
                         XY = 0.5 * (du_dy + dv_dx + du_dx * du_dy + dv_dx * dv_dy)
                     };
                     currentVertex.strain = strain;
@@ -62,29 +62,29 @@ namespace DigitalImageCorrelation.Core
         {
             Parallel.ForEach(image.Vertexes, vertex =>
             {
-                double denominator = -(vertex.strain.YY + vertex.strain.XX);
-                if (vertex.strain.YY == 0 || vertex.strain.XX == 0 || denominator == 0)
+                double denominator = -(vertex.strain.Y + vertex.strain.X);
+                if (vertex.strain.Y == 0 || vertex.strain.X == 0 || denominator == 0)
                 {
                     return;
                 }
-                double r = vertex.strain.XX / denominator;
-                double beta = vertex.strain.XX / vertex.strain.YY;
+                double r = vertex.strain.X / denominator;
+                double beta = vertex.strain.X / vertex.strain.Y;
                 double betaDenominator = (1.0 + r + r * beta);
                 double alpha = ((1.0 + r) * beta + r) / betaDenominator;
                 if (beta == 0 || alpha == 0 || betaDenominator == 0)
                     return;
                 vertex.stress = new Stress()
                 {
-                    YY = vertex.dY * Math.Exp(vertex.strain.YY)
+                    Y = vertex.dY * Math.Exp(vertex.strain.Y)
                 };
                 if ((1.0 + r) != 0)
                 {
                     var underSqrt = 1.0 + Math.Pow(alpha, 2) - ((2.0 * r) / (1.0 + r)) * alpha;
                     if (underSqrt >= 0)
-                        vertex.stress.Eq = vertex.stress.YY * Math.Sqrt(underSqrt);
+                        vertex.stress.Eq = vertex.stress.Y * Math.Sqrt(underSqrt);
                 }
-                vertex.stress.XX = alpha * vertex.stress.YY;
-                if (double.IsNaN(vertex.stress.XX))
+                vertex.stress.X = alpha * vertex.stress.Y;
+                if (double.IsNaN(vertex.stress.X))
                 {
                     throw new ArithmeticException();
                 }

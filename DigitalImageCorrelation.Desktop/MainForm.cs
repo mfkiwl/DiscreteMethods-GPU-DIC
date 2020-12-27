@@ -5,6 +5,7 @@ using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Drawing;
 using DigitalImageCorrelation.Desktop.Requests;
 using DigitalImageCorrelation.Desktop.Structures;
+using DigitalImageCorrelation.FileManagement;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -28,6 +29,9 @@ namespace DigitalImageCorrelation.Desktop
         private const double ZoomStep = 1.1;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+
+        public delegate void OnProgressChanged(object sender, ProgressChangedEventArgs e);
+
         public MainForm(Painter painter, Worker worker)
         {
             InitializeComponent();
@@ -39,6 +43,7 @@ namespace DigitalImageCorrelation.Desktop
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
         }
+
 
         private double GetZoom()
         {
@@ -323,11 +328,51 @@ namespace DigitalImageCorrelation.Desktop
             {
                 progressBar.Value += 1;
             }
-            AppendLineToTextbox("Images loaded: " + progressBar.Value.ToString() + "/" + progressBar.Maximum.ToString());
+            AppendLineToTextbox($"Images loaded: {progressBar.Value}/{progressBar.Maximum}");
             if (e.ProgressPercentage == 0)
             {
                 CurrentImageContainer = imageContainers[0];
                 InitializeImageScale(null, null);
+            }
+        }
+
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (progressBar.Value < progressBar.Maximum)
+            {
+                progressBar.Value += 1;
+            }
+            AppendLineToTextbox($"Progress changed: {progressBar.Value}/{progressBar.Maximum}");
+        }
+
+        private void Import_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                AppendLineToTextbox("Error: " + e.Error.Message);
+                Error(e.Error);
+            }
+            else
+            {
+                analyzeResult = e.Result as AnalyzeResult;
+                _logger.Info("Import Completed");
+                AppendLineToTextbox("Import Completed");
+                progressBar.Value = progressBar.Maximum;
+            }
+        }
+
+        private void Export_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                AppendLineToTextbox("Error: " + e.Error.Message);
+                Error(e.Error);
+            }
+            else
+            {
+                _logger.Info("Export Completed");
+                AppendLineToTextbox("Export Completed");
+                progressBar.Value = progressBar.Maximum;
             }
         }
 
@@ -473,11 +518,11 @@ namespace DigitalImageCorrelation.Desktop
             {
                 (DrawingType.DisplacementX) => vertex.dX,
                 (DrawingType.DisplacementY) => vertex.dY,
-                (DrawingType.StrainX) => vertex.strain.XX,
-                (DrawingType.StrainY) => vertex.strain.YY,
+                (DrawingType.StrainX) => vertex.strain.X,
+                (DrawingType.StrainY) => vertex.strain.Y,
                 (DrawingType.StrainShear) => vertex.strain.XY,
-                (DrawingType.StressX) => vertex.stress.XX,
-                (DrawingType.StressY) => vertex.stress.YY,
+                (DrawingType.StressX) => vertex.stress.X,
+                (DrawingType.StressY) => vertex.stress.Y,
                 (DrawingType.StressEq) => vertex.stress.Eq,
                 _ => 0,
             };
@@ -515,11 +560,11 @@ namespace DigitalImageCorrelation.Desktop
                 {
                     (DrawingType.DisplacementX) => CurrentImageContainer.Result.MaxDx,
                     (DrawingType.DisplacementY) => CurrentImageContainer.Result.MaxDy,
-                    (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainXX,
-                    (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainYY,
+                    (DrawingType.StrainX) => CurrentImageContainer.Result.MaxStrainX,
+                    (DrawingType.StrainY) => CurrentImageContainer.Result.MaxStrainY,
                     (DrawingType.StrainShear) => CurrentImageContainer.Result.MaxStrainXY,
-                    (DrawingType.StressX) => CurrentImageContainer.Result.MaxStressXX,
-                    (DrawingType.StressY) => CurrentImageContainer.Result.MaxStressYY,
+                    (DrawingType.StressX) => CurrentImageContainer.Result.MaxStressX,
+                    (DrawingType.StressY) => CurrentImageContainer.Result.MaxStressY,
                     (DrawingType.StressEq) => CurrentImageContainer.Result.MaxStressEq,
                     _ => 0,
                 };
@@ -563,11 +608,11 @@ namespace DigitalImageCorrelation.Desktop
                 {
                     (DrawingType.DisplacementX) => CurrentImageContainer.Result.MinDx,
                     (DrawingType.DisplacementY) => CurrentImageContainer.Result.MinDy,
-                    (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainXX,
-                    (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainYY,
+                    (DrawingType.StrainX) => CurrentImageContainer.Result.MinStrainX,
+                    (DrawingType.StrainY) => CurrentImageContainer.Result.MinStrainY,
                     (DrawingType.StrainShear) => CurrentImageContainer.Result.MinStrainXY,
-                    (DrawingType.StressX) => CurrentImageContainer.Result.MinStressXX,
-                    (DrawingType.StressY) => CurrentImageContainer.Result.MinStressYY,
+                    (DrawingType.StressX) => CurrentImageContainer.Result.MinStressX,
+                    (DrawingType.StressY) => CurrentImageContainer.Result.MinStressY,
                     (DrawingType.StressEq) => CurrentImageContainer.Result.MinStressEq,
                     _ => 0,
                 };
@@ -649,12 +694,42 @@ namespace DigitalImageCorrelation.Desktop
 
         private void ExportMetadataButton_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                ExportMetadataDialog.FileName = "DIC-metadata.xml";
+                if (ExportMetadataDialog.ShowDialog() == DialogResult.OK)
+                {
+                    progressBar.Value = 0;
+                    var exportManager = new ExportManager(ExportMetadataDialog.FileName);
+                    exportManager.ProgressChanged += ProgressChanged;
+                    exportManager.RunWorkerCompleted += Export_RunWorkerCompleted;
+                    exportManager.RunWorkerAsync(imageContainers);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private void ImportMetadataButton_Click(object sender, EventArgs e)
         {
-
+            try
+            {
+                ImportMetadataDialog.FileName = "DIC-metadata.xml";
+                if (ImportMetadataDialog.ShowDialog() == DialogResult.OK)
+                {
+                    progressBar.Value = 0;
+                    var importManager = new ImportManager(ImportMetadataDialog.FileName);
+                    importManager.ProgressChanged += ProgressChanged;
+                    importManager.RunWorkerCompleted += Import_RunWorkerCompleted;
+                    importManager.RunWorkerAsync(imageContainers);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error(ex);
+            }
         }
 
         private async void SaveImageButton_Click(object sender, EventArgs e)
@@ -675,6 +750,7 @@ namespace DigitalImageCorrelation.Desktop
             catch (Exception ex)
             {
                 Error(ex);
+
             }
         }
     }

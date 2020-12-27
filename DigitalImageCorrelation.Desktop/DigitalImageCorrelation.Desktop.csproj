@@ -24,6 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FileManagement\ExportManager.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

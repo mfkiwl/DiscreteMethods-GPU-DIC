@@ -19,10 +19,10 @@ namespace DigitalImageCorrelation.Drawing
             return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.dY, min, denominatorDy) });
         }
 
-        public static IEnumerable<ColorVertex> CalculateStrainColorsXX(double max, double min, Vertex[] vertexes)
+        public static IEnumerable<ColorVertex> CalculateStrainColorsX(double max, double min, Vertex[] vertexes)
         {
             var denominatorXX = (max - min) != 0 ? (max - min) : 1;
-            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.strain.XX, min, denominatorXX) });
+            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.strain.X, min, denominatorXX) });
         }
 
         public static IEnumerable<ColorVertex> CalculateStrainColorsXY(double max, double min, Vertex[] vertexes)
@@ -31,21 +31,21 @@ namespace DigitalImageCorrelation.Drawing
             return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.strain.XY, min, denominatorXY) });
         }
 
-        public static IEnumerable<ColorVertex> CalculateStrainColorsYY(double max, double min, Vertex[] vertexes)
+        public static IEnumerable<ColorVertex> CalculateStrainColorsY(double max, double min, Vertex[] vertexes)
         {
             var denominatorYY = (max - min) != 0 ? (max - min) : 1;
-            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.strain.YY, min, denominatorYY) });
+            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.strain.Y, min, denominatorYY) });
         }
 
-        public static IEnumerable<ColorVertex> CalculateStressColorsXX(double max, double min, Vertex[] vertexes)
+        public static IEnumerable<ColorVertex> CalculateStressColorsX(double max, double min, Vertex[] vertexes)
         {
             var denominatorYY = (max - min) != 0 ? (max - min) : 1;
-            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.stress.XX, min, denominatorYY) });
+            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.stress.X, min, denominatorYY) });
         }
-        public static IEnumerable<ColorVertex> CalculateStressColorsYY(double max, double min, Vertex[] vertexes)
+        public static IEnumerable<ColorVertex> CalculateStressColorsY(double max, double min, Vertex[] vertexes)
         {
             var denominatorYY = (max - min) != 0 ? (max - min) : 1;
-            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.stress.YY, min, denominatorYY) });
+            return vertexes.AsParallel().Select(vertex => new ColorVertex(vertex) { color = Utils.GetColor(vertex.stress.Y, min, denominatorYY) });
         }
         public static IEnumerable<ColorVertex> CalculateStressColorsEq(double max, double min, Vertex[] vertexes)
         {

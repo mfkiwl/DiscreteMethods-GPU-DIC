@@ -19,6 +19,8 @@ namespace DigitalImageCorrelation.Desktop.Structures
         public Stress stress = new Stress();
 
 
+        public Vertex()
+        { }
         public Vertex(int x, int y)
         {
             X = x;

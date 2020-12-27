@@ -4,16 +4,15 @@ using System.Drawing;
 
 namespace DigitalImageCorrelation.Desktop.Drawing.ResultPainter
 {
-    public class InterpolateStrainXX : InterpolateColorsTemplate, IResultPainter
+    public class InterpolateStressX : InterpolateColorsTemplate, IResultPainter
     {
         public override Bitmap Paint(Bitmap bitmap, DrawRequest request)
         {
             if (request.AnalyzeResults != null && request.AnalyzeResults.ImageResults.ContainsKey(request.Image.Index))
             {
                 var result = request.AnalyzeResults.ImageResults[request.Image.Index];
-                var vertexes = ColorHelper.CalculateStrainColorsXX(request.Max, request.Min, result.Vertexes);
+                var vertexes = ColorHelper.CalculateStressColorsX(request.Max, request.Min, result.Vertexes);
                 return Paint(bitmap, vertexes);
-
             }
             return bitmap;
         }

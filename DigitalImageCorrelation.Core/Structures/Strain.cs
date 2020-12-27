@@ -2,8 +2,8 @@
 {
     public class Strain
     {
-        public double XX;
-        public double YY;
+        public double X;
+        public double Y;
         public double XY;
     }
 }

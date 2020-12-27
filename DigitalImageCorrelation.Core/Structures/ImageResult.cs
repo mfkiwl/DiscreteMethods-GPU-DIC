@@ -13,17 +13,17 @@ namespace DigitalImageCorrelation.Core.Structures
         public double MinDx => Vertexes.Min(x => x.dX);
         public double MaxDy => Vertexes.Max(x => x.dY);
         public double MinDy => Vertexes.Min(x => x.dY);
-        public double MaxStrainXX => Vertexes.Max(x => x.strain.XX);
-        public double MinStrainXX => Vertexes.Min(x => x.strain.XX);
-        public double MaxStrainYY => Vertexes.Max(x => x.strain.YY);
-        public double MinStrainYY => Vertexes.Min(x => x.strain.YY);
+        public double MaxStrainX => Vertexes.Max(x => x.strain.X);
+        public double MinStrainX => Vertexes.Min(x => x.strain.X);
+        public double MaxStrainY => Vertexes.Max(x => x.strain.Y);
+        public double MinStrainY => Vertexes.Min(x => x.strain.Y);
         public double MaxStrainXY => Vertexes.Max(x => x.strain.XY);
         public double MinStrainXY => Vertexes.Min(x => x.strain.XY);
 
-        public double MaxStressXX => Vertexes.Max(x => x.stress.XX);
-        public double MinStressXX => Vertexes.Min(x => x.stress.XX);
-        public double MaxStressYY => Vertexes.Max(x => x.stress.YY);
-        public double MinStressYY => Vertexes.Min(x => x.stress.YY);
+        public double MaxStressX => Vertexes.Max(x => x.stress.X);
+        public double MinStressX => Vertexes.Min(x => x.stress.X);
+        public double MaxStressY => Vertexes.Max(x => x.stress.Y);
+        public double MinStressY => Vertexes.Min(x => x.stress.Y);
         public double MaxStressEq => Vertexes.Max(x => x.stress.Eq);
         public double MinStressEq => Vertexes.Min(x => x.stress.Eq);
 
