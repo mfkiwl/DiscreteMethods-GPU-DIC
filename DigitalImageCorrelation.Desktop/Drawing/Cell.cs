@@ -1,35 +1,19 @@
-﻿using DigitalImageCorrelation.Desktop.Structures;
+﻿using DigitalImageCorrelation.Drawing;
 using MIConvexHull;
 using System.Drawing;
 using System.Linq;
 
 namespace DigitalImageCorrelation.Desktop.Drawing
 {
-    public class Cell : TriangulationCell<Vertex, Cell>
+    public class Cell : TriangulationCell<ColorVertex, Cell>
     {
         public Point[] Points
         {
             get { return Vertices.Select(x => x.Point).ToArray(); }
         }
-        public Color[] ColorsDx
+        public Color[] Colors
         {
-            get { return Vertices.Select(x => x.ColorDx).ToArray(); }
-        }
-        public Color[] ColorsDy
-        {
-            get { return Vertices.Select(x => x.ColorDy).ToArray(); }
-        }
-        public Color[] ColorsXX
-        {
-            get { return Vertices.Select(x => x.strain.ColorXX).ToArray(); }
-        }
-        public Color[] ColorsYY
-        {
-            get { return Vertices.Select(x => x.strain.ColorYY).ToArray(); }
-        }
-        public Color[] ColorsXY
-        {
-            get { return Vertices.Select(x => x.strain.ColorXY).ToArray(); }
+            get { return Vertices.Select(x => x.color).ToArray(); }
         }
 
         public Color InterpolateColor(Color[] Colors)

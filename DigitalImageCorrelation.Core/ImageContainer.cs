@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DigitalImageCorrelation.Core.Structures;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -7,17 +8,15 @@ namespace DigitalImageCorrelation.Core
     public class ImageContainer
     {
         public string Filename { get; set; }
-        private bool isMouseDown = false;
         public byte[] GrayScaleImage;
         public int Index;
+        public ImageResult Result;
         public Bitmap Bmp
         {
             get { return BmpRaw.Clone() as Bitmap; }
             set { BmpRaw = value; }
         }
         public Bitmap BmpRaw { get; private set; }
-        public SquareLocation square = new SquareLocation();
-        private SelectedCorner DragedCorner = SelectedCorner.None;
         public int BitmapWidth;
         public int BitmapHeight;
 
@@ -25,93 +24,10 @@ namespace DigitalImageCorrelation.Core
         {
             BmpRaw = bitmap;
             Filename = name;
-            ReloadSizes(bitmap);
             Index = index;
             GrayScaleImage = ToGrayScaleArray(bitmap);
             BitmapWidth = bitmap.Width;
             BitmapHeight = bitmap.Height;
-        }
-
-        public void MouseDown(Point point)
-        {
-            if (IsInCorner(point))
-            {
-                isMouseDown = true;
-            }
-        }
-
-        private void ReloadSizes(Bitmap bmp)
-        {
-            SquareLocation.Width = Convert.ToInt32(bmp.Width * 0.8);
-            SquareLocation.Height = Convert.ToInt32(bmp.Height * 0.8);
-            SquareLocation.Left = Convert.ToInt32(bmp.Width * 0.1);
-            SquareLocation.Top = Convert.ToInt32(bmp.Height * 0.1);
-        }
-
-        public bool IsInCorner(Point point)
-        {
-            if (Math.Abs(square.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop - point.Y) < Utils.DELTA)
-            {
-                DragedCorner = SelectedCorner.LeftTop;
-                return true;
-            }
-            else if (Math.Abs(square.ScaledLeft - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop + square.ScaledHeight - point.Y) < Utils.DELTA)
-            {
-                DragedCorner = SelectedCorner.LeftBottom;
-                return true;
-            }
-            else if (Math.Abs(square.ScaledLeft + square.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop - point.Y) < Utils.DELTA)
-            {
-                DragedCorner = SelectedCorner.RightTop;
-                return true;
-            }
-            else if (Math.Abs(square.ScaledLeft + square.ScaledWidth - point.X) < Utils.DELTA && Math.Abs(square.ScaledTop + square.ScaledHeight - point.Y) < Utils.DELTA)
-            {
-                DragedCorner = SelectedCorner.RightBottom;
-                return true;
-            }
-            return false;
-        }
-
-        public void MouseUp(Point p)
-        {
-            if (isMouseDown)
-            {
-                var point = new Point() { X = (int)(p.X * 1.0 / SquareLocation.Scale), Y = (int)(p.Y * 1.0 / SquareLocation.Scale) };
-                if (point.X <= 0 || point.Y <= 0 || point.X >= BmpRaw.Width || point.Y >= BmpRaw.Height)
-                {
-                    return;
-                }
-                var xVector = 0;
-                var yVector = 0;
-                switch (DragedCorner)
-                {
-                    case SelectedCorner.LeftTop:
-                        xVector = SquareLocation.Left - point.X;
-                        yVector = SquareLocation.Top - point.Y;
-                        SquareLocation.Left = point.X;
-                        SquareLocation.Top = point.Y;
-                        break;
-                    case SelectedCorner.LeftBottom:
-                        xVector = SquareLocation.Left - point.X;
-                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
-                        SquareLocation.Left = point.X;
-                        break;
-                    case SelectedCorner.RightTop:
-                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                        yVector = SquareLocation.Top - point.Y;
-                        SquareLocation.Top = point.Y;
-                        break;
-                    case SelectedCorner.RightBottom:
-                        xVector = point.X - SquareLocation.Left - SquareLocation.Width;
-                        yVector = point.Y - SquareLocation.Top - SquareLocation.Height;
-                        break;
-                }
-                SquareLocation.Width += xVector;
-                SquareLocation.Height += yVector;
-                DragedCorner = SelectedCorner.None;
-                isMouseDown = false;
-            }
         }
 
         private byte[] ToGrayScaleArray(Bitmap image)

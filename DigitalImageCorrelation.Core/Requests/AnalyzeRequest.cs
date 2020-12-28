@@ -3,16 +3,10 @@ using System.Collections.Generic;
 
 namespace DigitalImageCorrelation.Core.Requests
 {
-    public class AnalyzeRequest
+    public class AnalyzeRequest : AnalyzeRequestBase
     {
         public ICalculation FindPoints { get; set; }
         public Dictionary<int, byte[]> Arrays { get; set; }
         public Vertex[] StartingVertexes { get; set; }
-        public int PointsinX { get; set; }
-        public int PointsinY { get; set; }
-        public int SubsetDelta { get; set; }
-        public int WindowDelta { get; set; }
-        public int BitmpWidth { get; set; }
-        public int BitmpHeight { get; set; }
     }
 }

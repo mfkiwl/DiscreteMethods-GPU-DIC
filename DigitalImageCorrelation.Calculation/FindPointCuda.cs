@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DigitalImageCorrelation.Calculation
 {
-    public class FindPointCuda : FindPointCpu
+    public class FindPointCuda : ICalculation
     {
         public FindPointCuda()
         {
@@ -15,9 +15,8 @@ namespace DigitalImageCorrelation.Calculation
                 throw new CudaException("There is no device available for cuda");
         }
 
-        public new Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
+        public Vertex[] FindPoint(int searchDelta, int subsetDelta, byte[] baseImage, byte[] nextImage, Vertex[] previousVertexes, int BitmapWidth, int BitmapHeight, int PointsinX, int PointsinY)
         {
-
             var points = previousVertexes.Select(vertex => new ResultPoint() { X = vertex.X, Y = vertex.Y }).ToArray();
             var result = FindPoints(baseImage, nextImage, points, searchDelta, subsetDelta, BitmapWidth, BitmapHeight, PointsinX, PointsinY);
             return result.Select(point => new Vertex(point.X, point.Y)).ToArray();

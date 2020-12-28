@@ -1,9 +1,9 @@
 ﻿namespace DigitalImageCorrelation.Core.Structures
 {
-    public class Strain
+    public class Stress
     {
         public double X;
         public double Y;
-        public double XY;
+        public double Eq;
     }
 }
