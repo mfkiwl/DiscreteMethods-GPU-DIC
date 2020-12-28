@@ -19,5 +19,6 @@ namespace DigitalImageCorrelation.Desktop.Requests
         public DrawingType Type { get; set; }
         public double Max { get; set; }
         public double Min { get; set; }
+        public SquareLocation Square { get; set; }
     }
 }

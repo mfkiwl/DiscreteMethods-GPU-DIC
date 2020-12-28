@@ -1,4 +1,5 @@
 ﻿using DigitalImageCorrelation.Core;
+using DigitalImageCorrelation.Core.Requests;
 using DigitalImageCorrelation.Core.Structures;
 using DigitalImageCorrelation.Desktop.Structures;
 using System.Collections.Concurrent;
@@ -25,15 +26,34 @@ namespace DigitalImageCorrelation.FileManagement
         {
             var imageContainers = e.Argument as ConcurrentDictionary<int, ImageContainer>;
             var xml = XDocument.Load(path).Root;
-            var imagesMetadata = xml.Descendants("ImagesMetadata");
-            int width = int.Parse(imagesMetadata.Descendants("Width").First().Value);
-            int height = int.Parse(imagesMetadata.Descendants("Height").First().Value);
-            int numberOfImages = int.Parse(imagesMetadata.Descendants("NumberOfImages").First().Value);
-            ValidateMetadata(width, height, numberOfImages, imageContainers);
+            var imagesMetadata = xml.Descendants("AnalyzeRequestBase");
+
+            var square = imagesMetadata.Descendants("Square").First();
+
+            var request = new AnalyzeRequestBase
+            {
+                BitmapHeight = int.Parse(imagesMetadata.Descendants("BitmapHeight").First().Value),
+                BitmapWidth = int.Parse(imagesMetadata.Descendants("BitmapWidth").First().Value),
+                PointsinX = int.Parse(imagesMetadata.Descendants("PointsinX").First().Value),
+                PointsinY = int.Parse(imagesMetadata.Descendants("PointsinY").First().Value),
+                SubsetDelta = int.Parse(imagesMetadata.Descendants("SubsetDelta").First().Value),
+                WindowDelta = int.Parse(imagesMetadata.Descendants("WindowDelta").First().Value),
+                Size = int.Parse(imagesMetadata.Descendants("Size").First().Value),
+                Square = new SquareLocation()
+                {
+                    Height = int.Parse(square.Descendants("Height").First().Value),
+                    Width = int.Parse(square.Descendants("Width").First().Value),
+                    Left = int.Parse(square.Descendants("Left").First().Value),
+                    Top = int.Parse(square.Descendants("Top").First().Value),
+                }
+            };
+            int width = int.Parse(imagesMetadata.Descendants("BitmapWidth").First().Value);
+            ValidateMetadata(request.BitmapWidth, request.BitmapHeight, request.Size, imageContainers);
             var imagesResults = xml.Descendants("ImagesResults");
             var analyzeResult = new AnalyzeResult
             {
-                StartingVertexes = GetStartingVertexes(imagesResults.Descendants("ImageResult").First())
+                StartingVertexes = GetStartingVertexes(imagesResults.Descendants("ImageResult").First()),
+                Request = request
             };
             Parallel.ForEach(imagesResults.Descendants("ImageResult"), resultNode =>
             {
@@ -87,14 +107,21 @@ namespace DigitalImageCorrelation.FileManagement
             return startingVertexes;
         }
 
-        private bool ValidateMetadata(int width, int height, int numberOfImages, ConcurrentDictionary<int, ImageContainer> imageContainers)
+        private bool ValidateMetadata(int width, int height, int size, ConcurrentDictionary<int, ImageContainer> imageContainers)
         {
-            var firstContainer = imageContainers.First().Value;
-            if (width != firstContainer.BitmapWidth ||
-                height != firstContainer.BitmapHeight ||
-                numberOfImages != imageContainers.Count)
+
+            if (!imageContainers.Any())
             {
-                throw new System.Exception($"Unable to load metadata. Metadata file describing diffrent images than loaded. Metadata describes {numberOfImages} images of size: {width}x{height}");
+                throw new System.Exception($"Unable to import metadata. There are no images loaded to application. Please make sure that proper raw images are loaded. Selected metadata describes {size} images of size: {width}x{height}");
+            }
+
+            var firstContainer = imageContainers.First().Value;
+            if (!imageContainers.Any() ||
+                width != firstContainer.BitmapWidth ||
+                height != firstContainer.BitmapHeight ||
+                size != imageContainers.Count)
+            {
+                throw new System.Exception($"Unable to load metadata. Metadata file describing diffrent images than loaded. Metadata describes {size} images of size: {width}x{height}");
             }
             return true;
         }

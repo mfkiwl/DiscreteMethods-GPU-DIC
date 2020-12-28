@@ -1,5 +1,4 @@
-﻿using DigitalImageCorrelation.Core;
-using System.Collections.Concurrent;
+﻿using DigitalImageCorrelation.Core.Structures;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,42 +20,70 @@ namespace DigitalImageCorrelation.FileManagement
 
         private void DoExport(object sender, DoWorkEventArgs e)
         {
-            var imageContainers = e.Argument as ConcurrentDictionary<int, ImageContainer>;
-            var firstImg = imageContainers.First().Value;
-            XElement doc = new XElement("dic");
-            XElement imagesMetadata = new XElement("ImagesMetadata");
-            imagesMetadata.Add(new XElement("Width", firstImg.BitmapWidth));
-            imagesMetadata.Add(new XElement("Height", firstImg.BitmapHeight));
-            imagesMetadata.Add(new XElement("NumberOfImages", imageContainers.Count));
-            doc.Add(imagesMetadata);
+            var results = e.Argument as AnalyzeResult;
+            ValidateMetadata(results);
+            var firstImg = results.ImageResults.First();
+            XElement document = new XElement("dic",
+                new XElement("AnalyzeRequestBase",
+                   new XElement("BitmapWidth", results.Request.BitmapWidth),
+                   new XElement("BitmapHeight", results.Request.BitmapHeight),
+                   new XElement("Size", results.ImageResults.Count),
+                   new XElement("PointsinX", results.Request.PointsinX),
+                   new XElement("PointsinY", results.Request.PointsinY),
+                   new XElement("SubsetDelta", results.Request.SubsetDelta),
+                   new XElement("WindowDelta", results.Request.WindowDelta),
+                   new XElement("Square",
+                        new XElement("Height", results.Request.Square.Height),
+                        new XElement("Width", results.Request.Square.Width),
+                        new XElement("Left", results.Request.Square.Left),
+                        new XElement("Top", results.Request.Square.Top)
+                    )
+                )
+            );
             XElement ImagesResults = new XElement("ImagesResults");
-            Parallel.ForEach(imageContainers, container =>
+            Parallel.ForEach(results.ImageResults, container =>
             {
                 XElement ImagesResult = new XElement("ImageResult");
                 ImagesResult.Add(new XElement("Index", container.Value.Index));
-                ImagesResult.Add(new XElement("VertexSize", container.Value.Result.Vertexes.Count()));
-                foreach (var vertex in container.Value.Result.Vertexes)
+                ImagesResult.Add(new XElement("VertexSize", container.Value.Vertexes.Count()));
+                foreach (var vertex in container.Value.Vertexes)
                 {
-                    XElement node = new XElement("V");
-                    node.Add(new XElement("X", vertex.X));
-                    node.Add(new XElement("Y", vertex.Y));
-                    node.Add(new XElement("dX", vertex.dX));
-                    node.Add(new XElement("dY", vertex.dY));
-                    //Strain
-                    node.Add(new XElement("EX", vertex.strain.X));
-                    node.Add(new XElement("EY", vertex.strain.Y));
-                    node.Add(new XElement("EXY", vertex.strain.XY));
-                    //Stress
-                    node.Add(new XElement("SX", vertex.stress.X));
-                    node.Add(new XElement("SY", vertex.stress.Y));
-                    node.Add(new XElement("SEq", vertex.stress.Eq));
+                    XElement node = new XElement("V",
+                        new XElement("X", vertex.X),
+                        new XElement("Y", vertex.Y),
+                        new XElement("dX", vertex.dX),
+                        new XElement("dY", vertex.dY),
+
+                        new XElement("EX", vertex.strain.X),
+                        new XElement("EY", vertex.strain.Y),
+                        new XElement("EXY", vertex.strain.XY),
+
+                        new XElement("SX", vertex.stress.X),
+                        new XElement("SY", vertex.stress.Y),
+                        new XElement("SEq", vertex.stress.Eq)
+                    );
                     ImagesResult.Add(node);
                 }
                 ImagesResults.Add(ImagesResult);
                 ReportProgress(container.Value.Index);
             });
-            doc.Add(ImagesResults);
-            doc.Save(path);
+            document.Add(ImagesResults);
+            document.Save(path);
+            e.Result = path;
+        }
+
+        private bool ValidateMetadata(AnalyzeResult results)
+        {
+            if (!results.ImageResults.Any())
+            {
+                throw new System.Exception($"Unable to export metadata. There is no data to export. Please make sure that the data has been analyzed and it is ready to export.");
+            }
+            var firstResult = results.ImageResults.First().Value;
+            if (!firstResult.Vertexes.Any())
+            {
+                throw new System.Exception($"Unable to export metadata. There is no analyzed data to export. Please make sure that the data has been analyzed and it is ready to export.");
+            }
+            return true;
         }
     }
 }

@@ -80,6 +80,7 @@
             this.DownPanel = new System.Windows.Forms.Panel();
             this.MessageRichTextBox = new System.Windows.Forms.RichTextBox();
             this.TopPanel = new System.Windows.Forms.Panel();
+            this.CustomScaleComboBox = new System.Windows.Forms.ComboBox();
             this.zoomTextbox = new System.Windows.Forms.TextBox();
             this.ResetZoomButton = new System.Windows.Forms.Button();
             this.showCropBoxCheckbox = new System.Windows.Forms.CheckBox();
@@ -368,6 +369,8 @@
             // 
             // LeftPanel
             // 
+            this.LeftPanel.AutoScroll = true;
+            this.LeftPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.LeftPanel.BackColor = System.Drawing.SystemColors.Control;
             this.LeftPanel.Controls.Add(this.OpenImagesPanel);
             this.LeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
@@ -375,9 +378,11 @@
             this.LeftPanel.Name = "LeftPanel";
             this.LeftPanel.Size = new System.Drawing.Size(174, 849);
             this.LeftPanel.TabIndex = 2;
+            this.LeftPanel.DoubleClick += new System.EventHandler(this.LeftPanel_DoubleClick);
             // 
             // OpenImagesPanel
             // 
+            this.OpenImagesPanel.AutoScroll = true;
             this.OpenImagesPanel.Controls.Add(this.panel1);
             this.OpenImagesPanel.Controls.Add(this.label2);
             this.OpenImagesPanel.Controls.Add(this.imageListView);
@@ -385,8 +390,9 @@
             this.OpenImagesPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.OpenImagesPanel.Location = new System.Drawing.Point(0, 0);
             this.OpenImagesPanel.Name = "OpenImagesPanel";
-            this.OpenImagesPanel.Size = new System.Drawing.Size(174, 831);
+            this.OpenImagesPanel.Size = new System.Drawing.Size(174, 747);
             this.OpenImagesPanel.TabIndex = 39;
+            this.OpenImagesPanel.DoubleClick += new System.EventHandler(this.LeftPanel_DoubleClick);
             // 
             // panel1
             // 
@@ -668,6 +674,7 @@
             // TopPanel
             // 
             this.TopPanel.AutoScroll = true;
+            this.TopPanel.Controls.Add(this.CustomScaleComboBox);
             this.TopPanel.Controls.Add(this.zoomTextbox);
             this.TopPanel.Controls.Add(this.ResetZoomButton);
             this.TopPanel.Controls.Add(this.showCropBoxCheckbox);
@@ -680,6 +687,25 @@
             this.TopPanel.Name = "TopPanel";
             this.TopPanel.Size = new System.Drawing.Size(1032, 35);
             this.TopPanel.TabIndex = 35;
+            // 
+            // CustomScaleComboBox
+            // 
+            this.CustomScaleComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CustomScaleComboBox.Items.AddRange(new object[] {
+            "0.25",
+            "0.50",
+            "0.75",
+            "1.00",
+            "1.25",
+            "1.50",
+            "1.75",
+            "2.0"});
+            this.CustomScaleComboBox.Location = new System.Drawing.Point(398, 6);
+            this.CustomScaleComboBox.Name = "CustomScaleComboBox";
+            this.CustomScaleComboBox.Size = new System.Drawing.Size(68, 23);
+            this.CustomScaleComboBox.Sorted = true;
+            this.CustomScaleComboBox.TabIndex = 35;
+            this.CustomScaleComboBox.SelectedIndexChanged += new System.EventHandler(this.CustomScaleComboBox_SelectedIndexChanged);
             // 
             // zoomTextbox
             // 
@@ -697,7 +723,7 @@
             this.ResetZoomButton.Name = "ResetZoomButton";
             this.ResetZoomButton.Size = new System.Drawing.Size(88, 27);
             this.ResetZoomButton.TabIndex = 33;
-            this.ResetZoomButton.Text = "Reset zoom";
+            this.ResetZoomButton.Text = "Fit to window";
             this.ResetZoomButton.UseVisualStyleBackColor = true;
             this.ResetZoomButton.Click += new System.EventHandler(this.InitializeImageScale);
             // 
@@ -755,6 +781,7 @@
             // 
             // RightPanel
             // 
+            this.RightPanel.AutoScroll = true;
             this.RightPanel.Controls.Add(this.AnalyzeDataPanel);
             this.RightPanel.Controls.Add(this.DisplayModePanel);
             this.RightPanel.Dock = System.Windows.Forms.DockStyle.Right;
@@ -763,6 +790,7 @@
             this.RightPanel.Name = "RightPanel";
             this.RightPanel.Size = new System.Drawing.Size(183, 814);
             this.RightPanel.TabIndex = 36;
+            this.RightPanel.DoubleClick += new System.EventHandler(this.RightPanel_DoubleClick);
             // 
             // AnalyzeDataPanel
             // 
@@ -785,6 +813,7 @@
             this.AnalyzeDataPanel.Name = "AnalyzeDataPanel";
             this.AnalyzeDataPanel.Size = new System.Drawing.Size(182, 368);
             this.AnalyzeDataPanel.TabIndex = 40;
+            this.AnalyzeDataPanel.DoubleClick += new System.EventHandler(this.RightPanel_DoubleClick);
             // 
             // SaveImageButton
             // 
@@ -804,7 +833,7 @@
             this.ImportMetadataButton.Name = "ImportMetadataButton";
             this.ImportMetadataButton.Size = new System.Drawing.Size(146, 31);
             this.ImportMetadataButton.TabIndex = 29;
-            this.ImportMetadataButton.Text = "Import metada";
+            this.ImportMetadataButton.Text = "Import xml metadata";
             this.ImportMetadataButton.UseVisualStyleBackColor = true;
             this.ImportMetadataButton.Click += new System.EventHandler(this.ImportMetadataButton_Click);
             // 
@@ -815,7 +844,7 @@
             this.ExportMetadataButton.Name = "ExportMetadataButton";
             this.ExportMetadataButton.Size = new System.Drawing.Size(146, 29);
             this.ExportMetadataButton.TabIndex = 28;
-            this.ExportMetadataButton.Text = "Export metada";
+            this.ExportMetadataButton.Text = "Export xml metadata";
             this.ExportMetadataButton.UseVisualStyleBackColor = true;
             this.ExportMetadataButton.Click += new System.EventHandler(this.ExportMetadataButton_Click);
             // 
@@ -1165,6 +1194,7 @@
         private System.Windows.Forms.SaveFileDialog SaveImageDialog;
         private System.Windows.Forms.SaveFileDialog ExportMetadataDialog;
         private System.Windows.Forms.OpenFileDialog ImportMetadataDialog;
+        private System.Windows.Forms.ComboBox CustomScaleComboBox;
     }
 }
 

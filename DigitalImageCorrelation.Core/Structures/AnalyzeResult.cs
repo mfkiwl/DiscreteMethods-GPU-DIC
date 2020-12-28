@@ -1,4 +1,5 @@
-﻿using DigitalImageCorrelation.Desktop.Structures;
+﻿using DigitalImageCorrelation.Core.Requests;
+using DigitalImageCorrelation.Desktop.Structures;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace DigitalImageCorrelation.Core.Structures
     {
         public ConcurrentDictionary<int, ImageResult> ImageResults = new ConcurrentDictionary<int, ImageResult>();
         public Vertex[] StartingVertexes;
+        public AnalyzeRequestBase Request;
         public double MaxDx => ImageResults.Max(x => x.Value.MaxDx);
         public double MinDx => ImageResults.Min(x => x.Value.MinDx);
         public double MaxDy => ImageResults.Max(x => x.Value.MaxDy);

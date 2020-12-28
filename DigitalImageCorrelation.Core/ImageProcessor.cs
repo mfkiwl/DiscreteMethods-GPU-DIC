@@ -32,7 +32,8 @@ namespace DigitalImageCorrelation.Core
             sw.Start();
             AnalyzeResult results = new AnalyzeResult()
             {
-                StartingVertexes = _request.StartingVertexes.ToArray()
+                StartingVertexes = _request.StartingVertexes.ToArray(),
+                Request = _request
             };
             var orderedDictionary = _request.Arrays.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             _logger.Info("Using {0} processor", _calculation.GetType().Name);
@@ -55,8 +56,8 @@ namespace DigitalImageCorrelation.Core
                                     orderedDictionary[entry.Key - 1],
                                     entry.Value,
                                     previous.Vertexes,
-                                    _request.BitmpWidth,
-                                    _request.BitmpHeight,
+                                    _request.BitmapWidth,
+                                    _request.BitmapHeight,
                                     _request.PointsinX,
                                     _request.PointsinY);
 

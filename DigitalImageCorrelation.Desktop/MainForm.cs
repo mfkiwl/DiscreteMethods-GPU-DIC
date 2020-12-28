@@ -11,6 +11,7 @@ using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,7 +29,7 @@ namespace DigitalImageCorrelation.Desktop
         private readonly Worker _worker;
         private const double ZoomStep = 1.1;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
+        private SquareLocation square = new SquareLocation();
 
         public delegate void OnProgressChanged(object sender, ProgressChangedEventArgs e);
 
@@ -42,18 +43,13 @@ namespace DigitalImageCorrelation.Desktop
             MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
-        }
-
-
-        private double GetZoom()
-        {
-            return SquareLocation.Scale;
+            AppendLineToTextbox("Initialization ended");
         }
 
         private void SetZoom(double value)
         {
-            SquareLocation.Scale = value < 2.0 ? value : 2.0;
-            zoomTextbox.Text = SquareLocation.Scale.ToString("F");
+            square.Scale = value < 2.0 ? value : 2.0;
+            zoomTextbox.Text = square.Scale.ToString("F");
         }
 
         private void OpenImagesButton_Click(object sender, EventArgs e)
@@ -62,6 +58,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (loadImagesFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    analyzeResult = new AnalyzeResult();
                     imageListView.Items.Clear();
                     progressBar.Minimum = 0;
                     progressBar.Maximum = loadImagesFileDialog.FileNames.Count();
@@ -103,17 +100,17 @@ namespace DigitalImageCorrelation.Desktop
             if (CurrentImageContainer.Result != null)
             {
 
-                LocalMaxLabel.Text = $"Local max: {Math.Round(GetLocalMaxValue(request.Type), 2)}";
-                LocalMinLabel.Text = $"Local min: {Math.Round(GetLocalMinValue(request.Type), 2)}";
-                GlobalMaxLabel.Text = $"Max: {Math.Round(GetGlobalMaxValue(request.Type), 2)}";
-                GlobalMinLabel.Text = $"Min: {Math.Round(GetGlobalMinValue(request.Type), 2)}";
+                LocalMaxLabel.Text = $"Local max: {GetFormat(GetLocalMaxValue(request.Type))}";
+                LocalMinLabel.Text = $"Local min: {GetFormat(GetLocalMinValue(request.Type))}";
+                GlobalMaxLabel.Text = $"Max: {GetFormat(GetGlobalMaxValue(request.Type))}";
+                GlobalMinLabel.Text = $"Min: {GetFormat(GetGlobalMinValue(request.Type))}";
 
                 ValueTypeLabel.Text = request.Type.ToString();
             }
             if (analyzeResult.ImageResults.Any())
             {
-                MaxValLabel.Text = $"{Math.Round(GetMax(request.Type), 2)}";
-                MinValLabel.Text = $"{Math.Round(GetMin(request.Type), 2)}";
+                MaxValLabel.Text = $"{GetFormat(GetMax(request.Type))}";
+                MinValLabel.Text = $"{GetFormat(GetMin(request.Type))}";
             }
         }
 
@@ -145,7 +142,7 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (analyzeButton.Enabled)
                 {
-                    CurrentImageContainer?.MouseDown(e.Location);
+                    square.MouseDown(e.Location);
                 }
             }
             catch (Exception ex)
@@ -158,7 +155,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             try
             {
-                CurrentImageContainer?.MouseUp(e.Location);
+                square.MouseUp(e.Location, CurrentImageContainer.BitmapWidth, CurrentImageContainer.BitmapHeight);
                 await DrawImage();
             }
             catch (Exception ex)
@@ -183,6 +180,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             if (CurrentImageContainer != null)
             {
+                CustomScaleComboBox.SelectedItem = null;
                 SetZoom(_painter.CalculateDefaultScale(CreateDrawRequest()));
                 await DrawImage();
                 MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
@@ -212,7 +210,8 @@ namespace DigitalImageCorrelation.Desktop
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 Type = type,
                 Max = max,
-                Min = min
+                Min = min,
+                Square = square
             };
         }
 
@@ -266,9 +265,11 @@ namespace DigitalImageCorrelation.Desktop
                 WindowDelta = int.Parse(windowDeltaTextbox.Text),
                 PointsinX = int.Parse(pointsXTextbox.Text),
                 PointsinY = int.Parse(pointsYTextbox.Text),
-                StartingVertexes = imageContainers.First().Value.square.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text)),
-                BitmpHeight = CurrentImageContainer.BitmapHeight,
-                BitmpWidth = CurrentImageContainer.BitmapWidth
+                StartingVertexes = square.CalculateStartingVertexes(int.Parse(pointsXTextbox.Text), int.Parse(pointsYTextbox.Text)),
+                BitmapHeight = CurrentImageContainer.BitmapHeight,
+                BitmapWidth = CurrentImageContainer.BitmapWidth,
+                Size = imageContainers.Count,
+                Square = square
             };
         }
 
@@ -317,6 +318,10 @@ namespace DigitalImageCorrelation.Desktop
                 Bitmap bitmap = new Bitmap(fileName);
                 var image = new ImageContainer(bitmap, Path.GetFileName(fileName), (int)index);
                 imageContainers[(int)index] = image;
+                if (index == 0)
+                {
+                    square.ReloadSizes(image.BitmapWidth, image.BitmapHeight);
+                }
                 worker.ReportProgress((int)index);
             });
             e.Result = imageContainers;
@@ -358,6 +363,12 @@ namespace DigitalImageCorrelation.Desktop
                 _logger.Info("Import Completed");
                 AppendLineToTextbox("Import Completed");
                 progressBar.Value = progressBar.Maximum;
+                pointsXTextbox.Text = analyzeResult.Request.PointsinX.ToString();
+                pointsYTextbox.Text = analyzeResult.Request.PointsinY.ToString();
+                subsetDeltaTextbox.Text = analyzeResult.Request.SubsetDelta.ToString();
+                windowDeltaTextbox.Text = analyzeResult.Request.WindowDelta.ToString();
+                square = analyzeResult.Request.Square;
+                InitializeImageScale(null, null);
             }
         }
 
@@ -370,8 +381,9 @@ namespace DigitalImageCorrelation.Desktop
             }
             else
             {
+                var path = e.Result as AnalyzeResult;
                 _logger.Info("Export Completed");
-                AppendLineToTextbox("Export Completed");
+                AppendLineToTextbox($"Export Completed. Result in {path}");
                 progressBar.Value = progressBar.Maximum;
             }
         }
@@ -459,7 +471,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (CurrentImageContainer != null)
                 {
-                    SetZoom(GetZoom() / ZoomStep);
+                    CustomScaleComboBox.SelectedItem = null;
+                    SetZoom(square.Scale / ZoomStep);
                     await DrawImage();
                 }
             }
@@ -475,7 +488,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (CurrentImageContainer != null)
                 {
-                    SetZoom(GetZoom() * ZoomStep);
+                    CustomScaleComboBox.SelectedItem = null;
+                    SetZoom(square.Scale * ZoomStep);
                     await DrawImage();
                 }
             }
@@ -491,8 +505,8 @@ namespace DigitalImageCorrelation.Desktop
             {
                 if (CurrentImageContainer != null)
                 {
-                    var x = (int)(e.Location.X / GetZoom());
-                    var y = (int)(e.Location.Y / GetZoom());
+                    var x = (int)(e.Location.X / square.Scale);
+                    var y = (int)(e.Location.Y / square.Scale);
                     XPosLabel.Text = $"X:{x}";
                     YPosLabel.Text = $"Y:{y}";
                     var drawingType = GetDrawingType();
@@ -501,8 +515,8 @@ namespace DigitalImageCorrelation.Desktop
                     if (analyzeResult.ImageResults.ContainsKey(CurrentImageContainer.Index))
                     {
                         var closestVertex = analyzeResult.ImageResults[CurrentImageContainer.Index].GetClosestVertex(x, y);
-                        ValueLabel.Text = $"Value:{Math.Round(GetValue(drawingType, closestVertex), 2)}";
-                        stringBuilder.AppendLine($"\nValue: {Math.Round(GetValue(drawingType, closestVertex), 2)}");
+                        ValueLabel.Text = $"Value:{GetFormat(GetValue(drawingType, closestVertex))}";
+                        stringBuilder.AppendLine($"\nValue: {GetFormat(GetValue(drawingType, closestVertex))}");
                     }
                     PictureboxToolTip.SetToolTip(MainPictureBox, stringBuilder.ToString());
                 }
@@ -624,6 +638,15 @@ namespace DigitalImageCorrelation.Desktop
             return 0;
         }
 
+        private string GetFormat(double number)
+        {
+            if (number > -1.0 && number < 1.0)
+            {
+                return number.ToString("0.00E0");
+            }
+            return Math.Round(number, 2).ToString();
+
+        }
         private async void imageListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -679,8 +702,8 @@ namespace DigitalImageCorrelation.Desktop
                 var type = GetDrawingType();
                 customMaxTextbox.Enabled = true;
                 customMinTextbox.Enabled = true;
-                customMaxTextbox.Text = $"{Math.Round(GetGlobalMaxValue(type), 2)}";
-                customMinTextbox.Text = $"{Math.Round(GetGlobalMinValue(type), 2)}";
+                customMaxTextbox.Text = GetFormat(GetGlobalMaxValue(type));
+                customMinTextbox.Text = GetFormat(GetGlobalMinValue(type));
             }
             try
             {
@@ -696,14 +719,22 @@ namespace DigitalImageCorrelation.Desktop
         {
             try
             {
-                ExportMetadataDialog.FileName = "DIC-metadata.xml";
+                if (analyzeResult.Request != null)
+                {
+                    ExportMetadataDialog.FileName = $"{analyzeResult.Request.PointsinX}x{analyzeResult.Request.PointsinY} - {analyzeResult.Request.Size} {DateTime.Now.ToString("MM-dd-yyyy HH-mm-ss")}.xml";
+                }
+                else
+                {
+                    throw new Exception($"Unable to export metadata. There is no analyzed data to export. Please make sure that the data has been analyzed and it is ready to export.");
+                }
                 if (ExportMetadataDialog.ShowDialog() == DialogResult.OK)
                 {
                     progressBar.Value = 0;
                     var exportManager = new ExportManager(ExportMetadataDialog.FileName);
                     exportManager.ProgressChanged += ProgressChanged;
                     exportManager.RunWorkerCompleted += Export_RunWorkerCompleted;
-                    exportManager.RunWorkerAsync(imageContainers);
+                    exportManager.RunWorkerAsync(analyzeResult);
+                    AppendLineToTextbox($"Exporting data started...");
                 }
             }
             catch (Exception ex)
@@ -716,7 +747,7 @@ namespace DigitalImageCorrelation.Desktop
         {
             try
             {
-                ImportMetadataDialog.FileName = "DIC-metadata.xml";
+                ImportMetadataDialog.FileName = ".xml";
                 if (ImportMetadataDialog.ShowDialog() == DialogResult.OK)
                 {
                     progressBar.Value = 0;
@@ -724,6 +755,7 @@ namespace DigitalImageCorrelation.Desktop
                     importManager.ProgressChanged += ProgressChanged;
                     importManager.RunWorkerCompleted += Import_RunWorkerCompleted;
                     importManager.RunWorkerAsync(imageContainers);
+                    AppendLineToTextbox($"Loading xml file {ImportMetadataDialog.FileName}");
                 }
             }
             catch (Exception ex)
@@ -736,22 +768,57 @@ namespace DigitalImageCorrelation.Desktop
         {
             try
             {
-                SaveImageDialog.FileName = Path.GetFileNameWithoutExtension(CurrentImageContainer.Filename) + "-DIC.jpg";
+                SaveImageDialog.FileName = Path.GetFileNameWithoutExtension(CurrentImageContainer.Filename) + "-DIC.png";
                 if (SaveImageDialog.ShowDialog() == DialogResult.OK)
                 {
+                    AppendLineToTextbox($"Saving image...");
                     var request = CreateDrawRequest();
                     request.PictureHeight = CurrentImageContainer.BitmapHeight;
                     request.PictureWidth = CurrentImageContainer.BitmapWidth;
                     Bitmap bmp = await _painter.DrawImage(request, CurrentImageContainer.Bmp);
-                    bmp.Save(SaveImageDialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    bmp.Save(SaveImageDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                    bmp.Dispose();
+                    AppendLineToTextbox($"Image successfully saved as {SaveImageDialog.FileName}");
                 }
-                AppendLineToTextbox($"Image successfully saved as {SaveImageDialog.FileName}");
             }
             catch (Exception ex)
             {
                 Error(ex);
 
             }
+        }
+
+        private async void CustomScaleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (CurrentImageContainer != null)
+                {
+                    var selectedRow = double.Parse(CustomScaleComboBox.SelectedItem.ToString(), CultureInfo.InvariantCulture);
+                    SetZoom(selectedRow);
+                    await DrawImage();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+        }
+
+        private void LeftPanel_DoubleClick(object sender, EventArgs e)
+        {
+            if (LeftPanel.Width > 100)
+                LeftPanel.Width = 50;
+            else
+                LeftPanel.Width = 174;
+        }
+
+        private void RightPanel_DoubleClick(object sender, EventArgs e)
+        {
+            if (RightPanel.Width > 100)
+                RightPanel.Width = 50;
+            else
+                RightPanel.Width = 183;
         }
     }
 }

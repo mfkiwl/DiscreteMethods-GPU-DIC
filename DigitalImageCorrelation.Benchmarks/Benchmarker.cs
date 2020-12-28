@@ -26,6 +26,7 @@ namespace DiscreteMethods.BenchmarkTests
             {
                 Bitmap bitmap = new Bitmap(path);
                 ImageContainers[index] = new ImageContainer(bitmap, Path.GetFileName(path), index);
+                //ReloadSizes(bitmap);
             }
             backgroundWorker.WorkerReportsProgress = true;
 
@@ -52,6 +53,8 @@ namespace DiscreteMethods.BenchmarkTests
         public void AnalyzeImages(int SubsetDelta, int WindowDelta, int PointsinX, int PointsinY, CalculationType calculationType)
         {
             var firstImage = ImageContainers.First().Value;
+            var square = new SquareLocation();
+            square.ReloadSizes(firstImage.BitmapWidth, firstImage.BitmapHeight);
             AnalyzeRequest request = new AnalyzeRequest()
             {
                 FindPoints = ResolveFindPoints(calculationType),
@@ -60,9 +63,9 @@ namespace DiscreteMethods.BenchmarkTests
                 WindowDelta = WindowDelta,
                 PointsinX = PointsinX,
                 PointsinY = PointsinY,
-                StartingVertexes = firstImage.square.CalculateStartingVertexes(PointsinX, PointsinY),
-                BitmpHeight = firstImage.BitmapHeight,
-                BitmpWidth = firstImage.BitmapWidth
+                StartingVertexes = square.CalculateStartingVertexes(PointsinX, PointsinY),
+                BitmapHeight = firstImage.BitmapHeight,
+                BitmapWidth = firstImage.BitmapWidth,
             };
             var imageprocessor = new ImageProcessor(backgroundWorker, request);
             imageprocessor.Analyze(new DoWorkEventArgs(null));

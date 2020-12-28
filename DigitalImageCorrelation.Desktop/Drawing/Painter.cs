@@ -54,8 +54,8 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                     {
                         _resultPainter = ChooseResultPainter(request.Type);
                         _resultPainter.Paint(bmp, request);
-                        DrawPoints(bmp, request.Image.square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                        bmp = ScaleBitmap(bmp, SquareLocation.Scale);
+                        DrawPoints(bmp, request.Square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                        bmp = ScaleBitmap(bmp, request.Square.Scale);
                         DrawRectagle(request, bmp, request.ShowCropBox);
                         return bmp;
                     }
@@ -74,8 +74,8 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                     {
                         _resultPainter = ChooseResultPainter(request.Type);
                         _resultPainter.Paint(bmp, request);
-                        DrawPoints(bmp, request.Image.square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                        DrawRectagleNoScale(bmp, request.ShowCropBox);
+                        DrawPoints(bmp, request.Square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
+                        DrawRectagleNoScale(bmp, request);
                         return bmp;
                     }
                 });
@@ -113,25 +113,25 @@ namespace DigitalImageCorrelation.Desktop.Drawing
             if (ShowCropBox)
             {
                 Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Image.square.ScaledLeft, (int)r.Image.square.ScaledTop, (int)r.Image.square.ScaledWidth, (int)r.Image.square.ScaledHeight));
-                g.DrawEllipse(_cornerPen, (int)r.Image.square.ScaledLeft - Utils.DELTA, (int)r.Image.square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.square.ScaledLeft + r.Image.square.ScaledWidth) - Utils.DELTA, (int)r.Image.square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)r.Image.square.ScaledLeft - Utils.DELTA, (int)(r.Image.square.ScaledTop + r.Image.square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Image.square.ScaledLeft + r.Image.square.ScaledWidth) - Utils.DELTA, (int)(r.Image.square.ScaledTop + r.Image.square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Square.ScaledLeft, (int)r.Square.ScaledTop, (int)r.Square.ScaledWidth, (int)r.Square.ScaledHeight));
+                g.DrawEllipse(_cornerPen, (int)r.Square.ScaledLeft - Utils.DELTA, (int)r.Square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Square.ScaledLeft + r.Square.ScaledWidth) - Utils.DELTA, (int)r.Square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)r.Square.ScaledLeft - Utils.DELTA, (int)(r.Square.ScaledTop + r.Square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, (int)(r.Square.ScaledLeft + r.Square.ScaledWidth) - Utils.DELTA, (int)(r.Square.ScaledTop + r.Square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
             }
             return bmp;
         }
 
-        private Bitmap DrawRectagleNoScale(Bitmap bmp, bool ShowCropBox)
+        private Bitmap DrawRectagleNoScale(Bitmap bmp, DrawRequest r)
         {
-            if (ShowCropBox)
+            if (r.ShowCropBox)
             {
                 Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle(SquareLocation.Left, SquareLocation.Top, SquareLocation.Width, SquareLocation.Height));
-                g.DrawEllipse(_cornerPen, SquareLocation.Left - Utils.DELTA, SquareLocation.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, SquareLocation.Left + SquareLocation.Width - Utils.DELTA, SquareLocation.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, SquareLocation.Left - Utils.DELTA, SquareLocation.Top + SquareLocation.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, SquareLocation.Left + SquareLocation.Width - Utils.DELTA, SquareLocation.Top + SquareLocation.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawRectangle(_rectanglePen, new Rectangle(r.Square.Left, r.Square.Top, r.Square.Width, r.Square.Height));
+                g.DrawEllipse(_cornerPen, r.Square.Left - Utils.DELTA, r.Square.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, r.Square.Left + r.Square.Width - Utils.DELTA, r.Square.Top - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, r.Square.Left - Utils.DELTA, r.Square.Top + r.Square.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
+                g.DrawEllipse(_cornerPen, r.Square.Left + r.Square.Width - Utils.DELTA, r.Square.Top + r.Square.Height - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
             }
             return bmp;
         }
