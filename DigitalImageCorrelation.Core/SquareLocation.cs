@@ -19,7 +19,11 @@ namespace DigitalImageCorrelation.Core
         public double ScaledTop { get => Top * Scale; }
         public double ScaledWidth { get => Width * Scale; }
         public double ScaledHeight { get => Height * Scale; }
-
+        public SquareLocation() { }
+        public SquareLocation(int bitmapWidth, int BitmapHeight)
+        {
+            ReloadSizes(bitmapWidth, BitmapHeight);
+        }
         public void ReloadSizes(int bitmapWidth, int BitmapHeight)
         {
             Width = Convert.ToInt32(bitmapWidth * 0.8);
