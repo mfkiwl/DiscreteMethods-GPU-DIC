@@ -67,19 +67,19 @@ namespace DigitalImageCorrelation.FileManagement
                     {
                         X = int.Parse(vertexNode.Descendants("X").First().Value),
                         Y = int.Parse(vertexNode.Descendants("Y").First().Value),
-                        dX = int.Parse(vertexNode.Descendants("dX").First().Value),
-                        dY = int.Parse(vertexNode.Descendants("dY").First().Value),
+                        dX = GetInt(vertexNode.Descendants("dX").FirstOrDefault()),
+                        dY = GetInt(vertexNode.Descendants("dY").FirstOrDefault()),
                         strain = new Strain
                         {
-                            X = double.Parse(vertexNode.Descendants("EX").First().Value, CultureInfo.InvariantCulture),
-                            Y = double.Parse(vertexNode.Descendants("EY").First().Value, CultureInfo.InvariantCulture),
-                            XY = double.Parse(vertexNode.Descendants("EXY").First().Value, CultureInfo.InvariantCulture),
+                            X = GetDouble(vertexNode.Descendants("EX").FirstOrDefault()),
+                            Y = GetDouble(vertexNode.Descendants("EY").FirstOrDefault()),
+                            XY = GetDouble(vertexNode.Descendants("EXY").FirstOrDefault()),
                         },
                         stress = new Stress
                         {
-                            X = double.Parse(vertexNode.Descendants("SX").First().Value, CultureInfo.InvariantCulture),
-                            Y = double.Parse(vertexNode.Descendants("SY").First().Value, CultureInfo.InvariantCulture),
-                            Eq = double.Parse(vertexNode.Descendants("SEq").First().Value, CultureInfo.InvariantCulture),
+                            X = GetDouble(vertexNode.Descendants("SX").FirstOrDefault()),
+                            Y = GetDouble(vertexNode.Descendants("SY").FirstOrDefault()),
+                            Eq = GetDouble(vertexNode.Descendants("SEq").FirstOrDefault()),
                         }
                     };
                     imageResult.Vertexes[i] = vertex;
@@ -89,6 +89,24 @@ namespace DigitalImageCorrelation.FileManagement
                 ReportProgress(index);
             });
             e.Result = analyzeResult;
+        }
+
+        double GetDouble(XElement? source)
+        {
+            if (source != null)
+            {
+                return double.Parse(source.Value, CultureInfo.InvariantCulture);
+            }
+            return 0;
+        }
+
+        int GetInt(XElement? source)
+        {
+            if (source != null)
+            {
+                return int.Parse(source.Value, CultureInfo.InvariantCulture);
+            }
+            return 0;
         }
 
         private Vertex[] GetStartingVertexes(XElement resultNode)

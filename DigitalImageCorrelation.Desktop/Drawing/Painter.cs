@@ -43,27 +43,6 @@ namespace DigitalImageCorrelation.Desktop.Drawing
             return bmp;
         }
 
-        public async Task<Bitmap> DrawImage(DrawRequest request)
-        {
-            if (request.Image != null)
-            {
-                return await Task.Run(() =>
-                {
-                    var bmp = new Bitmap(request.Image.BitmapWidth, request.Image.BitmapHeight);
-                    lock (_painterLock)
-                    {
-                        _resultPainter = ChooseResultPainter(request.Type);
-                        _resultPainter.Paint(bmp, request);
-                        DrawPoints(bmp, request.Square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                        bmp = ScaleBitmap(bmp, request.Square.Scale);
-                        DrawRectagle(request, bmp, request.ShowCropBox);
-                        return bmp;
-                    }
-                });
-            }
-            return await Task.FromResult<Bitmap>(null);
-        }
-
         public async Task<Bitmap> DrawImage(DrawRequest request, Bitmap bmp)
         {
             if (request.Image != null)
@@ -75,7 +54,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing
                         _resultPainter = ChooseResultPainter(request.Type);
                         _resultPainter.Paint(bmp, request);
                         DrawPoints(bmp, request.Square.CalculateStartingPoints(request.PointsinX, request.PointsinY), request.ShowCropBox);
-                        DrawRectagleNoScale(bmp, request);
+                        DrawRectagle(bmp, request);
                         return bmp;
                     }
                 });
@@ -101,28 +80,7 @@ namespace DigitalImageCorrelation.Desktop.Drawing
             };
         }
 
-        private Bitmap ScaleBitmap(Bitmap bmp, double scale)
-        {
-            var scaleWidth = (int)(bmp.Width * scale);
-            var scaleHeight = (int)(bmp.Height * scale);
-            return new Bitmap(bmp, scaleWidth, scaleHeight);
-        }
-
-        private Bitmap DrawRectagle(DrawRequest r, Bitmap bmp, bool ShowCropBox)
-        {
-            if (ShowCropBox)
-            {
-                Graphics g = Graphics.FromImage(bmp);
-                g.DrawRectangle(_rectanglePen, new Rectangle((int)r.Square.ScaledLeft, (int)r.Square.ScaledTop, (int)r.Square.ScaledWidth, (int)r.Square.ScaledHeight));
-                g.DrawEllipse(_cornerPen, (int)r.Square.ScaledLeft - Utils.DELTA, (int)r.Square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Square.ScaledLeft + r.Square.ScaledWidth) - Utils.DELTA, (int)r.Square.ScaledTop - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)r.Square.ScaledLeft - Utils.DELTA, (int)(r.Square.ScaledTop + r.Square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-                g.DrawEllipse(_cornerPen, (int)(r.Square.ScaledLeft + r.Square.ScaledWidth) - Utils.DELTA, (int)(r.Square.ScaledTop + r.Square.ScaledHeight) - Utils.DELTA, 2 * Utils.DELTA, 2 * Utils.DELTA);
-            }
-            return bmp;
-        }
-
-        private Bitmap DrawRectagleNoScale(Bitmap bmp, DrawRequest r)
+        private Bitmap DrawRectagle(Bitmap bmp, DrawRequest r)
         {
             if (r.ShowCropBox)
             {

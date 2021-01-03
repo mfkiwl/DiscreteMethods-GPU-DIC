@@ -1,4 +1,4 @@
-﻿namespace DigitalImageCorrelation.Desktop
+namespace DigitalImageCorrelation.Desktop
 {
     partial class MainForm
     {
@@ -282,7 +282,7 @@
             this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MainPictureBox.Name = "MainPictureBox";
             this.MainPictureBox.Size = new System.Drawing.Size(100, 100);
-            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.MainPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.MainPictureBox.TabIndex = 0;
             this.MainPictureBox.TabStop = false;
             this.MainPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainPictureBox_MouseDown);

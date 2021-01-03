@@ -51,16 +51,14 @@ namespace DigitalImageCorrelation.FileManagement
                     XElement node = new XElement("V",
                         new XElement("X", vertex.X),
                         new XElement("Y", vertex.Y),
-                        new XElement("dX", vertex.dX),
-                        new XElement("dY", vertex.dY),
-
-                        new XElement("EX", vertex.strain.X),
-                        new XElement("EY", vertex.strain.Y),
-                        new XElement("EXY", vertex.strain.XY),
-
-                        new XElement("SX", vertex.stress.X),
-                        new XElement("SY", vertex.stress.Y),
-                        new XElement("SEq", vertex.stress.Eq)
+                        vertex.dX != 0 ? new XElement("dX", vertex.dX) : null,
+                         vertex.dY != 0 ? new XElement("dY", vertex.dY) : null,
+                         vertex.strain.X != 0 ? new XElement("EX", vertex.strain.X) : null,
+                         vertex.strain.Y != 0 ? new XElement("EY", vertex.strain.Y) : null,
+                         vertex.strain.XY != 0 ? new XElement("EXY", vertex.strain.XY) : null,
+                         vertex.stress.X != 0 ? new XElement("SX", vertex.stress.X) : null,
+                         vertex.stress.Y != 0 ? new XElement("SY", vertex.stress.Y) : null,
+                         vertex.stress.Eq != 0 ? new XElement("SEq", vertex.stress.Eq) : null
                     );
                     ImagesResult.Add(node);
                 }

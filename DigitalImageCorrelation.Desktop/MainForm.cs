@@ -40,8 +40,6 @@ namespace DigitalImageCorrelation.Desktop
             _worker.OnProgressUpdate += OnImageProcessor_ProgressChanged;
             _worker.OnTaskDone += OnImageProcessor_RunWorkerCompleted;
             _painter = painter;
-            MainPictureBox.BackgroundImageLayout = ImageLayout.Zoom;
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             ScalePicturebox.Image = painter.DrawColorScale(ScalePicturebox.Width, ScalePicturebox.Height);
             AppendLineToTextbox("Initialization ended");
         }
@@ -96,7 +94,7 @@ namespace DigitalImageCorrelation.Desktop
         private async Task DrawImage()
         {
             var request = CreateDrawRequest();
-            MainPictureBox.Image = await _painter.DrawImage(request);
+            MainPictureBox.Image = await _painter.DrawImage(request, CurrentImageContainer.Bmp);
             if (CurrentImageContainer.Result != null)
             {
 
@@ -123,7 +121,6 @@ namespace DigitalImageCorrelation.Desktop
                     return false;
                 }
                 CurrentImageContainer = container;
-                MainPictureBox.BackgroundImage = container.BmpRaw;
                 ImageNameLabel.Text = CurrentImageContainer.Filename;
                 sizeNumberLabel.Text = $"{CurrentImageContainer.Bmp.Width}x{CurrentImageContainer.Bmp.Height}px";
                 await DrawImage();
@@ -176,14 +173,13 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private async void InitializeImageScale(object sender, EventArgs e)
+        private void InitializeImageScale(object sender, EventArgs e)
         {
             if (CurrentImageContainer != null)
             {
                 CustomScaleComboBox.SelectedItem = null;
                 SetZoom(_painter.CalculateDefaultScale(CreateDrawRequest()));
-                await DrawImage();
-                MainPictureBox.BackgroundImage = CurrentImageContainer.BmpRaw;
+                ResizePicturebox();
             }
         }
 
@@ -327,7 +323,7 @@ namespace DigitalImageCorrelation.Desktop
             e.Result = imageContainers;
         }
 
-        private void LoadImagesBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private async void LoadImagesBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (progressBar.Value < progressBar.Maximum)
             {
@@ -337,6 +333,7 @@ namespace DigitalImageCorrelation.Desktop
             if (e.ProgressPercentage == 0)
             {
                 CurrentImageContainer = imageContainers[0];
+                await DrawImage();
                 InitializeImageScale(null, null);
             }
         }
@@ -381,7 +378,7 @@ namespace DigitalImageCorrelation.Desktop
             }
             else
             {
-                var path = e.Result as AnalyzeResult;
+                var path = e.Result as string;
                 _logger.Info("Export Completed");
                 AppendLineToTextbox($"Export Completed. Result in {path}");
                 progressBar.Value = progressBar.Maximum;
@@ -465,7 +462,7 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private async void ZoomDownButton_Click(object sender, EventArgs e)
+        private void ZoomDownButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -473,7 +470,7 @@ namespace DigitalImageCorrelation.Desktop
                 {
                     CustomScaleComboBox.SelectedItem = null;
                     SetZoom(square.Scale / ZoomStep);
-                    await DrawImage();
+                    ResizePicturebox();
                 }
             }
             catch (Exception ex)
@@ -482,7 +479,7 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private async void ZoomUpButton_Click(object sender, EventArgs e)
+        private void ZoomUpButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -490,13 +487,19 @@ namespace DigitalImageCorrelation.Desktop
                 {
                     CustomScaleComboBox.SelectedItem = null;
                     SetZoom(square.Scale * ZoomStep);
-                    await DrawImage();
+                    ResizePicturebox();
                 }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
             }
+        }
+
+        private void ResizePicturebox()
+        {
+            MainPictureBox.Width = (int)(square.Scale * CurrentImageContainer.BitmapWidth);
+            MainPictureBox.Height = (int)(square.Scale * CurrentImageContainer.BitmapHeight);
         }
 
         private void MainPictureBox_MouseMove(object sender, MouseEventArgs e)
@@ -788,15 +791,19 @@ namespace DigitalImageCorrelation.Desktop
             }
         }
 
-        private async void CustomScaleComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void CustomScaleComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
                 if (CurrentImageContainer != null)
                 {
-                    var selectedRow = double.Parse(CustomScaleComboBox.SelectedItem.ToString(), CultureInfo.InvariantCulture);
-                    SetZoom(selectedRow);
-                    await DrawImage();
+                    var value = CustomScaleComboBox.SelectedItem;
+                    if (value != null)
+                    {
+                        var selectedRow = double.Parse(value.ToString(), CultureInfo.InvariantCulture);
+                        SetZoom(selectedRow);
+                        ResizePicturebox();
+                    }
                 }
             }
             catch (Exception ex)
