@@ -11,6 +11,7 @@ namespace DigitalImageCorrelation.Desktop.Structures
             get { return new double[] { X, Y }; }
             set { X = (int)value[0]; Y = (int)value[1]; }
         }
+
         public int X;
         public int Y;
         public int dX;
@@ -18,9 +19,8 @@ namespace DigitalImageCorrelation.Desktop.Structures
         public Strain strain = new Strain();
         public Stress stress = new Stress();
 
+        public Vertex() { }
 
-        public Vertex()
-        { }
         public Vertex(int x, int y)
         {
             X = x;

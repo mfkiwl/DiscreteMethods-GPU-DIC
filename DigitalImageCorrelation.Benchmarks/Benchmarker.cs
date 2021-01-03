@@ -26,35 +26,33 @@ namespace DiscreteMethods.BenchmarkTests
             {
                 Bitmap bitmap = new Bitmap(path);
                 ImageContainers[index] = new ImageContainer(bitmap, Path.GetFileName(path), index);
-                //ReloadSizes(bitmap);
             }
             backgroundWorker.WorkerReportsProgress = true;
 
         }
 
         [Benchmark]
-        //[Arguments(10, 10, 10, 10, CalculationType.Cpu)]
-        //[Arguments(50, 50, 10, 10, CalculationType.Cpu)]
-        //[Arguments(100, 100, 10, 10, CalculationType.Cpu)]
-        //[Arguments(10, 10, 50, 50, CalculationType.Cpu)]
+        [Arguments(10, 10, 10, 10, CalculationType.Cpu)]
+        [Arguments(50, 50, 10, 10, CalculationType.Cpu)]
+        [Arguments(100, 100, 10, 10, CalculationType.Cpu)]
+        [Arguments(10, 10, 50, 50, CalculationType.Cpu)]
         [Arguments(10, 10, 100, 100, CalculationType.Cpu)]
         [Arguments(10, 10, 200, 200, CalculationType.Cpu)]
         [Arguments(10, 10, 400, 400, CalculationType.Cpu)]
-        [Arguments(10, 10, 600, 600, CalculationType.Cpu)]
+        //[Arguments(10, 10, 600, 600, CalculationType.Cpu)]
 
-        //[Arguments(10, 10, 10, 10, CalculationType.Gpu)]
-        //[Arguments(50, 50, 10, 10, CalculationType.Gpu)]
-        //[Arguments(100, 100, 10, 10, CalculationType.Gpu)]
-        //[Arguments(10, 10, 50, 50, CalculationType.Gpu)]
+        [Arguments(10, 10, 10, 10, CalculationType.Gpu)]
+        [Arguments(50, 50, 10, 10, CalculationType.Gpu)]
+        [Arguments(100, 100, 10, 10, CalculationType.Gpu)]
+        [Arguments(10, 10, 50, 50, CalculationType.Gpu)]
         [Arguments(10, 10, 100, 100, CalculationType.Gpu)]
         [Arguments(10, 10, 200, 200, CalculationType.Gpu)]
         [Arguments(10, 10, 400, 400, CalculationType.Gpu)]
-        [Arguments(10, 10, 600, 600, CalculationType.Gpu)]
+        //[Arguments(10, 10, 600, 600, CalculationType.Gpu)]
         public void AnalyzeImages(int SubsetDelta, int WindowDelta, int PointsinX, int PointsinY, CalculationType calculationType)
         {
             var firstImage = ImageContainers.First().Value;
-            var square = new SquareLocation();
-            square.ReloadSizes(firstImage.BitmapWidth, firstImage.BitmapHeight);
+            var square = new SquareLocation(firstImage.BitmapWidth, firstImage.BitmapHeight);
             AnalyzeRequest request = new AnalyzeRequest()
             {
                 FindPoints = ResolveFindPoints(calculationType),
@@ -66,6 +64,8 @@ namespace DiscreteMethods.BenchmarkTests
                 StartingVertexes = square.CalculateStartingVertexes(PointsinX, PointsinY),
                 BitmapHeight = firstImage.BitmapHeight,
                 BitmapWidth = firstImage.BitmapWidth,
+                Square = square,
+                Size = ImageContainers.Count
             };
             var imageprocessor = new ImageProcessor(backgroundWorker, request);
             imageprocessor.Analyze(new DoWorkEventArgs(null));
